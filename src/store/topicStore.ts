@@ -61,7 +61,9 @@ export const useTopicStore = create<TopicState>()(
           
           const newAgentTopics = [...agentTopics]
           const [removed] = newAgentTopics.splice(oldIndex, 1)
-          newAgentTopics.splice(newIndex, 0, removed)
+          if (removed) {
+            newAgentTopics.splice(newIndex, 0, removed)
+          }
           
           return { topics: [...otherTopics, ...newAgentTopics] }
         })
