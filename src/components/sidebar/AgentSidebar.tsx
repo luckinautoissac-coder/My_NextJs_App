@@ -131,7 +131,9 @@ export function AgentSidebar() {
         const latestTopic = agentTopics.sort((a, b) => 
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         )[0]
-        setCurrentTopic(latestTopic.id)
+        if (latestTopic) {
+          setCurrentTopic(latestTopic.id)
+        }
       }
     } else if (currentTopicId && currentAgentId) {
       // 检查当前话题是否属于当前智能体
@@ -143,7 +145,9 @@ export function AgentSidebar() {
           const latestTopic = agentTopics.sort((a, b) => 
             new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
           )[0]
-          setCurrentTopic(latestTopic.id)
+          if (latestTopic) {
+            setCurrentTopic(latestTopic.id)
+          }
         } else {
           setCurrentTopic('')
         }
@@ -179,7 +183,9 @@ export function AgentSidebar() {
       const latestTopic = agentTopics.sort((a, b) => 
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       )[0]
-      setCurrentTopic(latestTopic.id)
+      if (latestTopic) {
+        setCurrentTopic(latestTopic.id)
+      }
     } else {
       // 如果该智能体没有话题，清除当前话题选择
       setCurrentTopic('')
