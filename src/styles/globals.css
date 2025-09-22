@@ -1,0 +1,285 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./highlight.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+	--font-sans: "Century Gothic", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-mono: "Consolas", "Monaco", "SF Mono", "Courier New", monospace;
+}
+
+@theme inline {
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+	--radius: 0.625rem;
+	
+	/* 基础配色方案 - 基于主色调#333367和字体色#c99f6f */
+	--primary-color: #333367;      /* 主色调 - 深蓝紫色 */
+	--primary-light: #4d4d8a;     /* 主色调浅色 */
+	--primary-dark: #262650;      /* 主色调深色 */
+	--text-primary: #2d2d2d;      /* 主字体色 - 深灰色（高对比度） */
+	--text-accent: #c99f6f;       /* 强调字体色 - 暖金色（用于强调） */
+	--text-secondary: #5a5a5a;    /* 次要字体色 - 中灰色 */
+	--text-muted: #888888;        /* 弱化字体色 - 浅灰色 */
+	
+	/* 协调色彩 */
+	--accent-warm: #d4b896;       /* 暖色调强调色 */
+	--accent-cool: #6b6b9d;       /* 冷色调强调色 */
+	--background-primary: #f8f7f4; /* 主背景 - 暖白色 */
+	--background-secondary: #f2f1ed; /* 次背景 */
+	--background-card: #ffffff;   /* 卡片背景 */
+	--border-color: #e8e6e0;      /* 边框色 */
+	--border-light: #f0efea;      /* 浅边框色 */
+	
+	/* 状态颜色 */
+	--success: #7c9885;           /* 成功色 - 协调绿 */
+	--warning: #d4a574;           /* 警告色 - 协调橙 */
+	--error: #c67b7b;             /* 错误色 - 协调红 */
+	--info: #7b9bc6;              /* 信息色 - 协调蓝 */
+	
+	/* 系统颜色映射 */
+	--background: var(--background-primary);
+	--foreground: var(--text-primary);
+	--card: var(--background-card);
+	--card-foreground: var(--text-primary);
+	--popover: var(--background-card);
+	--popover-foreground: var(--text-primary);
+	--primary: var(--primary-color);
+	--primary-foreground: var(--background-card);
+	--secondary: var(--background-secondary);
+	--secondary-foreground: var(--text-secondary);
+	--muted: var(--background-secondary);
+	--muted-foreground: var(--text-muted);
+	--accent: var(--accent-warm);
+	--accent-foreground: var(--primary-color);
+	--destructive: var(--error);
+	--border: var(--border-color);
+	--input: var(--border-color);
+	--ring: var(--primary-light);
+	
+	/* 图表颜色 */
+	--chart-1: var(--primary-color);
+	--chart-2: var(--accent-warm);
+	--chart-3: var(--accent-cool);
+	--chart-4: var(--success);
+	--chart-5: var(--warning);
+	
+	/* 侧边栏颜色 */
+	--sidebar: var(--background-secondary);
+	--sidebar-foreground: var(--text-primary);
+	--sidebar-primary: var(--primary-color);
+	--sidebar-primary-foreground: var(--background-card);
+	--sidebar-accent: var(--accent-warm);
+	--sidebar-accent-foreground: var(--primary-color);
+	--sidebar-border: var(--border-light);
+	--sidebar-ring: var(--primary-light);
+}
+
+.dark {
+	/* 暗色主题配色 - 基于主色调调整 */
+	--primary-color: #4d4d8a;      /* 主色调 - 亮一些 */
+	--primary-light: #6b6b9d;     /* 主色调浅色 */
+	--primary-dark: #333367;      /* 主色调深色 */
+	--text-primary: #e8e8e8;      /* 主字体色 - 高对比度浅色 */
+	--text-accent: #d4b896;       /* 强调字体色 - 暖金色 */
+	--text-secondary: #b8b8b8;    /* 次要字体色 - 中浅色 */
+	--text-muted: #999999;        /* 弱化字体色 - 中等灰色 */
+	
+	/* 暗色协调色彩 */
+	--accent-warm: #c99f6f;       /* 暖色调强调色 */
+	--accent-cool: #8a8ab3;       /* 冷色调强调色 */
+	--background-primary: #1a1a1a; /* 主背景 - 深色 */
+	--background-secondary: #242424; /* 次背景 */
+	--background-card: #2a2a2a;   /* 卡片背景 */
+	--border-color: #3a3a3a;      /* 边框色 */
+	--border-light: #333333;      /* 浅边框色 */
+	
+	/* 暗色状态颜色 */
+	--success: #8fa998;           /* 成功色 */
+	--warning: #e4b584;           /* 警告色 */
+	--error: #d68b8b;             /* 错误色 */
+	--info: #8bacd6;              /* 信息色 */
+	
+	/* 系统颜色重新映射 */
+	--background: var(--background-primary);
+	--foreground: var(--text-primary);
+	--card: var(--background-card);
+	--card-foreground: var(--text-primary);
+	--popover: var(--background-card);
+	--popover-foreground: var(--text-primary);
+	--primary: var(--primary-color);
+	--primary-foreground: var(--background-card);
+	--secondary: var(--background-secondary);
+	--secondary-foreground: var(--text-secondary);
+	--muted: var(--background-secondary);
+	--muted-foreground: var(--text-muted);
+	--accent: var(--accent-warm);
+	--accent-foreground: var(--background-card);
+	--destructive: var(--error);
+	--border: var(--border-color);
+	--input: var(--border-color);
+	--ring: var(--primary-light);
+	
+	/* 暗色图表颜色 */
+	--chart-1: var(--primary-color);
+	--chart-2: var(--accent-warm);
+	--chart-3: var(--accent-cool);
+	--chart-4: var(--success);
+	--chart-5: var(--warning);
+	
+	/* 暗色侧边栏颜色 */
+	--sidebar: var(--background-secondary);
+	--sidebar-foreground: var(--text-primary);
+	--sidebar-primary: var(--primary-color);
+	--sidebar-primary-foreground: var(--background-card);
+	--sidebar-accent: var(--accent-warm);
+	--sidebar-accent-foreground: var(--background-card);
+	--sidebar-border: var(--border-light);
+	--sidebar-ring: var(--primary-light);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+	}
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Century Gothic", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif;
+	}
+  
+  /* 中文字体优化 */
+  :lang(zh), :lang(zh-CN), :lang(zh-TW) {
+    font-family: "Microsoft YaHei", "微软雅黑", "Century Gothic", ui-sans-serif, system-ui, sans-serif;
+  }
+  
+  /* 英文字体优化 */
+  :lang(en) {
+    font-family: "Century Gothic", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif;
+  }
+  
+  /* 代码字体 */
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+  
+  /* 字体渲染优化 */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* 中文字体特殊优化 */
+  .chinese-text {
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", "Heiti SC", sans-serif;
+  }
+  
+  /* 英文字体特殊优化 */
+  .english-text {
+    font-family: "Century Gothic", "Helvetica Neue", "Arial", sans-serif;
+  }
+  
+  /* 布局稳定性优化 */
+  .layout-container {
+    min-width: 768px; /* 最小宽度确保侧边栏不被压缩 */
+  }
+  
+  .sidebar-fixed {
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+  
+  .chat-area {
+    min-width: 300px; /* 聊天区域最小宽度 */
+  }
+  
+  /* 字体对比度优化 */
+  .high-contrast-text {
+    color: var(--text-primary);
+    text-shadow: 0 0 1px rgba(0,0,0,0.1);
+  }
+  
+  .accent-text {
+    color: var(--text-accent);
+    font-weight: 600;
+  }
+  
+  /* 确保在白色背景下的可读性 */
+  .bg-white .text-primary,
+  .bg-white [style*="--text-primary"] {
+    color: var(--text-primary) !important;
+  }
+  
+  /* 确保强调色在白色背景下有足够对比度 */
+  .bg-white .accent-text,
+  .bg-white [style*="--text-accent"] {
+    color: #8b6914 !important; /* 更深的金色用于白色背景 */
+  }
+}
+
+@layer utilities {
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+  }
+}

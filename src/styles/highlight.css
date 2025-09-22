@@ -1,0 +1,188 @@
+/* 代码高亮样式 - 自定义主题 */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0;
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: var(--primary-color);
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: var(--accent-cool);
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: var(--accent-warm);
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.hljs-subst {
+  font-weight: normal;
+}
+
+.hljs-type,
+.hljs-class .hljs-title,
+.hljs-tag,
+.hljs-regexp,
+.hljs-link {
+  color: var(--warning);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-built_in,
+.hljs-builtin-name {
+  color: var(--error);
+}
+
+.hljs-meta,
+.hljs-deletion {
+  color: var(--text-muted);
+}
+
+.hljs-addition {
+  color: var(--success);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* 自定义滚动条样式 */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 4px;
+}
+
+.scrollbar-track-gray-800::-webkit-scrollbar-track {
+  background-color: #1f2937;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Markdown 内容样式优化 */
+.markdown-content {
+  line-height: 1.6;
+}
+
+.markdown-content > *:first-child {
+  margin-top: 0;
+}
+
+.markdown-content > *:last-child {
+  margin-bottom: 0;
+}
+
+/* 表格样式 */
+.markdown-content table {
+  border-collapse: collapse;
+}
+
+.markdown-content table th,
+.markdown-content table td {
+  border: 1px solid #e5e7eb;
+}
+
+/* 引用块样式 */
+.markdown-content blockquote {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* 列表样式 */
+.markdown-content ul ul,
+.markdown-content ol ol,
+.markdown-content ul ol,
+.markdown-content ol ul {
+  margin: 0.5em 0 0.5em 1.5em;
+}
+
+/* 内联代码样式 */
+.markdown-content code {
+  font-family: var(--font-mono);
+}
+
+/* 代码块样式 */
+.markdown-content pre {
+  font-family: var(--font-mono);
+  line-height: 1.4;
+}
+
+/* 中英文混合内容字体优化 */
+.markdown-content {
+  font-family: "Century Gothic", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif;
+  color: var(--text-primary);
+}
+
+/* 标题字体加强 */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  font-family: "Century Gothic", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+}
+
+/* 强调文本字体 */
+.markdown-content strong {
+  font-family: "Century Gothic", "Microsoft YaHei", "微软雅黑", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--text-accent);
+}
+
+/* 白色背景下的强调色调整 */
+.bg-white .markdown-content strong,
+.bg-white .markdown-content h1 {
+  color: #8b6914 !important;
+}
+
+/* 链接悬停效果 */
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+/* 标题间距优化 */
+.markdown-content h1 + p,
+.markdown-content h2 + p,
+.markdown-content h3 + p,
+.markdown-content h4 + p,
+.markdown-content h5 + p,
+.markdown-content h6 + p {
+  margin-top: 0;
+}
