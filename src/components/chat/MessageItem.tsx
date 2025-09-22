@@ -8,7 +8,6 @@ import {
   AtSign, MoreHorizontal, Menu, CheckSquare, GitBranch, Brain
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -360,12 +359,10 @@ export function MessageItem({ message }: MessageItemProps) {
   const handleBranch = () => {
     if (!currentTopicId || !currentAgent) return
     
-    // 创建分支：复制所有对话到新话题
+    // 创建分支：复制当前对话到新话题
     const allMessages = getMessagesByTopic(currentTopicId)
-    // 过滤掉思考类型和分隔符类型的消息，只复制正常的用户和AI消息
-    const branchMessages = allMessages.filter(msg => 
-      msg.messageType !== 'thinking' && msg.messageType !== 'context-separator'
-    )
+    const messageIndex = allMessages.findIndex(msg => msg.id === message.id)
+    const branchMessages = allMessages.slice(0, messageIndex + 1)
     
     // 创建新话题
     const branchTopicName = `分支话题 - ${new Date().toLocaleString()}`
@@ -431,19 +428,20 @@ export function MessageItem({ message }: MessageItemProps) {
             : 'bg-gray-100 text-gray-900'
         )}>
           {isEditing ? (
-            <div className="space-y-3 w-full">
-              <Textarea
+            <div className="space-y-2">
+              <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="min-h-[100px] max-h-[300px] resize-none"
-                placeholder="编辑消息内容..."
+                className="w-full p-3 border rounded resize-y text-gray-900 bg-white min-h-[120px]"
+                rows={Math.max(5, editContent.split('\n').length)}
                 autoFocus
+                style={{ minHeight: '120px', maxHeight: '400px' }}
               />
-              <div className="flex gap-2 justify-end">
-                <Button size="sm" onClick={handleSaveEdit} className="h-8 px-3 text-sm">
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleSaveEdit} className="h-6 px-2 text-xs">
                   保存
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleCancelEdit} className="h-8 px-3 text-sm">
+                <Button size="sm" variant="outline" onClick={handleCancelEdit} className="h-6 px-2 text-xs">
                   取消
                 </Button>
               </div>
