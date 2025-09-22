@@ -27,7 +27,7 @@ export function MainLayout() {
       label: `${MODEL_PROVIDERS[model.provider]} - ${model.name}`,
       model
     }
-  }).filter(Boolean)
+  }).filter((option): option is NonNullable<typeof option> => option !== null)
 
   // 检查当前模型是否支持深度思考
   const isCurrentModelDeepThinking = selectedModel ? isDeepThinkingModel(selectedModel) : false
