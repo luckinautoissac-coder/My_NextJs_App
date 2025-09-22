@@ -31,7 +31,9 @@ export const useAgentStore = create<AgentState>()(
         set((state) => {
           const newAgents = [...state.agents]
           const [removed] = newAgents.splice(oldIndex, 1)
-          newAgents.splice(newIndex, 0, removed)
+          if (removed) {
+            newAgents.splice(newIndex, 0, removed)
+          }
           return { agents: newAgents }
         })
       },
