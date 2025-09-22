@@ -54,7 +54,7 @@ Vercel 是 Next.js 官方推荐的零配置部署平台，非常适合静态和 
    git add .
    git commit -m "Initial commit"
    git branch -M main
-   git remote add origin https://github.com/你的用户名/my-nextjs-app.git
+   git remote add origin https://github.com/你的用户名/my_nextjs_app.git
    git push -u origin main
    ```
 
