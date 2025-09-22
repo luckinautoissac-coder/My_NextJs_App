@@ -92,7 +92,7 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
   // 获取已添加的模型信息
   const addedModelInfo = (addedModels || [])
     .map(id => ALL_MODELS.find(model => model.id === id))
-    .filter(Boolean)
+    .filter((model): model is NonNullable<typeof model> => model !== undefined)
 
   const handleRemoveModel = (modelId: string) => {
     if (addedModels.length <= 1) {

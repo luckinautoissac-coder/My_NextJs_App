@@ -42,7 +42,7 @@ export function ModelServiceDialog({ open, onOpenChange }: ModelServiceDialogPro
   // 获取已添加的模型信息
   const addedModelInfo = (addedModels || [])
     .map(id => ALL_MODELS.find(model => model.id === id))
-    .filter(Boolean)
+    .filter((model): model is NonNullable<typeof model> => model !== undefined)
 
   const handleSave = () => {
     if (!localApiKey.trim()) {
