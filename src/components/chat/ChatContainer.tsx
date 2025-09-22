@@ -2,7 +2,6 @@
 
 import { MessageList } from './MessageList'
 import { ChatInput } from './ChatInput'
-import { ApiKeyDialog } from './ApiKeyDialog'
 import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import { useChatStore } from '@/store/chatStore'
@@ -40,7 +39,6 @@ export function ChatContainer() {
             <Trash2 className="h-4 w-4 mr-2" />
             清除对话
           </Button>
-          <ApiKeyDialog />
         </div>
       </div>
 
