@@ -72,7 +72,8 @@ function ThinkingMessage({ message }: { message: Message }) {
     <div className="flex items-start gap-3 p-4">
       {/* AI 头像 */}
       <div className="flex-shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full text-white"
+             style={{ backgroundColor: 'var(--primary-color)' }}>
           <Bot className="h-4 w-4" />
         </div>
       </div>
@@ -412,8 +413,9 @@ export function MessageItem({ message }: MessageItemProps) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {!isUser && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100">
-          <Bot className="h-4 w-4 text-blue-600" />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+             style={{ backgroundColor: 'var(--primary-light)', opacity: 0.2 }}>
+          <Bot className="h-4 w-4" style={{ color: 'var(--primary-color)' }} />
         </div>
       )}
       
@@ -424,18 +426,28 @@ export function MessageItem({ message }: MessageItemProps) {
         <div className={cn(
           'relative rounded-lg px-4 py-3 text-sm max-w-full',
           isUser 
-            ? 'bg-blue-500 text-white' 
+            ? 'text-white' 
             : 'bg-gray-100 text-gray-900'
-        )}>
+        )}
+        style={isUser ? { 
+          backgroundColor: 'var(--primary-color)', 
+          color: 'var(--background-card)' 
+        } : undefined}>
           {isEditing ? (
             <div className="space-y-2">
               <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="w-full p-3 border rounded resize-y text-gray-900 bg-white min-h-[120px]"
+                className="w-full p-3 border rounded resize-y min-h-[120px]"
+                style={{ 
+                  minHeight: '120px', 
+                  maxHeight: '400px',
+                  backgroundColor: 'var(--background-card)',
+                  color: 'var(--text-primary)',
+                  borderColor: 'var(--border-color)'
+                }}
                 rows={Math.max(5, editContent.split('\n').length)}
                 autoFocus
-                style={{ minHeight: '120px', maxHeight: '400px' }}
               />
               <div className="flex gap-2">
                 <Button size="sm" onClick={handleSaveEdit} className="h-6 px-2 text-xs">
@@ -616,9 +628,10 @@ export function MessageItem({ message }: MessageItemProps) {
                   size="sm"
                   className={cn(
                     "h-6 px-2 text-xs",
-                    isSelected ? "bg-blue-500 text-white" : "bg-white text-gray-700 hover:bg-gray-50",
+                    isSelected ? "text-white" : "bg-white text-gray-700 hover:bg-gray-50",
                     isLoading && "animate-pulse"
                   )}
+                  style={isSelected ? { backgroundColor: 'var(--primary-color)' } : undefined}
                   onClick={() => setSelectedModel(message.id, response.modelId)}
                   disabled={isLoading}
                   title={`切换到${response.modelName}的回复`}

@@ -407,12 +407,13 @@ export function ChatInput() {
                 <DropdownMenuItem
                   key={model.id}
                   onClick={() => handleSelectModel(model.id)}
-                  className={selectedModel === model.id ? "bg-blue-50 text-blue-700" : ""}
+                  className={selectedModel === model.id ? "text-white" : ""}
+                  style={selectedModel === model.id ? { backgroundColor: 'var(--primary-light)' } : undefined}
                 >
                   <div className="flex items-center justify-between w-full">
                     <span>{model.name}</span>
                     {selectedModel === model.id && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--background-card)' }} />
                     )}
                   </div>
                 </DropdownMenuItem>
