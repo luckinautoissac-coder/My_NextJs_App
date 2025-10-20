@@ -9,9 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { useKnowledgeStore } from '@/store/knowledgeStore'
 import { ALL_MODELS } from '@/data/models'
-import { Plus, File, FileText, Folder, Link, Globe, Upload, Check, X, RotateCw, Trash2, BookOpen } from 'lucide-react'
+import { Plus, File, FileText, Folder, Link, Globe, Upload, Check, X, RotateCw, Trash2, BookOpen, Settings, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import type { DocumentType } from '@/types/knowledge'
+import { cn } from '@/lib/utils'
 
 interface KnowledgeBaseDialogProps {
   open: boolean
@@ -162,45 +163,53 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
     website: Globe
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <Check className="h-4 w-4 text-green-500" />
-      case 'failed':
-        return <X className="h-4 w-4 text-red-500" />
-      case 'embedding':
-        return <RotateCw className="h-4 w-4 text-blue-500 animate-spin" />
-      default:
-        return <div className="h-4 w-4 rounded-full border-2 border-gray-300" />
-    }
-  }
 
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[95vw] w-[1600px] h-[88vh] max-h-[900px]">
-          <DialogHeader className="border-b pb-4">
-            <DialogTitle className="text-2xl font-semibold">知识库管理</DialogTitle>
-          </DialogHeader>
-          
-          <div className="flex gap-6 flex-1 overflow-hidden pt-4">
-            {/* 左侧：知识库列表 */}
-            <div className="w-[320px] flex-shrink-0 border-r pr-6 flex flex-col gap-3 overflow-hidden">
-              <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+        <DialogContent className="max-w-[95vw] w-[1600px] h-[88vh] max-h-[900px] p-0">
+          <div className="flex h-full">
+            {/* 左侧边栏 */}
+            <div className="w-[28%] border-r bg-white flex flex-col">
+              {/* 标题 */}
+              <div className="px-6 py-5 border-b">
+                <h2 className="text-xl font-semibold text-gray-900">知识库</h2>
+              </div>
+              
+              {/* 知识库列表 */}
+              <div className="flex-1 overflow-y-auto py-2">
               {knowledgeBases.map((kb) => (
                 <ContextMenu key={kb.id}>
                   <ContextMenuTrigger>
                     <div
-                      className={`p-4 rounded-lg cursor-pointer transition-colors ${
-                        selectedKBId === kb.id
-                          ? 'bg-primary text-primary-foreground'
-                          : 'hover:bg-accent'
-                      }`}
+                      className={cn(
+                        "relative px-6 py-3 cursor-pointer transition-all flex items-center gap-3",
+                        "hover:bg-gray-50",
+                        selectedKBId === kb.id && "bg-gray-100"
+                      )}
                       onClick={() => setSelectedKBId(kb.id)}
                     >
-                      <div className="font-medium truncate text-base">{kb.name}</div>
-                      <div className="text-sm opacity-70 mt-1.5">
-                        {kb.documents.length} 个文档
+                      {/* 选中指示器 */}
+                      {selectedKBId === kb.id && (
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-600" />
+                      )}
+                      
+                      {/* 图标 */}
+                      <div className="flex-shrink-0">
+                        <Folder className={cn(
+                          "h-5 w-5",
+                          selectedKBId === kb.id ? "text-blue-600" : "text-gray-500"
+                        )} />
+                      </div>
+                      
+                      {/* 文本 */}
+                      <div className="flex-1 min-w-0">
+                        <div className={cn(
+                          "font-medium truncate text-sm",
+                          selectedKBId === kb.id ? "text-gray-900" : "text-gray-700"
+                        )}>
+                          {kb.name}
+                        </div>
                       </div>
                     </div>
                   </ContextMenuTrigger>
@@ -222,52 +231,69 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
               ))}
               </div>
               
-              <div className="pt-3 border-t">
-                <Button
-                  variant="outline"
-                  className="w-full justify-center h-12 text-base font-medium"
+              {/* 添加按钮 */}
+              <div className="px-6 py-4 border-t">
+                <button
                   onClick={() => setShowNewKBDialog(true)}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
                 >
-                  <Plus className="h-5 w-5 mr-2" />
-                  添加新知识库
-                </Button>
+                  <Plus className="h-4 w-4" />
+                  添加
+                </button>
               </div>
             </div>
 
-            {/* 右侧：文档管理 */}
-            <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+            {/* 右侧主内容区 */}
+            <div className="flex-1 flex flex-col bg-white overflow-hidden">
               {selectedKB ? (
                 <>
                   {/* 顶部工具栏 */}
-                  <div className="flex-shrink-0 space-y-3 mb-4">
-                    {/* 嵌入模型显示和添加文件按钮 */}
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3 px-4 py-3 bg-blue-50 rounded-lg border border-blue-200 flex-1 min-w-0">
-                        <span className="text-sm font-medium text-gray-600 whitespace-nowrap">嵌入模型:</span>
-                        <span className="text-sm font-semibold text-blue-700 truncate">
+                  <div className="flex items-center justify-between px-6 py-4 border-b">
+                    {/* 左侧 - 嵌入模型 */}
+                    <div className="flex items-center gap-3">
+                      <Settings className="h-4 w-4 text-gray-500" />
+                      <span className="text-sm text-gray-600">嵌入模型</span>
+                      <div className="px-3 py-1 bg-gray-100 border border-gray-300 rounded-full">
+                        <span className="text-sm text-gray-700">
                           {embeddingModels.find(m => m.id === selectedKB.embeddingModel)?.name || '未知模型'}
                         </span>
                       </div>
-                      <Button
-                        size="default"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="h-11 px-6 text-base font-medium bg-blue-600 hover:bg-blue-700 whitespace-nowrap flex-shrink-0"
-                      >
-                        <Plus className="h-5 w-5 mr-2" />
-                        添加文件
-                      </Button>
                     </div>
+                    
+                    {/* 右侧 - 搜索 */}
+                    <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                      <Search className="h-4 w-4 text-gray-500" />
+                    </button>
+                  </div>
 
-                    {/* 分类标签 */}
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        size="sm"
-                        variant={activeTab === 'all' ? 'default' : 'outline'}
+                  {/* 标签导航栏 */}
+                  <div className="flex items-center justify-between px-6 border-b">
+                    <div className="flex items-center gap-6 -mb-px">
+                      {/* 全部标签 */}
+                      <button
                         onClick={() => setActiveTab('all')}
-                        className="h-9 px-4 text-sm font-medium"
+                        className={cn(
+                          "flex items-center gap-2 px-1 py-3 text-sm font-medium transition-colors relative",
+                          activeTab === 'all'
+                            ? "text-blue-600"
+                            : "text-gray-600 hover:text-gray-900"
+                        )}
                       >
-                        全部 ({selectedKB.documents.length})
-                      </Button>
+                        <span>全部</span>
+                        <span className={cn(
+                          "px-1.5 py-0.5 rounded text-xs",
+                          activeTab === 'all'
+                            ? "bg-blue-100 text-blue-600"
+                            : "bg-gray-100 text-gray-600"
+                        )}>
+                          {selectedKB.documents.length}
+                        </span>
+                        {activeTab === 'all' && (
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                        )}
+                      </button>
+                      
+                      {/* 其他标签 */}
                       {(['file', 'note', 'directory', 'url', 'website'] as DocumentType[]).map((type) => {
                         const Icon = typeIcons[type]
                         const labels = {
@@ -279,19 +305,43 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
                         }
                         const count = selectedKB.documents.filter(d => d.type === type).length
                         return (
-                          <Button
+                          <button
                             key={type}
-                            size="sm"
-                            variant={activeTab === type ? 'default' : 'outline'}
                             onClick={() => setActiveTab(type)}
-                            className="h-9 px-4 text-sm font-medium"
+                            className={cn(
+                              "flex items-center gap-2 px-1 py-3 text-sm font-medium transition-colors relative",
+                              activeTab === type
+                                ? "text-blue-600"
+                                : "text-gray-600 hover:text-gray-900"
+                            )}
                           >
-                            <Icon className="h-4 w-4 mr-1.5" />
-                            {labels[type]} ({count})
-                          </Button>
+                            <Icon className="h-4 w-4" />
+                            <span>{labels[type]}</span>
+                            <span className={cn(
+                              "px-1.5 py-0.5 rounded text-xs",
+                              activeTab === type
+                                ? "bg-blue-100 text-blue-600"
+                                : "bg-gray-100 text-gray-600"
+                            )}>
+                              {count}
+                            </span>
+                            {activeTab === type && (
+                              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
+                            )}
+                          </button>
                         )
                       })}
                     </div>
+                    
+                    {/* 添加文件按钮 */}
+                    <Button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg h-9 px-4 text-sm font-medium"
+                    >
+                      <Plus className="h-4 w-4 mr-1.5" />
+                      添加文件
+                    </Button>
+                    
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -302,23 +352,23 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
                     />
                   </div>
 
-                  {/* 拖拽上传区 */}
-                  <div
-                    className="flex-shrink-0 border-2 border-dashed rounded-lg p-6 mb-3 text-center bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-all cursor-pointer"
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="h-10 w-10 mx-auto mb-2 text-gray-400" />
-                    <div className="text-base font-medium mb-1 text-gray-700">拖拽文件到这里或点击上传</div>
-                    <div className="text-xs text-gray-500">
-                      支持 TXT, MD, HTML, PDF, DOCX, PPTX, XLSX, EPUB 等格式
+                  {/* 内容区域 */}
+                  <div className="flex-1 overflow-y-auto px-6 py-6">
+                    {/* 拖拽上传区 */}
+                    <div
+                      className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center mb-6 hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer"
+                      onDrop={handleDrop}
+                      onDragOver={handleDragOver}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <div className="text-lg font-medium text-gray-700 mb-2">拖拽文件到这里</div>
+                      <div className="text-sm text-gray-500">
+                        支持 TXT, MD, HTML, PDF, DOCX, PPTX, XLSX, EPUB... 格式
+                      </div>
                     </div>
-                  </div>
 
-                  {/* 文档列表 */}
-                  <div className="flex-1 overflow-y-auto min-h-0">
-                    <div className="space-y-2 pr-2">
+                    {/* 文档列表 */}
+                    <div className="space-y-2">
                       {filteredDocs.length === 0 ? (
                         <div className="text-center py-12">
                           <FileText className="h-12 w-12 mx-auto mb-3 text-gray-300" />
@@ -329,55 +379,66 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
                         filteredDocs.map((doc) => (
                           <div
                             key={doc.id}
-                            className="flex items-center gap-3 p-3 border rounded-lg hover:shadow-sm hover:border-blue-300 transition-all bg-white"
+                            className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors bg-white"
                           >
-                            {/* 文件图标和信息 */}
-                            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                            {/* 左侧 - 文件图标 */}
+                            <div className="flex-shrink-0">
                               {(() => {
                                 const Icon = typeIcons[doc.type]
-                                return (
-                                  <div className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg bg-blue-50">
-                                    <Icon className="h-4 w-4 text-blue-600" />
-                                  </div>
-                                )
+                                return <Icon className="h-8 w-8 text-red-500" />
                               })()}
-                              <div className="flex flex-col min-w-0 flex-1">
-                                <span className="truncate text-sm font-medium text-gray-900">{doc.name}</span>
-                                <span className="text-xs text-gray-500 truncate">
-                                  {new Date(doc.uploadedAt).toLocaleString('zh-CN', {
-                                    month: '2-digit',
-                                    day: '2-digit',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
-                                  {doc.size && ` · ${(doc.size / 1024 / 1024).toFixed(2)} MB`}
-                                </span>
+                            </div>
+                            
+                            {/* 中部 - 文件信息 */}
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-gray-900 truncate mb-1">
+                                {doc.name}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {new Date(doc.uploadedAt).toLocaleString('zh-CN', {
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                                {doc.size && ` · ${(doc.size / 1024 / 1024).toFixed(1)} MB`}
                               </div>
                             </div>
                             
-                            {/* 操作按钮 */}
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                              <Button
-                                size="sm"
-                                variant="outline"
+                            {/* 右侧 - 操作按钮 */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="h-8 w-8 p-0"
+                                className="p-1.5 hover:bg-gray-100 rounded transition-colors"
                                 title="重新上传"
                               >
-                                <RotateCw className="h-4 w-4" />
-                              </Button>
-                              <div className="w-8 h-8 flex items-center justify-center border rounded-md bg-gray-50">
-                                {getStatusIcon(doc.status)}
+                                <RotateCw className="h-4 w-4 text-gray-600" />
+                              </button>
+                              
+                              <div className="p-1.5">
+                                {doc.status === 'completed' && (
+                                  <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
+                                    <Check className="h-3 w-3 text-white" />
+                                  </div>
+                                )}
+                                {doc.status === 'failed' && (
+                                  <X className="h-5 w-5 text-red-500" />
+                                )}
+                                {doc.status === 'embedding' && (
+                                  <RotateCw className="h-5 w-5 text-blue-500 animate-spin" />
+                                )}
+                                {doc.status === 'pending' && (
+                                  <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                                )}
                               </div>
-                              <Button
-                                size="sm"
-                                variant="outline"
+                              
+                              <button
                                 onClick={() => deleteDocument(selectedKB.id, doc.id)}
-                                className="h-8 w-8 p-0 hover:bg-red-50 hover:border-red-300"
+                                className="p-1.5 hover:bg-red-50 rounded transition-colors"
                                 title="删除"
                               >
                                 <Trash2 className="h-4 w-4 text-red-500" />
-                              </Button>
+                              </button>
                             </div>
                           </div>
                         ))
@@ -386,10 +447,10 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center">
-                  <BookOpen className="h-20 w-20 text-gray-300 mb-4" />
-                  <div className="text-xl font-medium text-gray-600 mb-2">请选择或创建一个知识库</div>
-                  <div className="text-base text-gray-400">从左侧列表中选择一个知识库开始管理文档</div>
+                <div className="flex flex-col items-center justify-center h-full text-center px-6">
+                  <Folder className="h-16 w-16 text-gray-300 mb-4" />
+                  <div className="text-lg font-medium text-gray-600 mb-2">请选择或创建一个知识库</div>
+                  <div className="text-sm text-gray-400">从左侧列表中选择一个知识库开始管理文档</div>
                 </div>
               )}
             </div>
