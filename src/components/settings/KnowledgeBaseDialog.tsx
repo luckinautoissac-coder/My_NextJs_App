@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { useKnowledgeStore } from '@/store/knowledgeStore'
 import { ALL_MODELS } from '@/data/models'
-import { Plus, File, FileText, Folder, Link, Globe, Upload, Check, X, RotateCw, Trash2 } from 'lucide-react'
+import { Plus, File, FileText, Folder, Link, Globe, Upload, Check, X, RotateCw, Trash2, BookOpen } from 'lucide-react'
 import { toast } from 'sonner'
 import type { DocumentType } from '@/types/knowledge'
 
@@ -178,14 +178,15 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[90vw] w-[1400px] h-[85vh]">
-          <DialogHeader>
-            <DialogTitle className="text-xl">知识库</DialogTitle>
+        <DialogContent className="max-w-[95vw] w-[1600px] h-[90vh] max-h-[900px]">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-2xl font-semibold">知识库管理</DialogTitle>
           </DialogHeader>
           
-          <div className="flex gap-6 h-full overflow-hidden">
+          <div className="flex gap-6 flex-1 overflow-hidden pt-4">
             {/* 左侧：知识库列表 */}
-            <div className="w-72 border-r pr-6 flex flex-col gap-3 overflow-y-auto">
+            <div className="w-80 border-r pr-6 flex flex-col gap-3 overflow-hidden">
+              <div className="flex-1 overflow-y-auto space-y-2 pr-2">
               {knowledgeBases.map((kb) => (
                 <ContextMenu key={kb.id}>
                   <ContextMenuTrigger>
@@ -219,156 +220,176 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
                   </ContextMenuContent>
                 </ContextMenu>
               ))}
+              </div>
               
-              <Button
-                variant="outline"
-                className="w-full justify-start h-11 text-base"
-                onClick={() => setShowNewKBDialog(true)}
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                添加
-              </Button>
+              <div className="pt-3 border-t">
+                <Button
+                  variant="outline"
+                  className="w-full justify-center h-12 text-base font-medium"
+                  onClick={() => setShowNewKBDialog(true)}
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  添加新知识库
+                </Button>
+              </div>
             </div>
 
             {/* 右侧：文档管理 */}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden min-w-0">
               {selectedKB ? (
                 <>
-                  {/* 第一行：嵌入模型 */}
-                  <div className="mb-5 p-4 bg-accent rounded-lg flex items-center gap-2">
-                    <span className="text-base font-medium text-gray-600">嵌入模型</span>
-                    <span className="text-base font-semibold">
-                      {embeddingModels.find(m => m.id === selectedKB.embeddingModel)?.name || '未知模型'}
-                    </span>
-                  </div>
+                  {/* 顶部工具栏 */}
+                  <div className="flex-shrink-0 space-y-4 mb-4">
+                    {/* 嵌入模型显示 */}
+                    <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <span className="text-base font-medium text-gray-700">嵌入模型：</span>
+                      <span className="text-base font-semibold text-blue-700">
+                        {embeddingModels.find(m => m.id === selectedKB.embeddingModel)?.name || '未知模型'}
+                      </span>
+                    </div>
 
-                  {/* 第二行：分类标签 */}
-                  <div className="flex gap-3 mb-5">
-                    <Button
-                      size="default"
-                      variant={activeTab === 'all' ? 'default' : 'outline'}
-                      onClick={() => setActiveTab('all')}
-                      className="h-10 px-4 text-base"
-                    >
-                      全部
-                    </Button>
-                    {(['file', 'note', 'directory', 'url', 'website'] as DocumentType[]).map((type) => {
-                      const Icon = typeIcons[type]
-                      const labels = {
-                        file: '文件',
-                        note: '笔记',
-                        directory: '目录',
-                        url: '网址',
-                        website: '网站'
-                      }
-                      const count = selectedKB.documents.filter(d => d.type === type).length
-                      return (
+                    {/* 分类标签和操作按钮 */}
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="default"
+                        variant={activeTab === 'all' ? 'default' : 'outline'}
+                        onClick={() => setActiveTab('all')}
+                        className="h-11 px-5 text-base font-medium"
+                      >
+                        全部 ({selectedKB.documents.length})
+                      </Button>
+                      {(['file', 'note', 'directory', 'url', 'website'] as DocumentType[]).map((type) => {
+                        const Icon = typeIcons[type]
+                        const labels = {
+                          file: '文件',
+                          note: '笔记',
+                          directory: '目录',
+                          url: '网址',
+                          website: '网站'
+                        }
+                        const count = selectedKB.documents.filter(d => d.type === type).length
+                        return (
+                          <Button
+                            key={type}
+                            size="default"
+                            variant={activeTab === type ? 'default' : 'outline'}
+                            onClick={() => setActiveTab(type)}
+                            className="h-11 px-5 text-base font-medium"
+                          >
+                            <Icon className="h-5 w-5 mr-2" />
+                            {labels[type]} ({count})
+                          </Button>
+                        )
+                      })}
+                      <div className="ml-auto">
                         <Button
-                          key={type}
                           size="default"
-                          variant={activeTab === type ? 'default' : 'outline'}
-                          onClick={() => setActiveTab(type)}
-                          className="h-10 px-4 text-base"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="h-11 px-6 text-base font-medium bg-blue-600 hover:bg-blue-700"
                         >
-                          <Icon className="h-5 w-5 mr-2" />
-                          {labels[type]}
-                          <span className="ml-2 text-sm opacity-70">{count}</span>
+                          <Plus className="h-5 w-5 mr-2" />
+                          添加文件
                         </Button>
-                      )
-                    })}
-                    <Button
-                      size="default"
-                      variant="outline"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="h-10 px-4 text-base bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-300"
-                    >
-                      <Plus className="h-5 w-5 mr-2" />
-                      添加文件
-                    </Button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      multiple
-                      className="hidden"
-                      accept=".txt,.md,.html,.pdf,.docx,.pptx,.xlsx,.epub"
-                      onChange={(e) => handleFileUpload(e.target.files)}
-                    />
-                  </div>
-
-                  {/* 第三行：拖拽区 */}
-                  <div
-                    className="border-2 border-dashed rounded-lg p-12 mb-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors"
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                  >
-                    <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-                    <div className="text-xl font-medium mb-3 text-gray-700">拖拽文件到这里</div>
-                    <div className="text-base text-gray-500">
-                      支持 TXT, MD, HTML, PDF, DOCX, PPTX, XLSX, EPUB...格式
+                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        className="hidden"
+                        accept=".txt,.md,.html,.pdf,.docx,.pptx,.xlsx,.epub"
+                        onChange={(e) => handleFileUpload(e.target.files)}
+                      />
                     </div>
                   </div>
 
-                  {/* 第四行：文档列表 */}
-                  <div className="flex-1 overflow-y-auto space-y-3">
-                    {filteredDocs.length === 0 ? (
-                      <div className="text-center text-muted-foreground py-12 text-base">
-                        暂无文档
-                      </div>
-                    ) : (
-                      filteredDocs.map((doc) => (
-                        <div
-                          key={doc.id}
-                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors"
-                        >
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            {(() => {
-                              const Icon = typeIcons[doc.type]
-                              return <Icon className="h-5 w-5 flex-shrink-0 text-gray-600" />
-                            })()}
-                            <div className="flex flex-col min-w-0 flex-1">
-                              <span className="truncate text-base font-medium">{doc.name}</span>
-                              <span className="text-sm text-gray-500">
-                                {new Date(doc.uploadedAt).toLocaleString('zh-CN', {
-                                  month: '2-digit',
-                                  day: '2-digit',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                                {doc.size && ` · ${(doc.size / 1024 / 1024).toFixed(2)} MB`}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3 ml-4">
-                            <Button
-                              size="default"
-                              variant="ghost"
-                              onClick={() => fileInputRef.current?.click()}
-                              className="h-9 px-3"
-                              title="重新上传"
-                            >
-                              <RotateCw className="h-5 w-5" />
-                            </Button>
-                            <div className="w-9 h-9 flex items-center justify-center">
-                              {getStatusIcon(doc.status)}
-                            </div>
-                            <Button
-                              size="default"
-                              variant="ghost"
-                              onClick={() => deleteDocument(selectedKB.id, doc.id)}
-                              className="h-9 px-3 hover:bg-red-50"
-                              title="删除"
-                            >
-                              <Trash2 className="h-5 w-5 text-red-500" />
-                            </Button>
-                          </div>
+                  {/* 拖拽上传区 */}
+                  <div
+                    className="flex-shrink-0 border-2 border-dashed rounded-lg p-8 mb-4 text-center bg-gray-50 hover:bg-blue-50 hover:border-blue-300 transition-all cursor-pointer"
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <Upload className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                    <div className="text-lg font-medium mb-2 text-gray-700">拖拽文件到这里或点击上传</div>
+                    <div className="text-sm text-gray-500">
+                      支持 TXT, MD, HTML, PDF, DOCX, PPTX, XLSX, EPUB 等格式
+                    </div>
+                  </div>
+
+                  {/* 文档列表 */}
+                  <div className="flex-1 overflow-y-auto min-h-0">
+                    <div className="space-y-2 pr-2">
+                      {filteredDocs.length === 0 ? (
+                        <div className="text-center py-16">
+                          <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+                          <div className="text-lg font-medium text-gray-500 mb-2">暂无文档</div>
+                          <div className="text-sm text-gray-400">点击"添加文件"或拖拽文件到上方区域</div>
                         </div>
-                      ))
-                    )}
+                      ) : (
+                        filteredDocs.map((doc) => (
+                          <div
+                            key={doc.id}
+                            className="flex items-center gap-4 p-4 border rounded-lg hover:shadow-sm hover:border-blue-300 transition-all bg-white"
+                          >
+                            {/* 文件图标和信息 */}
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              {(() => {
+                                const Icon = typeIcons[doc.type]
+                                return (
+                                  <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg bg-blue-50">
+                                    <Icon className="h-5 w-5 text-blue-600" />
+                                  </div>
+                                )
+                              })()}
+                              <div className="flex flex-col min-w-0 flex-1">
+                                <span className="truncate text-base font-medium text-gray-900">{doc.name}</span>
+                                <span className="text-sm text-gray-500">
+                                  {new Date(doc.uploadedAt).toLocaleString('zh-CN', {
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                  {doc.size && ` · ${(doc.size / 1024 / 1024).toFixed(2)} MB`}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {/* 操作按钮 */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <Button
+                                size="default"
+                                variant="outline"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="h-10 w-10 p-0"
+                                title="重新上传"
+                              >
+                                <RotateCw className="h-5 w-5" />
+                              </Button>
+                              <div className="w-10 h-10 flex items-center justify-center border rounded-lg bg-gray-50">
+                                {getStatusIcon(doc.status)}
+                              </div>
+                              <Button
+                                size="default"
+                                variant="outline"
+                                onClick={() => deleteDocument(selectedKB.id, doc.id)}
+                                className="h-10 w-10 p-0 hover:bg-red-50 hover:border-red-300"
+                                title="删除"
+                              >
+                                <Trash2 className="h-5 w-5 text-red-500" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </>
               ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground text-lg">
-                  请选择或创建一个知识库
+                <div className="flex flex-col items-center justify-center h-full text-center">
+                  <BookOpen className="h-20 w-20 text-gray-300 mb-4" />
+                  <div className="text-xl font-medium text-gray-600 mb-2">请选择或创建一个知识库</div>
+                  <div className="text-base text-gray-400">从左侧列表中选择一个知识库开始管理文档</div>
                 </div>
               )}
             </div>
