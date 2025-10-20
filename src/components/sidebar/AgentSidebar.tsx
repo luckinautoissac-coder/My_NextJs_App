@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useAgentStore } from '@/store/agentStore'
 import { useTopicStore } from '@/store/topicStore'
-import { Bot, RefreshCw, Settings, Wrench, Database, Zap, GripVertical } from 'lucide-react'
+import { Bot, RefreshCw, Settings, Wrench, Database, Zap, GripVertical, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   DndContext,
@@ -33,6 +33,7 @@ import {
 import { ModelServiceDialog } from '@/components/settings/ModelServiceDialog'
 import { DataSettingsDialog } from '@/components/settings/DataSettingsDialog'
 import { QuickPhrasesDialog } from '@/components/settings/QuickPhrasesDialog'
+import { KnowledgeBaseDialog } from '@/components/settings/KnowledgeBaseDialog'
 
 // 可拖拽的智能体项组件
 function SortableAgentItem({ agent, isActive, onClick }: { agent: any, isActive: boolean, onClick: () => void }) {
@@ -102,6 +103,7 @@ export function AgentSidebar() {
   const [modelServiceOpen, setModelServiceOpen] = useState(false)
   const [dataSettingsOpen, setDataSettingsOpen] = useState(false)
   const [quickPhrasesOpen, setQuickPhrasesOpen] = useState(false)
+  const [knowledgeBaseOpen, setKnowledgeBaseOpen] = useState(false)
 
   // 处理拖拽结束
   function handleDragEnd(event: any) {
@@ -170,6 +172,10 @@ export function AgentSidebar() {
 
   const handleQuickPhrasesSettings = () => {
     setQuickPhrasesOpen(true)
+  }
+
+  const handleKnowledgeBaseSettings = () => {
+    setKnowledgeBaseOpen(true)
   }
 
   // 处理智能体切换
@@ -275,6 +281,13 @@ export function AgentSidebar() {
                 <Zap className="h-4 w-4 mr-2" />
                 快捷短语
               </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={handleKnowledgeBaseSettings}
+                data-knowledge-base-settings
+              >
+                <BookOpen className="h-4 w-4 mr-2" />
+                知识库
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -294,6 +307,11 @@ export function AgentSidebar() {
       <QuickPhrasesDialog
         open={quickPhrasesOpen}
         onOpenChange={setQuickPhrasesOpen}
+      />
+      
+      <KnowledgeBaseDialog
+        open={knowledgeBaseOpen}
+        onOpenChange={setKnowledgeBaseOpen}
       />
     </>
   )

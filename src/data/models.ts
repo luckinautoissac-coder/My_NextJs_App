@@ -335,6 +335,30 @@ export const ALL_MODELS: AIModel[] = [
     contextLength: 128000,
     isFree: false,
     isAdded: false
+  },
+
+  // Embedding Models - OpenAI
+  {
+    id: 'text-embedding-ada-002',
+    name: 'Text Embedding Ada 002',
+    provider: 'openai',
+    category: ['embedding'],
+    description: 'OpenAI的嵌入模型，适用于语义搜索和文档检索',
+    contextLength: 8191,
+    isFree: false,
+    isAdded: false
+  },
+
+  // Embedding Models - Google
+  {
+    id: 'gemini-embedding-exp-03-07',
+    name: 'Gemini Embedding Exp 03-07',
+    provider: 'google',
+    category: ['embedding'],
+    description: 'Google实验性嵌入模型，支持高维向量表示',
+    contextLength: 2048,
+    isFree: false,
+    isAdded: false
   }
 ]
 

@@ -22,6 +22,7 @@ import { useTopicStore } from '@/store/topicStore'
 import { useAPISettingsStore } from '@/store/apiSettingsStore'
 import { useThinkingChainStore } from '@/store/thinkingChainStore'
 import { useQuickPhrasesStore } from '@/store/quickPhrasesStore'
+import { useKnowledgeStore } from '@/store/knowledgeStore'
 import { sendMessage } from '@/lib/api'
 import { toast } from 'sonner'
 import { ALL_MODELS } from '@/data/models'
@@ -35,10 +36,21 @@ export function ChatInput() {
   const { apiKey, selectedModel, baseUrl, updateSettings } = useAPISettingsStore()
   const { getCurrentConfig, isEnabled, isDeepThinkingModel } = useThinkingChainStore()
   const { phrases } = useQuickPhrasesStore()
+  const { 
+    knowledgeBases, 
+    selectedKnowledgeBaseIds, 
+    selectKnowledgeBase, 
+    deselectKnowledgeBase 
+  } = useKnowledgeStore()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const currentAgent = agents.find(agent => agent.id === currentAgentId)
+  
+  // 获取选中的知识库信息
+  const selectedKnowledgeBases = selectedKnowledgeBaseIds
+    .map(id => knowledgeBases.find(kb => kb.id === id))
+    .filter((kb): kb is NonNullable<typeof kb> => kb !== undefined)
 
   // 自动调整文本框高度
   const adjustTextareaHeight = () => {
@@ -136,8 +148,15 @@ export function ChatInput() {
     setInput(`请帮我搜索并总结关于"${input.trim()}"的最新信息`)
   }
 
-  const handleKnowledgeBase = () => {
-    toast.info('知识库功能开发中...')
+  // 知识库选择不需要额外处理，下拉菜单会自动处理
+  const handleSelectKnowledgeBase = (kbId: string) => {
+    selectKnowledgeBase(kbId)
+    toast.success('已添加知识库')
+  }
+
+  const handleRemoveKnowledgeBase = (kbId: string) => {
+    deselectKnowledgeBase(kbId)
+    toast.success('已移除知识库')
   }
 
   const handleMCP = () => {
@@ -367,15 +386,65 @@ export function ChatInput() {
             <Search className="h-4 w-4" />
           </Button>
           
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleKnowledgeBase}
-            className="h-8 px-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            title="知识库"
-          >
-            <BookOpen className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                title="知识库"
+              >
+                <BookOpen className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" side="top" className="w-64">
+              <DropdownMenuLabel>选择知识库</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {knowledgeBases.length === 0 ? (
+                <DropdownMenuItem disabled className="text-center py-4">
+                  <div className="flex flex-col items-center gap-2 w-full">
+                    <BookOpen className="h-8 w-8 text-gray-300" />
+                    <span className="text-gray-500">暂无知识库</span>
+                    <span className="text-xs text-gray-400">请先在设置中创建知识库</span>
+                  </div>
+                </DropdownMenuItem>
+              ) : (
+                <>
+                  {knowledgeBases.map((kb) => (
+                    <DropdownMenuItem
+                      key={kb.id}
+                      onClick={() => handleSelectKnowledgeBase(kb.id)}
+                      disabled={selectedKnowledgeBaseIds.includes(kb.id)}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium">{kb.name}</span>
+                        <span className="text-xs text-gray-500">
+                          {kb.documents.length} 个文档
+                        </span>
+                      </div>
+                      {selectedKnowledgeBaseIds.includes(kb.id) && (
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                          已选
+                        </span>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => {
+                      // 导航到设置
+                      document.querySelector<HTMLElement>('[data-knowledge-base-settings]')?.click()
+                    }}
+                    className="text-blue-600"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    添加知识库...
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Button
             variant="ghost"
@@ -537,6 +606,28 @@ export function ChatInput() {
 
       {/* 输入区域 */}
       <div className="p-4">
+        {/* 选中的知识库显示区域 */}
+        {selectedKnowledgeBases.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {selectedKnowledgeBases.map((kb) => (
+              <div
+                key={kb.id}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                <span className="font-medium">{kb.name}</span>
+                <span className="text-xs opacity-70">({kb.documents.length})</span>
+                <button
+                  onClick={() => handleRemoveKnowledgeBase(kb.id)}
+                  className="ml-1 hover:bg-blue-100 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
         {/* 文件预览区域 */}
         {uploadedFiles.length > 0 && (
           <div className="mb-3 p-3 bg-gray-50 rounded-lg border">
