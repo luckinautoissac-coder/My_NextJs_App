@@ -165,40 +165,40 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Check className="h-4 w-4 text-green-500" />
+        return <Check className="h-6 w-6 text-green-500" />
       case 'failed':
-        return <X className="h-4 w-4 text-red-500" />
+        return <X className="h-6 w-6 text-red-500" />
       case 'embedding':
-        return <RotateCw className="h-4 w-4 text-blue-500 animate-spin" />
+        return <RotateCw className="h-6 w-6 text-blue-500 animate-spin" />
       default:
-        return null
+        return <div className="h-6 w-6 rounded-full border-2 border-gray-300" />
     }
   }
 
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl h-[80vh]">
+        <DialogContent className="max-w-[90vw] w-[1400px] h-[85vh]">
           <DialogHeader>
-            <DialogTitle>知识库管理</DialogTitle>
+            <DialogTitle className="text-xl">知识库</DialogTitle>
           </DialogHeader>
           
-          <div className="flex gap-4 h-full overflow-hidden">
+          <div className="flex gap-6 h-full overflow-hidden">
             {/* 左侧：知识库列表 */}
-            <div className="w-64 border-r pr-4 flex flex-col gap-2 overflow-y-auto">
+            <div className="w-72 border-r pr-6 flex flex-col gap-3 overflow-y-auto">
               {knowledgeBases.map((kb) => (
                 <ContextMenu key={kb.id}>
                   <ContextMenuTrigger>
                     <div
-                      className={`p-3 rounded-lg cursor-pointer transition-colors ${
+                      className={`p-4 rounded-lg cursor-pointer transition-colors ${
                         selectedKBId === kb.id
                           ? 'bg-primary text-primary-foreground'
                           : 'hover:bg-accent'
                       }`}
                       onClick={() => setSelectedKBId(kb.id)}
                     >
-                      <div className="font-medium truncate">{kb.name}</div>
-                      <div className="text-xs opacity-70 mt-1">
+                      <div className="font-medium truncate text-base">{kb.name}</div>
+                      <div className="text-sm opacity-70 mt-1.5">
                         {kb.documents.length} 个文档
                       </div>
                     </div>
@@ -222,11 +222,11 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
               
               <Button
                 variant="outline"
-                className="w-full justify-start"
+                className="w-full justify-start h-11 text-base"
                 onClick={() => setShowNewKBDialog(true)}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                添加新知识库
+                <Plus className="h-5 w-5 mr-2" />
+                添加
               </Button>
             </div>
 
@@ -235,42 +235,54 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
               {selectedKB ? (
                 <>
                   {/* 第一行：嵌入模型 */}
-                  <div className="mb-4 p-3 bg-accent rounded-lg">
-                    <span className="text-sm font-medium">嵌入模型：</span>
-                    <span className="text-sm ml-2">
+                  <div className="mb-5 p-4 bg-accent rounded-lg flex items-center gap-2">
+                    <span className="text-base font-medium text-gray-600">嵌入模型</span>
+                    <span className="text-base font-semibold">
                       {embeddingModels.find(m => m.id === selectedKB.embeddingModel)?.name || '未知模型'}
                     </span>
                   </div>
 
                   {/* 第二行：分类标签 */}
-                  <div className="flex gap-2 mb-4">
+                  <div className="flex gap-3 mb-5">
                     <Button
-                      size="sm"
+                      size="default"
                       variant={activeTab === 'all' ? 'default' : 'outline'}
                       onClick={() => setActiveTab('all')}
+                      className="h-10 px-4 text-base"
                     >
                       全部
                     </Button>
                     {(['file', 'note', 'directory', 'url', 'website'] as DocumentType[]).map((type) => {
                       const Icon = typeIcons[type]
+                      const labels = {
+                        file: '文件',
+                        note: '笔记',
+                        directory: '目录',
+                        url: '网址',
+                        website: '网站'
+                      }
+                      const count = selectedKB.documents.filter(d => d.type === type).length
                       return (
                         <Button
                           key={type}
-                          size="sm"
+                          size="default"
                           variant={activeTab === type ? 'default' : 'outline'}
                           onClick={() => setActiveTab(type)}
+                          className="h-10 px-4 text-base"
                         >
-                          <Icon className="h-4 w-4 mr-1" />
-                          {type === 'file' ? '文件' : type === 'note' ? '笔记' : type === 'directory' ? '目录' : type === 'url' ? '网址' : '网站'}
+                          <Icon className="h-5 w-5 mr-2" />
+                          {labels[type]}
+                          <span className="ml-2 text-sm opacity-70">{count}</span>
                         </Button>
                       )
                     })}
                     <Button
-                      size="sm"
+                      size="default"
                       variant="outline"
                       onClick={() => fileInputRef.current?.click()}
+                      className="h-10 px-4 text-base bg-blue-50 hover:bg-blue-100 text-blue-600 border-blue-300"
                     >
-                      <Plus className="h-4 w-4 mr-1" />
+                      <Plus className="h-5 w-5 mr-2" />
                       添加文件
                     </Button>
                     <input
@@ -285,51 +297,68 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
 
                   {/* 第三行：拖拽区 */}
                   <div
-                    className="border-2 border-dashed rounded-lg p-8 mb-4 text-center"
+                    className="border-2 border-dashed rounded-lg p-12 mb-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors"
                     onDrop={handleDrop}
                     onDragOver={handleDragOver}
                   >
-                    <Upload className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <div className="text-lg font-medium mb-2">拖拽文件到这里</div>
-                    <div className="text-sm text-muted-foreground">
+                    <Upload className="h-16 w-16 mx-auto mb-4 text-gray-400" />
+                    <div className="text-xl font-medium mb-3 text-gray-700">拖拽文件到这里</div>
+                    <div className="text-base text-gray-500">
                       支持 TXT, MD, HTML, PDF, DOCX, PPTX, XLSX, EPUB...格式
                     </div>
                   </div>
 
                   {/* 第四行：文档列表 */}
-                  <div className="flex-1 overflow-y-auto space-y-2">
+                  <div className="flex-1 overflow-y-auto space-y-3">
                     {filteredDocs.length === 0 ? (
-                      <div className="text-center text-muted-foreground py-8">
+                      <div className="text-center text-muted-foreground py-12 text-base">
                         暂无文档
                       </div>
                     ) : (
                       filteredDocs.map((doc) => (
                         <div
                           key={doc.id}
-                          className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent"
+                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors"
                         >
-                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
                             {(() => {
                               const Icon = typeIcons[doc.type]
-                              return <Icon className="h-4 w-4 flex-shrink-0" />
+                              return <Icon className="h-5 w-5 flex-shrink-0 text-gray-600" />
                             })()}
-                            <span className="truncate">{doc.name}</span>
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <span className="truncate text-base font-medium">{doc.name}</span>
+                              <span className="text-sm text-gray-500">
+                                {new Date(doc.uploadedAt).toLocaleString('zh-CN', {
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                                {doc.size && ` · ${(doc.size / 1024 / 1024).toFixed(2)} MB`}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3 ml-4">
                             <Button
-                              size="sm"
+                              size="default"
                               variant="ghost"
                               onClick={() => fileInputRef.current?.click()}
+                              className="h-9 px-3"
+                              title="重新上传"
                             >
-                              <RotateCw className="h-4 w-4" />
+                              <RotateCw className="h-5 w-5" />
                             </Button>
-                            {getStatusIcon(doc.status)}
+                            <div className="w-9 h-9 flex items-center justify-center">
+                              {getStatusIcon(doc.status)}
+                            </div>
                             <Button
-                              size="sm"
+                              size="default"
                               variant="ghost"
                               onClick={() => deleteDocument(selectedKB.id, doc.id)}
+                              className="h-9 px-3 hover:bg-red-50"
+                              title="删除"
                             >
-                              <Trash2 className="h-4 w-4 text-red-500" />
+                              <Trash2 className="h-5 w-5 text-red-500" />
                             </Button>
                           </div>
                         </div>
@@ -338,7 +367,7 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
                   </div>
                 </>
               ) : (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="flex items-center justify-center h-full text-muted-foreground text-lg">
                   请选择或创建一个知识库
                 </div>
               )}
@@ -349,29 +378,30 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
 
       {/* 新建知识库对话框 */}
       <Dialog open={showNewKBDialog} onOpenChange={setShowNewKBDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>添加新知识库</DialogTitle>
+            <DialogTitle className="text-xl">添加新知识库</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="kb-name">名称</Label>
+          <div className="space-y-5 py-4">
+            <div className="space-y-3">
+              <Label htmlFor="kb-name" className="text-base">名称</Label>
               <Input
                 id="kb-name"
                 value={newKBName}
                 onChange={(e) => setNewKBName(e.target.value)}
                 placeholder="输入知识库名称"
+                className="h-11 text-base"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="kb-model">嵌入模型</Label>
+            <div className="space-y-3">
+              <Label htmlFor="kb-model" className="text-base">嵌入模型</Label>
               <Select value={newKBModel} onValueChange={setNewKBModel}>
-                <SelectTrigger id="kb-model">
+                <SelectTrigger id="kb-model" className="h-11 text-base">
                   <SelectValue placeholder="选择嵌入模型" />
                 </SelectTrigger>
                 <SelectContent>
                   {embeddingModels.map((model) => (
-                    <SelectItem key={model.id} value={model.id}>
+                    <SelectItem key={model.id} value={model.id} className="text-base py-3">
                       {model.name}
                     </SelectItem>
                   ))}
@@ -379,40 +409,41 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
               </Select>
             </div>
           </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setShowNewKBDialog(false)}>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setShowNewKBDialog(false)} className="h-10 px-6 text-base">
               取消
             </Button>
-            <Button onClick={handleCreateKB}>创建</Button>
+            <Button onClick={handleCreateKB} className="h-10 px-6 text-base">创建</Button>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* 编辑知识库对话框 */}
       <Dialog open={showEditKBDialog} onOpenChange={setShowEditKBDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>知识库设置</DialogTitle>
+            <DialogTitle className="text-xl">知识库设置</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-kb-name">名称</Label>
+          <div className="space-y-5 py-4">
+            <div className="space-y-3">
+              <Label htmlFor="edit-kb-name" className="text-base">名称</Label>
               <Input
                 id="edit-kb-name"
                 value={newKBName}
                 onChange={(e) => setNewKBName(e.target.value)}
                 placeholder="输入知识库名称"
+                className="h-11 text-base"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-kb-model">嵌入模型</Label>
+            <div className="space-y-3">
+              <Label htmlFor="edit-kb-model" className="text-base">嵌入模型</Label>
               <Select value={newKBModel} onValueChange={setNewKBModel}>
-                <SelectTrigger id="edit-kb-model">
+                <SelectTrigger id="edit-kb-model" className="h-11 text-base">
                   <SelectValue placeholder="选择嵌入模型" />
                 </SelectTrigger>
                 <SelectContent>
                   {embeddingModels.map((model) => (
-                    <SelectItem key={model.id} value={model.id}>
+                    <SelectItem key={model.id} value={model.id} className="text-base py-3">
                       {model.name}
                     </SelectItem>
                   ))}
@@ -420,11 +451,11 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
               </Select>
             </div>
           </div>
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setShowEditKBDialog(false)}>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setShowEditKBDialog(false)} className="h-10 px-6 text-base">
               取消
             </Button>
-            <Button onClick={handleUpdateKB}>保存</Button>
+            <Button onClick={handleUpdateKB} className="h-10 px-6 text-base">保存</Button>
           </div>
         </DialogContent>
       </Dialog>
