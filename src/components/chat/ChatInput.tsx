@@ -660,7 +660,7 @@ export function ChatInput() {
           </div>
         )}
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-end">
           <Textarea
             ref={textareaRef}
             value={input}
@@ -670,14 +670,14 @@ export function ChatInput() {
             }}
             onKeyDown={handleKeyDown}
             placeholder="输入消息... (按 Enter 发送，Shift+Enter 换行)"
-            className="min-h-[44px] max-h-[200px] resize-none"
+            className="min-h-[44px] max-h-[200px] resize-none overflow-y-auto"
             disabled={isLoading}
           />
           <Button
             onClick={handleSubmit}
             disabled={!input.trim() || isLoading || !apiKey.trim() || !currentTopicId}
             size="sm"
-            className="shrink-0"
+            className="shrink-0 h-[44px]"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
