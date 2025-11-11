@@ -126,6 +126,47 @@ interface MessageItemProps {
   message: Message
 }
 
+// 处理附件内容显示
+function formatAttachmentContent(content: string): string {
+  // 检测并简化附件内容
+  let formattedContent = content
+
+  // 1. 简化Base64图片数据
+  formattedContent = formattedContent.replace(
+    /Base64数据:\s*data:image\/[^;]+;base64,[A-Za-z0-9+/=]{100,}/g,
+    'Base64数据: [已隐藏，数据过长]'
+  )
+
+  // 2. 简化长文本附件内容（保留前后各200字符）
+  formattedContent = formattedContent.replace(
+    /(--- 文件:.*?---\n)([\s\S]{400,}?)(\n--- 文件结束 ---)/g,
+    (match, header, content, footer) => {
+      if (content.length > 500) {
+        const preview = content.substring(0, 200) + '\n\n... [内容过长，已省略 ' + 
+          Math.round((content.length - 400) / 1000) + 'KB] ...\n\n' + 
+          content.substring(content.length - 200)
+        return header + preview + footer
+      }
+      return match
+    }
+  )
+
+  // 3. 简化PDF长内容（每页只显示前100字符）
+  formattedContent = formattedContent.replace(
+    /(--- 第 \d+ 页 ---\n)([\s\S]{200,}?)(?=\n--- 第 \d+ 页 ---|$)/g,
+    (match, header, content) => {
+      if (content.length > 300) {
+        const preview = content.substring(0, 150) + '\n... [页面内容过长，已省略约 ' + 
+          Math.round((content.length - 150) / 1000) + 'KB] ...'
+        return header + preview + '\n\n'
+      }
+      return match
+    }
+  )
+
+  return formattedContent
+}
+
 export function MessageItem({ message }: MessageItemProps) {
   // 如果是上下文分隔线消息，显示特殊样式
   if (message.messageType === 'context-separator') {
@@ -466,9 +507,9 @@ export function MessageItem({ message }: MessageItemProps) {
             <div>
               {/* 根据消息类型选择渲染方式 */}
               {isUser ? (
-                /* 用户消息保持纯文本显示 */
+                /* 用户消息 - 简化附件内容显示 */
                 <div className="whitespace-pre-wrap break-words overflow-wrap-anywhere leading-relaxed">
-                  {message.content}
+                  {formatAttachmentContent(message.content)}
                 </div>
               ) : message.modelResponses && message.modelResponses.length > 0 ? (
                 <div>
