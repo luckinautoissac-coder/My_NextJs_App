@@ -26,6 +26,12 @@ import { useKnowledgeStore } from '@/store/knowledgeStore'
 import { sendMessage } from '@/lib/api'
 import { toast } from 'sonner'
 import { ALL_MODELS } from '@/data/models'
+import * as pdfjsLib from 'pdfjs-dist'
+
+// 配置 PDF.js worker
+if (typeof window !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+}
 
 export function ChatInput() {
   const [input, setInput] = useState('')
@@ -225,8 +231,39 @@ export function ChatInput() {
   }
 
 
+  // 解析PDF文件
+  const parsePDF = async (file: File): Promise<string> => {
+    try {
+      const arrayBuffer = await file.arrayBuffer()
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
+      const numPages = pdf.numPages
+      let fullText = `[PDF文档: ${file.name}]\n页数: ${numPages}\n大小: ${formatFileSize(file.size)}\n\n`
+      
+      // 读取所有页面的文本
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum)
+        const textContent = await page.getTextContent()
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(' ')
+        
+        fullText += `--- 第 ${pageNum} 页 ---\n${pageText}\n\n`
+      }
+      
+      return fullText
+    } catch (error) {
+      console.error('PDF解析失败:', error)
+      throw new Error(`PDF解析失败: ${error instanceof Error ? error.message : '未知错误'}`)
+    }
+  }
+
   // 读取文件内容
   const readFileContent = async (file: File): Promise<string> => {
+    // 如果是PDF文件，使用专门的PDF解析函数
+    if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      return await parsePDF(file)
+    }
+    
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       
