@@ -225,8 +225,48 @@ export function ChatInput() {
   }
 
 
+  // 读取文件内容
+  const readFileContent = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      
+      reader.onload = (e) => {
+        const result = e.target?.result
+        if (typeof result === 'string') {
+          // 如果是文本文件，直接返回内容
+          if (file.type.startsWith('text/') || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+            resolve(result)
+          } 
+          // 如果是图片，返回base64
+          else if (file.type.startsWith('image/')) {
+            resolve(`[图片: ${file.name}]\n数据格式: ${file.type}\n大小: ${formatFileSize(file.size)}\nBase64数据: ${result}`)
+          }
+          // 其他文件类型
+          else {
+            resolve(`[文件: ${file.name}]\n类型: ${file.type}\n大小: ${formatFileSize(file.size)}\n注：该文件类型暂不支持内容读取`)
+          }
+        } else {
+          reject(new Error('读取文件失败'))
+        }
+      }
+      
+      reader.onerror = () => reject(new Error(`读取文件失败: ${file.name}`))
+      
+      // 根据文件类型选择读取方式
+      if (file.type.startsWith('text/') || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+        reader.readAsText(file)
+      } else if (file.type.startsWith('image/')) {
+        reader.readAsDataURL(file)
+      } else {
+        // 其他文件尝试读取为文本
+        reader.readAsText(file)
+      }
+    })
+  }
+
   const handleSubmit = async () => {
-    if (!input.trim() || isLoading) return
+    // 允许只上传文件不输入文字，或只输入文字不上传文件
+    if ((!input.trim() && uploadedFiles.length === 0) || isLoading) return
     
     if (!apiKey.trim()) {
       toast.error('请先设置 API Key')
@@ -243,12 +283,30 @@ export function ChatInput() {
       return
     }
 
-    let userMessage = input.trim()
+    let userMessage = input.trim() || '请帮我分析以下文件内容：'
     
-    // 如果有上传的文件，添加文件信息到消息中
+    // 如果有上传的文件，读取并添加文件内容到消息中
     if (uploadedFiles.length > 0) {
-      const fileList = uploadedFiles.map(file => `- ${file.name} (${formatFileSize(file.size)})`).join('\n')
-      userMessage = `${userMessage}\n\n[附件文件]\n${fileList}\n\n注：这是一个演示项目，文件内容暂时无法实际处理，但AI会基于文件名和类型提供相关建议。`
+      toast.info('正在读取文件内容...')
+      try {
+        const fileContents = await Promise.all(
+          uploadedFiles.map(async (file) => {
+            try {
+              const content = await readFileContent(file)
+              return `\n\n--- 文件: ${file.name} ---\n${content}\n--- 文件结束 ---`
+            } catch (error) {
+              console.error('读取文件失败:', error)
+              return `\n\n--- 文件: ${file.name} ---\n[读取失败: ${error instanceof Error ? error.message : '未知错误'}]\n--- 文件结束 ---`
+            }
+          })
+        )
+        
+        userMessage = `${userMessage}\n\n=== 附件内容 ===${fileContents.join('')}\n=== 附件结束 ===\n\n请分析以上附件内容并回答我的问题。`
+      } catch (error) {
+        console.error('处理文件时出错:', error)
+        toast.error('处理文件时出错')
+        return
+      }
     }
     
     setInput('')
@@ -675,7 +733,7 @@ export function ChatInput() {
           />
           <Button
             onClick={handleSubmit}
-            disabled={!input.trim() || isLoading || !apiKey.trim() || !currentTopicId}
+            disabled={(!input.trim() && uploadedFiles.length === 0) || isLoading || !apiKey.trim() || !currentTopicId}
             size="sm"
             className="shrink-0 h-[44px]"
           >
