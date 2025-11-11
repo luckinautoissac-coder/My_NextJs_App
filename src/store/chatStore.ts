@@ -112,6 +112,20 @@ export const useChatStore = create<ChatState>()(
           state.messages = state.messages.map(message => ({
             ...message,
             timestamp: new Date(message.timestamp),
+            // 恢复 thinkingInfo 中的 startTime
+            ...(message.thinkingInfo && {
+              thinkingInfo: {
+                ...message.thinkingInfo,
+                startTime: new Date(message.thinkingInfo.startTime)
+              }
+            }),
+            // 恢复 modelResponses 中的 timestamp
+            ...(message.modelResponses && {
+              modelResponses: message.modelResponses.map(response => ({
+                ...response,
+                timestamp: response.timestamp ? new Date(response.timestamp) : new Date()
+              }))
+            })
           }))
         }
       }
