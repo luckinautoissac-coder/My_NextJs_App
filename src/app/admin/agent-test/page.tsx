@@ -24,25 +24,31 @@ export default function AgentTestPage() {
 
   const testAgent = async (agentId: string) => {
     try {
-      // 测试1: 尝试获取智能体配置
+      // 直接测试：只获取智能体列表，不发送消息
       const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [{ role: 'user', content: 'test' }],
-          agentId: agentId,
-        }),
+        method: 'GET',
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
         setTestResults(prev => ({
           ...prev,
           [agentId]: {
             status: 'error',
-            error: `HTTP ${response.status}: ${errorText.substring(0, 200)}`
+            error: `无法获取智能体列表: HTTP ${response.status}`
+          }
+        }))
+        return
+      }
+
+      const data = await response.json()
+      const agent = data.agents?.find((a: any) => a.id === agentId)
+      
+      if (!agent) {
+        setTestResults(prev => ({
+          ...prev,
+          [agentId]: {
+            status: 'error',
+            error: '智能体未在列表中找到，可能配置有语法错误'
           }
         }))
         return
@@ -53,6 +59,7 @@ export default function AgentTestPage() {
         ...prev,
         [agentId]: {
           status: 'success',
+          promptLength: 0
         }
       }))
     } catch (error: any) {
