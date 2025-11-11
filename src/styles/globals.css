@@ -55,18 +55,18 @@
 	--primary-color: #333367;      /* 主色调 - 深蓝紫色 */
 	--primary-light: #4d4d8a;     /* 主色调浅色 */
 	--primary-dark: #262650;      /* 主色调深色 */
-	--text-primary: #2d2d2d;      /* 主字体色 - 深灰色（高对比度） */
+	--text-primary: #1a1a1a;      /* 主字体色 - 更深的灰黑色（超高对比度） */
 	--text-accent: #c99f6f;       /* 强调字体色 - 暖金色（用于强调） */
-	--text-secondary: #5a5a5a;    /* 次要字体色 - 中灰色 */
+	--text-secondary: #4a4a4a;    /* 次要字体色 - 中深灰色 */
 	--text-muted: #888888;        /* 弱化字体色 - 浅灰色 */
 	
 	/* 协调色彩 */
 	--accent-warm: #d4b896;       /* 暖色调强调色 */
 	--accent-cool: #6b6b9d;       /* 冷色调强调色 */
 	--background-primary: #f8f7f4; /* 主背景 - 暖白色 */
-	--background-secondary: #f2f1ed; /* 次背景 */
+	--background-secondary: #fafaf8; /* 次背景 - AI回复框，更浅更接近白色 */
 	--background-card: #ffffff;   /* 卡片背景 */
-	--border-color: #e8e6e0;      /* 边框色 */
+	--border-color: #d4d2cc;      /* 边框色 - 加深一点 */
 	--border-light: #f0efea;      /* 浅边框色 */
 	
 	/* 状态颜色 */
@@ -127,9 +127,9 @@
 	--accent-warm: #c99f6f;       /* 暖色调强调色 */
 	--accent-cool: #8a8ab3;       /* 冷色调强调色 */
 	--background-primary: #1a1a1a; /* 主背景 - 深色 */
-	--background-secondary: #242424; /* 次背景 */
+	--background-secondary: #262626; /* 次背景 - AI回复框，稍浅一点 */
 	--background-card: #2a2a2a;   /* 卡片背景 */
-	--border-color: #3a3a3a;      /* 边框色 */
+	--border-color: #444444;      /* 边框色 - 提高对比度 */
 	--border-light: #333333;      /* 浅边框色 */
 	
 	/* 暗色状态颜色 */
