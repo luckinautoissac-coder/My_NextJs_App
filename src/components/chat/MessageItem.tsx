@@ -427,12 +427,16 @@ export function MessageItem({ message }: MessageItemProps) {
           'relative rounded-lg px-4 py-3 text-sm max-w-full',
           isUser 
             ? 'text-white' 
-            : 'bg-gray-100 text-gray-900'
+            : ''
         )}
         style={isUser ? { 
           backgroundColor: 'var(--primary-color)', 
           color: 'var(--background-card)' 
-        } : undefined}>
+        } : {
+          backgroundColor: 'var(--background-secondary)',
+          color: 'var(--text-primary)',
+          border: '1px solid var(--border-color)'
+        }}>
           {isEditing ? (
             <div className="space-y-2">
               <textarea
