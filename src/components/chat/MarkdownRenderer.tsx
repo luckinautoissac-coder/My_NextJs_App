@@ -27,15 +27,15 @@ function CodeBlock({ children, className, ...props }: any) {
   }
 
   return (
-    <div className="relative group">
+    <div className="relative group my-4">
       <div className="flex items-center justify-between px-4 py-2 text-sm rounded-t-lg" 
-           style={{ backgroundColor: 'var(--primary-dark)', color: 'var(--text-primary)' }}>
-        <span style={{ color: 'var(--text-secondary)' }}>{language || '代码'}</span>
+           style={{ backgroundColor: '#2c2c2c', color: '#e8e8e8' }}>
+        <span style={{ color: '#a8a8a8' }}>{language || '代码'}</span>
         <Button
           variant="ghost"
           size="sm"
           className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ color: 'var(--text-secondary)' }}
+          style={{ color: '#a8a8a8' }}
           onClick={handleCopy}
         >
           {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
@@ -45,7 +45,7 @@ function CodeBlock({ children, className, ...props }: any) {
         "p-4 rounded-b-lg overflow-x-auto text-sm",
         "scrollbar-thin"
       )}
-      style={{ backgroundColor: 'var(--primary-color)', color: 'var(--background-card)' }}>
+      style={{ backgroundColor: '#1e1e1e', color: '#d4d4d4' }}>
         <code className={className} {...props}>
           {children}
         </code>
@@ -58,11 +58,12 @@ function CodeBlock({ children, className, ...props }: any) {
 function InlineCode({ children, ...props }: any) {
   return (
     <code 
-      className="px-1.5 py-0.5 rounded text-sm" 
+      className="px-1.5 py-0.5 rounded text-sm font-medium" 
       style={{ 
         fontFamily: 'var(--font-mono)',
-        backgroundColor: 'var(--background-secondary)',
-        color: 'var(--primary-color)'
+        backgroundColor: '#f5f2f0',
+        color: '#c7254e',
+        border: '1px solid #e1dcdc'
       }}
       {...props}
     >
@@ -86,21 +87,21 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
           // 标题
           h1: ({ children, ...props }) => (
             <h1 className="text-2xl font-bold mb-4 mt-6 first:mt-0 pb-2" 
-                style={{ color: 'var(--text-accent)', borderBottom: '2px solid var(--border-color)' }}
+                style={{ color: '#b8860b', borderBottom: '2px solid #d4d2cc' }}
                 {...props}>
               {children}
             </h1>
           ),
           h2: ({ children, ...props }) => (
             <h2 className="text-xl font-bold mb-3 mt-5 first:mt-0" 
-                style={{ color: 'var(--text-primary)' }}
+                style={{ color: '#1a1a1a' }}
                 {...props}>
               {children}
             </h2>
           ),
           h3: ({ children, ...props }) => (
             <h3 className="text-lg font-semibold mb-2 mt-4 first:mt-0" 
-                style={{ color: 'var(--text-primary)' }}
+                style={{ color: '#1a1a1a' }}
                 {...props}>
               {children}
             </h3>
@@ -139,14 +140,14 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
           // 强调
           strong: ({ children, ...props }) => (
             <strong className="font-bold" 
-                    style={{ color: 'var(--text-accent)' }}
+                    style={{ color: '#b8860b' }}
                     {...props}>
               {children}
             </strong>
           ),
           em: ({ children, ...props }) => (
             <em className="italic" 
-                style={{ color: 'var(--text-secondary)' }}
+                style={{ color: '#4a4a4a' }}
                 {...props}>
               {children}
             </em>
@@ -177,9 +178,9 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
           blockquote: ({ children, ...props }) => (
             <blockquote className="border-l-4 pl-4 py-2 mb-4 italic" 
                         style={{ 
-                          borderColor: 'var(--accent-warm)', 
-                          backgroundColor: 'var(--background-secondary)',
-                          color: 'var(--text-secondary)'
+                          borderColor: '#c99f6f', 
+                          backgroundColor: '#f9f8f6',
+                          color: '#3a3a3a'
                         }}
                         {...props}>
               {children}
@@ -227,32 +228,32 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
           table: ({ children, ...props }) => (
             <div className="overflow-x-auto mb-4">
               <table className="min-w-full rounded-lg overflow-hidden" 
-                     style={{ border: '1px solid var(--border-color)' }}
+                     style={{ border: '1px solid #d4d2cc' }}
                      {...props}>
                 {children}
               </table>
             </div>
           ),
           thead: ({ children, ...props }) => (
-            <thead style={{ backgroundColor: 'var(--background-secondary)' }} {...props}>
+            <thead style={{ backgroundColor: '#f5f3f0' }} {...props}>
               {children}
             </thead>
           ),
           tbody: ({ children, ...props }) => (
-            <tbody style={{ backgroundColor: 'var(--background-card)' }} {...props}>
+            <tbody style={{ backgroundColor: '#ffffff' }} {...props}>
               {children}
             </tbody>
           ),
           tr: ({ children, ...props }) => (
-            <tr style={{ borderBottom: '1px solid var(--border-color)' }} {...props}>
+            <tr style={{ borderBottom: '1px solid #e8e6e0' }} {...props}>
               {children}
             </tr>
           ),
           th: ({ children, ...props }) => (
             <th className="px-4 py-3 text-left font-semibold last:border-r-0" 
                 style={{ 
-                  color: 'var(--text-primary)', 
-                  borderRight: '1px solid var(--border-color)' 
+                  color: '#1a1a1a', 
+                  borderRight: '1px solid #e8e6e0' 
                 }}
                 {...props}>
               {children}
@@ -261,8 +262,8 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
           td: ({ children, ...props }) => (
             <td className="px-4 py-3 last:border-r-0" 
                 style={{ 
-                  color: 'var(--text-primary)', 
-                  borderRight: '1px solid var(--border-color)' 
+                  color: '#1a1a1a', 
+                  borderRight: '1px solid #e8e6e0' 
                 }}
                 {...props}>
               {children}

@@ -1,22 +1,22 @@
-/* 代码高亮样式 - 自定义主题 */
+/* 代码高亮样式 - VS Code Dark+ 主题风格 */
 .hljs {
   display: block;
   overflow-x: auto;
   padding: 0;
   background: transparent;
-  color: var(--text-primary);
+  color: #d4d4d4;
 }
 
 .hljs-comment,
 .hljs-quote {
-  color: var(--text-muted);
+  color: #6a9955;
   font-style: italic;
 }
 
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-subst {
-  color: var(--primary-color);
+  color: #569cd6;
 }
 
 .hljs-number,
@@ -24,18 +24,18 @@
 .hljs-variable,
 .hljs-template-variable,
 .hljs-tag .hljs-attr {
-  color: var(--accent-cool);
+  color: #b5cea8;
 }
 
 .hljs-string,
 .hljs-doctag {
-  color: var(--accent-warm);
+  color: #ce9178;
 }
 
 .hljs-title,
 .hljs-section,
 .hljs-selector-id {
-  color: var(--text-primary);
+  color: #dcdcaa;
   font-weight: bold;
 }
 
@@ -48,23 +48,23 @@
 .hljs-tag,
 .hljs-regexp,
 .hljs-link {
-  color: var(--warning);
+  color: #4ec9b0;
 }
 
 .hljs-symbol,
 .hljs-bullet,
 .hljs-built_in,
 .hljs-builtin-name {
-  color: var(--error);
+  color: #c586c0;
 }
 
 .hljs-meta,
 .hljs-deletion {
-  color: var(--text-muted);
+  color: #808080;
 }
 
 .hljs-addition {
-  color: var(--success);
+  color: #b5cea8;
 }
 
 .hljs-emphasis {
@@ -73,6 +73,14 @@
 
 .hljs-strong {
   font-weight: bold;
+}
+
+.hljs-function {
+  color: #dcdcaa;
+}
+
+.hljs-params {
+  color: #9cdcfe;
 }
 
 /* 自定义滚动条样式 */
