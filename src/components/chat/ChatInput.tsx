@@ -26,11 +26,14 @@ import { useKnowledgeStore } from '@/store/knowledgeStore'
 import { sendMessage } from '@/lib/api'
 import { toast } from 'sonner'
 import { ALL_MODELS } from '@/data/models'
-import * as pdfjsLib from 'pdfjs-dist'
 
-// 配置 PDF.js worker
+// 动态导入 PDF.js 以避免 SSR 问题
+let pdfjsLib: any = null
 if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+  import('pdfjs-dist').then((pdfjs) => {
+    pdfjsLib = pdfjs
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+  })
 }
 
 export function ChatInput() {
@@ -234,6 +237,12 @@ export function ChatInput() {
   // 解析PDF文件
   const parsePDF = async (file: File): Promise<string> => {
     try {
+      // 确保 PDF.js 已加载
+      if (!pdfjsLib) {
+        pdfjsLib = await import('pdfjs-dist')
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+      }
+      
       const arrayBuffer = await file.arrayBuffer()
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
       const numPages = pdf.numPages
