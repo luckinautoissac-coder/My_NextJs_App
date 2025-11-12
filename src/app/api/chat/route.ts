@@ -2065,7 +2065,7 @@ After-sales service for elevators is critical. We use a dual-model system to ens
 
 我们近60年的历史源于军工配套，为我们注入了"可靠性高于一切"的基因。我们把严谨的工程标准应用于每一台电梯，为您提供长期稳定运行的可靠承诺。
 
-Our nearly 40-year history is rooted in military-grade engineering, instilling a "reliability-above-all" philosophy into our DNA. We apply these rigorous standards to every elevator, delivering a proven promise of long-term, stable operation.
+Our nearly 60-year history is rooted in military-grade engineering, instilling a "reliability-above-all" philosophy into our DNA. We apply these rigorous standards to every elevator, delivering a proven promise of long-term, stable operation.
 
   - **2. 强大的非标定制能力：将您的特殊构想变为现实**
 
