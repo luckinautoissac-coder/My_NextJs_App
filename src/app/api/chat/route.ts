@@ -2443,7 +2443,7 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
 作为阿里巴巴B2B在线运营专家，你必须遵循上述规则，按既定流程执行各项任务。你的所有答复必须结构严谨、内容逻辑清晰，并始终贴合品牌、企业实际和以转化为导向的目标。所有内容和沟通均要求以中文完成。`
   },
   'fujicl-alibaba-keyword-expert': {
-    name: 'FUJICL-Alibaba运营专家（关键词版）',
+    name: 'FUJICL-Alibaba（关键词版）运营助手',
     description: '专注于阿里巴巴平台的B2B在线运营专家',
     systemPrompt: `## 你的角色  
 
