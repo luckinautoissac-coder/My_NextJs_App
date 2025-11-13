@@ -56,7 +56,7 @@ function SortableAgentItem({ agent, isActive, onClick }: { agent: any, isActive:
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors',
+        'group flex items-start gap-2 px-3 py-3 rounded-lg cursor-pointer transition-colors',
         isActive ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100',
         isDragging && 'opacity-50'
       )}
@@ -71,16 +71,16 @@ function SortableAgentItem({ agent, isActive, onClick }: { agent: any, isActive:
       </div>
       
       {/* 智能体图标和信息 */}
-      <div className="flex items-center gap-3 flex-1" onClick={onClick}>
+      <div className="flex items-start gap-3 flex-1" onClick={onClick}>
         <div className={cn(
-          'flex h-8 w-8 items-center justify-center rounded-full',
+          'flex h-8 w-8 items-center justify-center rounded-full flex-shrink-0 mt-0.5',
           isActive ? 'bg-blue-100' : 'bg-gray-100'
         )}>
           <Bot className={cn('h-4 w-4', isActive ? 'text-blue-600' : 'text-gray-600')} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate">{agent.name}</p>
-          <p className="text-xs text-gray-500 truncate">{agent.description}</p>
+          <p className="text-sm font-medium break-words leading-tight">{agent.name}</p>
+          <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mt-0.5">{agent.description}</p>
         </div>
       </div>
     </div>
@@ -241,7 +241,7 @@ export function AgentSidebar() {
             onDragEnd={handleDragEnd}
           >
             <SortableContext items={agents.map(agent => agent.id)} strategy={verticalListSortingStrategy}>
-              <div className="space-y-1">
+              <div className="space-y-2">
                 {agents.map((agent) => (
                   <SortableAgentItem
                     key={agent.id}
