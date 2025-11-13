@@ -57,7 +57,7 @@ function SortableAgentItem({ agent, isActive, onClick }: { agent: any, isActive:
       style={style}
       className={cn(
         'group flex items-start gap-2 px-3 py-3 rounded-lg cursor-pointer transition-colors',
-        isActive ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100',
+        isActive ? 'bg-blue-100 text-blue-700 border-l-4 border-blue-600 font-medium shadow-sm' : 'hover:bg-gray-100',
         isDragging && 'opacity-50'
       )}
       {...attributes}
@@ -74,9 +74,9 @@ function SortableAgentItem({ agent, isActive, onClick }: { agent: any, isActive:
       <div className="flex items-start gap-3 flex-1" onClick={onClick}>
         <div className={cn(
           'flex h-8 w-8 items-center justify-center rounded-full flex-shrink-0 mt-0.5',
-          isActive ? 'bg-blue-100' : 'bg-gray-100'
+          isActive ? 'bg-blue-600' : 'bg-gray-100'
         )}>
-          <Bot className={cn('h-4 w-4', isActive ? 'text-blue-600' : 'text-gray-600')} />
+          <Bot className={cn('h-4 w-4', isActive ? 'text-white' : 'text-gray-600')} />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium break-words leading-tight">{agent.name}</p>
