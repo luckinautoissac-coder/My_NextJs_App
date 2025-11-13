@@ -134,6 +134,38 @@ export function ChatInput() {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  // 处理粘贴事件（支持粘贴图片）
+  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const items = event.clipboardData?.items
+    if (!items) return
+
+    const imageFiles: File[] = []
+    
+    // 遍历剪贴板项目
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]
+      
+      // 检查是否是图片
+      if (item.type.startsWith('image/')) {
+        const file = item.getAsFile()
+        if (file) {
+          // 检查文件大小
+          if (file.size <= 10 * 1024 * 1024) { // 10MB限制
+            imageFiles.push(file)
+          } else {
+            toast.error(`图片过大 (最大10MB)`)
+          }
+        }
+      }
+    }
+    
+    // 如果有图片文件，添加到上传列表
+    if (imageFiles.length > 0) {
+      setUploadedFiles(prev => [...prev, ...imageFiles])
+      toast.success(`已粘贴 ${imageFiles.length} 张图片`)
+    }
+  }
+
   const getFileIcon = (file: File) => {
     if (file.type.startsWith('image/')) {
       return <Image className="h-4 w-4" />
@@ -773,6 +805,7 @@ export function ChatInput() {
               adjustTextareaHeight()
             }}
             onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
             placeholder="输入消息... (按 Enter 发送，Shift+Enter 换行)"
             className="min-h-[44px] max-h-[200px] resize-none overflow-y-auto"
             disabled={isLoading}
