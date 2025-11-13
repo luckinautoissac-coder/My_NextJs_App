@@ -74,7 +74,9 @@ export const useQuickPhrasesStore = create<QuickPhrasesState>()(
         set((state) => {
           const newPhrases = [...state.phrases]
           const [removed] = newPhrases.splice(oldIndex, 1)
-          newPhrases.splice(newIndex, 0, removed)
+          if (removed) {
+            newPhrases.splice(newIndex, 0, removed)
+          }
           return { phrases: newPhrases }
         })
       }
