@@ -68,6 +68,15 @@ export const useQuickPhrasesStore = create<QuickPhrasesState>()(
         const state = get()
         if (!category) return state.phrases
         return state.phrases.filter((phrase) => phrase.category === category)
+      },
+
+      reorderPhrases: (oldIndex, newIndex) => {
+        set((state) => {
+          const newPhrases = [...state.phrases]
+          const [removed] = newPhrases.splice(oldIndex, 1)
+          newPhrases.splice(newIndex, 0, removed)
+          return { phrases: newPhrases }
+        })
       }
     }),
     {

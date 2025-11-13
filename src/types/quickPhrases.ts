@@ -13,4 +13,5 @@ export interface QuickPhrasesState {
   updatePhrase: (id: string, updates: Partial<QuickPhrase>) => void
   deletePhrase: (id: string) => void
   getPhrasesByCategory: (category?: string) => QuickPhrase[]
+  reorderPhrases: (oldIndex: number, newIndex: number) => void
 }

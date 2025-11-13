@@ -18,11 +18,27 @@ import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { 
   Zap, Plus, Edit, Trash2, Save, X, Search, 
-  MessageSquare, Code, Languages, FileText 
+  MessageSquare, Code, Languages, FileText, GripVertical 
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useQuickPhrasesStore } from '@/store/quickPhrasesStore'
 import type { QuickPhrase } from '@/types/quickPhrases'
+import { cn } from '@/lib/utils'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 interface QuickPhrasesDialogProps {
   open: boolean
@@ -36,13 +52,104 @@ interface EditingPhrase {
   category: string
 }
 
+// 可拖拽的短语卡片组件
+function SortablePhraseCard({ 
+  phrase, 
+  onEdit, 
+  onDelete,
+  isDragEnabled 
+}: { 
+  phrase: QuickPhrase
+  onEdit: (phrase: QuickPhrase) => void
+  onDelete: (id: string) => void
+  isDragEnabled: boolean
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: phrase.id, disabled: !isDragEnabled })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Card className={cn(isDragging && 'opacity-50')}>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 flex-1">
+              {isDragEnabled && (
+                <div 
+                  {...attributes}
+                  {...listeners}
+                  className="cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity"
+                >
+                  <GripVertical className="h-4 w-4 text-gray-400" />
+                </div>
+              )}
+              <CardTitle className="text-base flex items-center gap-2">
+                {phrase.name}
+                {phrase.category && (
+                  <Badge variant="secondary" className="text-xs">
+                    {phrase.category}
+                  </Badge>
+                )}
+              </CardTitle>
+            </div>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onEdit(phrase)}
+                className="h-8 w-8 p-0"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onDelete(phrase.id)}
+                className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <p className="text-sm text-gray-600 whitespace-pre-wrap">
+            {phrase.content}
+          </p>
+          <div className="text-xs text-gray-400 mt-2">
+            创建于 {phrase.createdAt.toLocaleDateString()}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
 export function QuickPhrasesDialog({ open, onOpenChange }: QuickPhrasesDialogProps) {
-  const { phrases, addPhrase, updatePhrase, deletePhrase } = useQuickPhrasesStore()
+  const { phrases, addPhrase, updatePhrase, deletePhrase, reorderPhrases } = useQuickPhrasesStore()
   
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [editingPhrase, setEditingPhrase] = useState<EditingPhrase | null>(null)
   const [isCreating, setIsCreating] = useState(false)
+
+  // 拖拽传感器
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   // 获取所有分类
   const categories = Array.from(new Set(phrases.map(p => p.category).filter(Boolean)))
@@ -65,6 +172,21 @@ export function QuickPhrasesDialog({ open, onOpenChange }: QuickPhrasesDialogPro
     
     return matchesSearch && matchesCategory
   })
+
+  // 判断是否启用拖拽（只有在未筛选时才能拖拽排序）
+  const isDragEnabled = !searchQuery && selectedCategory === 'all'
+
+  // 处理拖拽结束
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event
+
+    if (active.id !== over?.id) {
+      const oldIndex = phrases.findIndex((phrase) => phrase.id === active.id)
+      const newIndex = phrases.findIndex((phrase) => phrase.id === over.id)
+      
+      reorderPhrases(oldIndex, newIndex)
+    }
+  }
 
   const handleCreatePhrase = () => {
     setEditingPhrase({
@@ -186,48 +308,26 @@ export function QuickPhrasesDialog({ open, onOpenChange }: QuickPhrasesDialogPro
                     <p className="text-sm">点击"新建短语"创建您的第一个快捷短语</p>
                   </div>
                 ) : (
-                  filteredPhrases.map((phrase) => (
-                    <Card key={phrase.id}>
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-base flex items-center gap-2">
-                            {phrase.name}
-                            {phrase.category && (
-                              <Badge variant="secondary" className="text-xs">
-                                {phrase.category}
-                              </Badge>
-                            )}
-                          </CardTitle>
-                          <div className="flex gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditPhrase(phrase)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeletePhrase(phrase.id)}
-                              className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <p className="text-sm text-gray-600 whitespace-pre-wrap">
-                          {phrase.content}
-                        </p>
-                        <div className="text-xs text-gray-400 mt-2">
-                          创建于 {phrase.createdAt.toLocaleDateString()}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext 
+                      items={filteredPhrases.map(phrase => phrase.id)} 
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {filteredPhrases.map((phrase) => (
+                        <SortablePhraseCard
+                          key={phrase.id}
+                          phrase={phrase}
+                          onEdit={handleEditPhrase}
+                          onDelete={handleDeletePhrase}
+                          isDragEnabled={isDragEnabled}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
                 )}
               </div>
             </ScrollArea>
