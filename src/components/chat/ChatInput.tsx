@@ -32,7 +32,7 @@ let pdfjsLib: any = null
 if (typeof window !== 'undefined') {
   import('pdfjs-dist').then((pdfjs) => {
     pdfjsLib = pdfjs
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
   })
 }
 
