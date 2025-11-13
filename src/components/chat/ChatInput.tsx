@@ -145,8 +145,8 @@ export function ChatInput() {
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
       
-      // 检查是否是图片
-      if (item.type.startsWith('image/')) {
+      // 检查 item 是否存在且是图片
+      if (item && item.type.startsWith('image/')) {
         const file = item.getAsFile()
         if (file) {
           // 检查文件大小
