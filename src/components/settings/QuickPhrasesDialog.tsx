@@ -80,7 +80,7 @@ function SortablePhraseCard({
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Card className={cn(isDragging && 'opacity-50')}>
+      <Card className={cn('group', isDragging && 'opacity-50')}>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 flex-1">
@@ -88,7 +88,7 @@ function SortablePhraseCard({
                 <div 
                   {...attributes}
                   {...listeners}
-                  className="cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity"
+                  className="cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <GripVertical className="h-4 w-4 text-gray-400" />
                 </div>
