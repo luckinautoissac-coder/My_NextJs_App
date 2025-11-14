@@ -32,7 +32,7 @@ let pdfjsLib: any = null
 if (typeof window !== 'undefined') {
   import('pdfjs-dist').then((pdfjs) => {
     pdfjsLib = pdfjs
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
   })
 }
 
@@ -283,7 +283,7 @@ export function ChatInput() {
       if (!pdfjsLib) {
         toast.info('正在加载 PDF 解析器...')
         pdfjsLib = await import('pdfjs-dist')
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
       }
       
       toast.info('正在解析 PDF 文件...')
