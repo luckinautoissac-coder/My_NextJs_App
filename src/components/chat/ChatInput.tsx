@@ -98,16 +98,26 @@ export function ChatInput() {
     
     // 检查文件类型和大小
     const validFiles = files.filter(file => {
-      const isValidType = file.type.startsWith('image/') || 
-                         file.type === 'application/pdf' ||
-                         file.type === 'text/plain' ||
-                         file.type === 'application/msword' ||
-                         file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      const fileName = file.name.toLowerCase()
+      const fileExt = fileName.substring(fileName.lastIndexOf('.'))
+      
+      // 支持的文件扩展名（更可靠的检测方式）
+      const supportedExtensions = [
+        '.pdf', '.txt', '.md',
+        '.doc', '.docx',
+        '.xls', '.xlsx',
+        '.ppt', '.pptx',
+        '.csv', '.json', '.xml'
+      ]
+      
+      const isImage = file.type.startsWith('image/')
+      const isSupportedDoc = supportedExtensions.includes(fileExt)
+      const isValidType = isImage || isSupportedDoc
       
       const isValidSize = file.size <= 10 * 1024 * 1024 // 10MB限制
       
       if (!isValidType) {
-        toast.error(`不支持的文件类型: ${file.name}`)
+        toast.error(`不支持的文件类型: ${file.name}\n支持: 图片、PDF、TXT、Word、Excel、PPT、CSV、JSON、XML`)
         return false
       }
       
@@ -271,37 +281,68 @@ export function ChatInput() {
     try {
       // 确保 PDF.js 已加载
       if (!pdfjsLib) {
+        toast.info('正在加载 PDF 解析器...')
         pdfjsLib = await import('pdfjs-dist')
         pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
       }
       
+      toast.info('正在解析 PDF 文件...')
       const arrayBuffer = await file.arrayBuffer()
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
-      const numPages = pdf.numPages
-      let fullText = `[PDF文档: ${file.name}]\n页数: ${numPages}\n大小: ${formatFileSize(file.size)}\n\n`
       
-      // 读取所有页面的文本
-      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum)
-        const textContent = await page.getTextContent()
-        const pageText = textContent.items
-          .map((item: any) => item.str)
-          .join(' ')
-        
-        fullText += `--- 第 ${pageNum} 页 ---\n${pageText}\n\n`
+      // 添加更详细的错误处理
+      const loadingTask = pdfjsLib.getDocument({ 
+        data: arrayBuffer,
+        verbosity: 0 // 减少控制台日志
+      })
+      
+      const pdf = await loadingTask.promise
+      const numPages = pdf.numPages
+      let fullText = `📄 [PDF文档: ${file.name}]\n📊 页数: ${numPages}\n💾 大小: ${formatFileSize(file.size)}\n${'='.repeat(50)}\n\n`
+      
+      // 读取所有页面的文本（限制最多读取前50页，避免超大文件）
+      const maxPages = Math.min(numPages, 50)
+      for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
+        try {
+          const page = await pdf.getPage(pageNum)
+          const textContent = await page.getTextContent()
+          const pageText = textContent.items
+            .map((item: any) => item.str)
+            .filter((str: string) => str.trim().length > 0)
+            .join(' ')
+          
+          if (pageText.trim()) {
+            fullText += `\n--- 📖 第 ${pageNum} 页 ---\n${pageText}\n`
+          }
+        } catch (pageError) {
+          console.error(`读取第 ${pageNum} 页失败:`, pageError)
+          fullText += `\n--- 📖 第 ${pageNum} 页 ---\n[该页面无法读取]\n`
+        }
       }
       
+      if (numPages > 50) {
+        fullText += `\n\n⚠️ 注意: PDF 文件共 ${numPages} 页，已读取前 50 页内容。`
+      }
+      
+      fullText += `\n\n${'='.repeat(50)}\n[PDF 解析完成]`
+      
+      toast.success('PDF 解析成功！')
       return fullText
     } catch (error) {
       console.error('PDF解析失败:', error)
-      throw new Error(`PDF解析失败: ${error instanceof Error ? error.message : '未知错误'}`)
+      const errorMessage = error instanceof Error ? error.message : '未知错误'
+      toast.error(`PDF 解析失败: ${errorMessage}`)
+      
+      // 返回基本文件信息，即使解析失败
+      return `📄 [PDF文档: ${file.name}]\n❌ 解析失败: ${errorMessage}\n💾 大小: ${formatFileSize(file.size)}\n\n请尝试使用其他 PDF 文件或将文件转换为文本格式后重试。`
     }
   }
 
   // 读取文件内容
   const readFileContent = async (file: File): Promise<string> => {
+    const fileName = file.name.toLowerCase()
+    
     // 如果是PDF文件，使用专门的PDF解析函数
-    if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+    if (file.type === 'application/pdf' || fileName.endsWith('.pdf')) {
       return await parsePDF(file)
     }
     
@@ -311,33 +352,79 @@ export function ChatInput() {
       reader.onload = (e) => {
         const result = e.target?.result
         if (typeof result === 'string') {
-          // 如果是文本文件，直接返回内容
-          if (file.type.startsWith('text/') || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
-            resolve(result)
+          // 文本类文件（TXT、MD、CSV、JSON、XML、代码文件等）
+          const textExtensions = ['.txt', '.md', '.csv', '.json', '.xml', '.html', '.css', '.js', '.ts', '.jsx', '.tsx', '.py', '.java', '.cpp', '.c', '.h']
+          const isTextFile = file.type.startsWith('text/') || 
+                            textExtensions.some(ext => fileName.endsWith(ext))
+          
+          if (isTextFile) {
+            let header = `📄 [文件: ${file.name}]\n💾 大小: ${formatFileSize(file.size)}`
+            
+            // 为不同类型的文本文件添加格式化
+            if (fileName.endsWith('.json')) {
+              try {
+                const jsonData = JSON.parse(result)
+                header += `\n📋 类型: JSON 数据\n${'='.repeat(50)}\n\n`
+                return resolve(header + JSON.stringify(jsonData, null, 2))
+              } catch {
+                header += `\n📋 类型: JSON 文件（解析失败，显示原始内容）\n${'='.repeat(50)}\n\n`
+                return resolve(header + result)
+              }
+            } else if (fileName.endsWith('.csv')) {
+              header += `\n📊 类型: CSV 表格数据\n${'='.repeat(50)}\n\n`
+              return resolve(header + result)
+            } else if (fileName.endsWith('.xml')) {
+              header += `\n📋 类型: XML 数据\n${'='.repeat(50)}\n\n`
+              return resolve(header + result)
+            } else if (fileName.endsWith('.md')) {
+              header += `\n📝 类型: Markdown 文档\n${'='.repeat(50)}\n\n`
+              return resolve(header + result)
+            } else {
+              header += `\n📝 类型: 文本文件\n${'='.repeat(50)}\n\n`
+              return resolve(header + result)
+            }
           } 
-          // 如果是图片，返回base64
+          // 图片文件
           else if (file.type.startsWith('image/')) {
-            resolve(`[图片: ${file.name}]\n数据格式: ${file.type}\n大小: ${formatFileSize(file.size)}\nBase64数据: ${result}`)
+            resolve(`🖼️ [图片: ${file.name}]\n📋 格式: ${file.type}\n💾 大小: ${formatFileSize(file.size)}\n${'='.repeat(50)}\n\n${result}`)
           }
-          // 其他文件类型
+          // Office 文档（Word、Excel、PPT）
+          else if (fileName.endsWith('.doc') || fileName.endsWith('.docx')) {
+            resolve(`📝 [Word 文档: ${file.name}]\n💾 大小: ${formatFileSize(file.size)}\n${'='.repeat(50)}\n\n⚠️ Word 文档需要转换为 PDF 或 TXT 格式才能读取内容。\n建议：请将文档另存为 PDF 格式后重新上传。`)
+          }
+          else if (fileName.endsWith('.xls') || fileName.endsWith('.xlsx')) {
+            resolve(`📊 [Excel 表格: ${file.name}]\n💾 大小: ${formatFileSize(file.size)}\n${'='.repeat(50)}\n\n⚠️ Excel 表格需要转换为 CSV 格式才能读取内容。\n建议：请将表格另存为 CSV 格式后重新上传。`)
+          }
+          else if (fileName.endsWith('.ppt') || fileName.endsWith('.pptx')) {
+            resolve(`📊 [PowerPoint 演示文稿: ${file.name}]\n💾 大小: ${formatFileSize(file.size)}\n${'='.repeat(50)}\n\n⚠️ PowerPoint 文档需要转换为 PDF 格式才能读取内容。\n建议：请将演示文稿另存为 PDF 格式后重新上传。`)
+          }
+          // 其他未知文件类型
           else {
-            resolve(`[文件: ${file.name}]\n类型: ${file.type}\n大小: ${formatFileSize(file.size)}\n注：该文件类型暂不支持内容读取`)
+            resolve(`📄 [文件: ${file.name}]\n📋 类型: ${file.type || '未知'}\n💾 大小: ${formatFileSize(file.size)}\n${'='.repeat(50)}\n\n⚠️ 该文件类型暂不支持直接读取。\n支持的格式：\n• 文本：TXT、MD、CSV、JSON、XML\n• 图片：JPG、PNG、GIF、WebP 等\n• 文档：PDF（推荐）`)
           }
         } else {
           reject(new Error('读取文件失败'))
         }
       }
       
-      reader.onerror = () => reject(new Error(`读取文件失败: ${file.name}`))
+      reader.onerror = () => {
+        const errorMsg = `读取文件失败: ${file.name}`
+        toast.error(errorMsg)
+        reject(new Error(errorMsg))
+      }
       
       // 根据文件类型选择读取方式
-      if (file.type.startsWith('text/') || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
-        reader.readAsText(file)
+      const textExtensions = ['.txt', '.md', '.csv', '.json', '.xml', '.html', '.css', '.js', '.ts']
+      const isTextFile = file.type.startsWith('text/') || 
+                        textExtensions.some(ext => fileName.endsWith(ext))
+      
+      if (isTextFile) {
+        reader.readAsText(file, 'UTF-8')
       } else if (file.type.startsWith('image/')) {
         reader.readAsDataURL(file)
       } else {
         // 其他文件尝试读取为文本
-        reader.readAsText(file)
+        reader.readAsText(file, 'UTF-8')
       }
     })
   }
@@ -481,7 +568,7 @@ export function ChatInput() {
         ref={fileInputRef}
         type="file"
         multiple
-        accept="image/*,.pdf,.txt,.doc,.docx"
+        accept="image/*,.pdf,.txt,.md,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.json,.xml"
         onChange={handleFileChange}
         className="hidden"
       />
