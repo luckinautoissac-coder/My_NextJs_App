@@ -204,6 +204,12 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             </a>
           ),
           
+          // 预格式化文本（代码块的外层）
+          pre: ({ children, ...props }: any) => {
+            // 直接返回子元素，避免双重包裹
+            return <>{children}</>
+          },
+          
           // 代码
           code: ({ inline, children, className, ...props }: any) => {
             return inline ? (
