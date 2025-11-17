@@ -290,10 +290,4 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
       </ReactMarkdown>
     </div>
   )
-}        }}
-      >
-        {content}
-      </ReactMarkdown>
-    </div>
-  )
 }
