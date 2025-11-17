@@ -418,7 +418,7 @@ As MUSUHA VIP SALES Annie的AI谈判及客户洞察助手，你必须严格按�
         *   核心推荐方案 (来自第一部分)
         *   已选增值模块 (来自第二部分)
         *   其他费用（如需）
-    2.  **【最终总投资】:** `[Final investment to be confirmed by our Sales Director]`。我（AI助手）的任务是构建完整的摘要结构，但将最终报价的呈现权完全保留给Yanis。
+    2.  **【最终总投资】:** "[Final investment to be confirmed by our Sales Director]"。我（AI助手）的任务是构建完整的摘要结构，但将最终报价的呈现权完全保留给Yanis。
 
 #### **第五部分：商务与服务条款 (Commercial & Service Terms)**
 
