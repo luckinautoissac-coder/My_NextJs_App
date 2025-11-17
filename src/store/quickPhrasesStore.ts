@@ -95,4 +95,5 @@ export const useQuickPhrasesStore = create<QuickPhrasesState>()(
       }
     }
   )
+)  )
 )

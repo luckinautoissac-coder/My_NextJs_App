@@ -303,20 +303,20 @@ export function ChatInput() {
       const maxPages = Math.min(numPages, 50)
       for (let pageNum = 1; pageNum <= maxPages; pageNum++) {
         try {
-          const page = await pdf.getPage(pageNum)
-          const textContent = await page.getTextContent()
-          const pageText = textContent.items
-            .map((item: any) => item.str)
+        const page = await pdf.getPage(pageNum)
+        const textContent = await page.getTextContent()
+        const pageText = textContent.items
+          .map((item: any) => item.str)
             .filter((str: string) => str.trim().length > 0)
-            .join(' ')
-          
+          .join(' ')
+        
           if (pageText.trim()) {
             fullText += `\n--- 📖 第 ${pageNum} 页 ---\n${pageText}\n`
           }
         } catch (pageError) {
           console.error(`读取第 ${pageNum} 页失败:`, pageError)
           fullText += `\n--- 📖 第 ${pageNum} 页 ---\n[该页面无法读取]\n`
-        }
+      }
       }
       
       if (numPages > 50) {
@@ -926,4 +926,364 @@ export function ChatInput() {
 
     </div>
   )
+}              <DropdownMenuItem onClick={() => handleTranslate('korean')}>
+                韩文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('french')}>
+                法文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('german')}>
+                德文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('spanish')}>
+                西班牙文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('russian')}>
+                俄文
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* 输入区域 */}
+      <div className="p-4">
+        {/* 选中的知识库显示区域 */}
+        {selectedKnowledgeBases.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {selectedKnowledgeBases.map((kb) => (
+              <div
+                key={kb.id}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                <span className="font-medium">{kb.name}</span>
+                <span className="text-xs opacity-70">({kb.documents.length})</span>
+                <button
+                  onClick={() => handleRemoveKnowledgeBase(kb.id)}
+                  className="ml-1 hover:bg-blue-100 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* 文件预览区域 */}
+        {uploadedFiles.length > 0 && (
+          <div className="mb-3 p-3 bg-gray-50 rounded-lg border">
+            <div className="text-sm font-medium text-gray-700 mb-2">
+              已选择 {uploadedFiles.length} 个文件：
+            </div>
+            <div className="space-y-2">
+              {uploadedFiles.map((file, index) => (
+                <div key={index} className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center gap-2">
+                    {getFileIcon(file)}
+                    <span className="text-sm text-gray-600 truncate max-w-xs">
+                      {file.name}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      ({formatFileSize(file.size)})
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveFile(index)}
+                    className="h-6 w-6 p-0 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div className="flex gap-2 items-end">
+          <Textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value)
+              adjustTextareaHeight()
+            }}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            placeholder="输入消息... (按 Enter 发送，Shift+Enter 换行)"
+            className="min-h-[44px] max-h-[200px] resize-none overflow-y-auto"
+            disabled={isLoading}
+          />
+          <Button
+            onClick={handleSubmit}
+            disabled={(!input.trim() && uploadedFiles.length === 0) || isLoading || !apiKey.trim() || !currentTopicId}
+            size="sm"
+            className="shrink-0 h-[44px]"
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+        
+        {!apiKey.trim() && (
+          <p className="mt-2 text-xs text-red-500">
+            请先设置 AIHUBMIX API Key
+          </p>
+        )}
+        
+        {!currentTopicId && apiKey.trim() && (
+          <p className="mt-2 text-xs text-red-500">
+            请先选择或创建一个话题
+          </p>
+        )}
+      </div>
+
+    </div>
+  )
+
+}
+              <DropdownMenuItem onClick={() => handleTranslate('korean')}>
+                韩文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('french')}>
+                法文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('german')}>
+                德文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('spanish')}>
+                西班牙文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('russian')}>
+                俄文
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* 输入区域 */}
+      <div className="p-4">
+        {/* 选中的知识库显示区域 */}
+        {selectedKnowledgeBases.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {selectedKnowledgeBases.map((kb) => (
+              <div
+                key={kb.id}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                <span className="font-medium">{kb.name}</span>
+                <span className="text-xs opacity-70">({kb.documents.length})</span>
+                <button
+                  onClick={() => handleRemoveKnowledgeBase(kb.id)}
+                  className="ml-1 hover:bg-blue-100 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* 文件预览区域 */}
+        {uploadedFiles.length > 0 && (
+          <div className="mb-3 p-3 bg-gray-50 rounded-lg border">
+            <div className="text-sm font-medium text-gray-700 mb-2">
+              已选择 {uploadedFiles.length} 个文件：
+            </div>
+            <div className="space-y-2">
+              {uploadedFiles.map((file, index) => (
+                <div key={index} className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center gap-2">
+                    {getFileIcon(file)}
+                    <span className="text-sm text-gray-600 truncate max-w-xs">
+                      {file.name}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      ({formatFileSize(file.size)})
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveFile(index)}
+                    className="h-6 w-6 p-0 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div className="flex gap-2 items-end">
+          <Textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value)
+              adjustTextareaHeight()
+            }}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            placeholder="输入消息... (按 Enter 发送，Shift+Enter 换行)"
+            className="min-h-[44px] max-h-[200px] resize-none overflow-y-auto"
+            disabled={isLoading}
+          />
+          <Button
+            onClick={handleSubmit}
+            disabled={(!input.trim() && uploadedFiles.length === 0) || isLoading || !apiKey.trim() || !currentTopicId}
+            size="sm"
+            className="shrink-0 h-[44px]"
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+        
+        {!apiKey.trim() && (
+          <p className="mt-2 text-xs text-red-500">
+            请先设置 AIHUBMIX API Key
+          </p>
+        )}
+        
+        {!currentTopicId && apiKey.trim() && (
+          <p className="mt-2 text-xs text-red-500">
+            请先选择或创建一个话题
+          </p>
+        )}
+      </div>
+
+    </div>
+  )
+}              <DropdownMenuItem onClick={() => handleTranslate('korean')}>
+                韩文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('french')}>
+                法文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('german')}>
+                德文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('spanish')}>
+                西班牙文
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleTranslate('russian')}>
+                俄文
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* 输入区域 */}
+      <div className="p-4">
+        {/* 选中的知识库显示区域 */}
+        {selectedKnowledgeBases.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {selectedKnowledgeBases.map((kb) => (
+              <div
+                key={kb.id}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-sm border border-blue-200"
+              >
+                <BookOpen className="h-3.5 w-3.5" />
+                <span className="font-medium">{kb.name}</span>
+                <span className="text-xs opacity-70">({kb.documents.length})</span>
+                <button
+                  onClick={() => handleRemoveKnowledgeBase(kb.id)}
+                  className="ml-1 hover:bg-blue-100 rounded-full p-0.5 transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* 文件预览区域 */}
+        {uploadedFiles.length > 0 && (
+          <div className="mb-3 p-3 bg-gray-50 rounded-lg border">
+            <div className="text-sm font-medium text-gray-700 mb-2">
+              已选择 {uploadedFiles.length} 个文件：
+            </div>
+            <div className="space-y-2">
+              {uploadedFiles.map((file, index) => (
+                <div key={index} className="flex items-center justify-between bg-white p-2 rounded border">
+                  <div className="flex items-center gap-2">
+                    {getFileIcon(file)}
+                    <span className="text-sm text-gray-600 truncate max-w-xs">
+                      {file.name}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      ({formatFileSize(file.size)})
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveFile(index)}
+                    className="h-6 w-6 p-0 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div className="flex gap-2 items-end">
+          <Textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value)
+              adjustTextareaHeight()
+            }}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            placeholder="输入消息... (按 Enter 发送，Shift+Enter 换行)"
+            className="min-h-[44px] max-h-[200px] resize-none overflow-y-auto"
+            disabled={isLoading}
+          />
+          <Button
+            onClick={handleSubmit}
+            disabled={(!input.trim() && uploadedFiles.length === 0) || isLoading || !apiKey.trim() || !currentTopicId}
+            size="sm"
+            className="shrink-0 h-[44px]"
+          >
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+        
+        {!apiKey.trim() && (
+          <p className="mt-2 text-xs text-red-500">
+            请先设置 AIHUBMIX API Key
+          </p>
+        )}
+        
+        {!currentTopicId && apiKey.trim() && (
+          <p className="mt-2 text-xs text-red-500">
+            请先选择或创建一个话题
+          </p>
+        )}
+      </div>
+
+    </div>
+  )
+
 }
