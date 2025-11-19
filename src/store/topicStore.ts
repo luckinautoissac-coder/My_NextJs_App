@@ -56,16 +56,34 @@ export const useTopicStore = create<TopicState>()(
 
       reorderTopics: (agentId, oldIndex, newIndex) => {
         set((state) => {
+          // 获取当前智能体的所有话题
           const agentTopics = state.topics.filter(topic => topic.agentId === agentId)
           const otherTopics = state.topics.filter(topic => topic.agentId !== agentId)
           
-          const newAgentTopics = [...agentTopics]
-          const [removed] = newAgentTopics.splice(oldIndex, 1)
-          if (removed) {
-            newAgentTopics.splice(newIndex, 0, removed)
+          // 对当前智能体的话题进行重排序
+          const reorderedAgentTopics = [...agentTopics]
+          const [movedTopic] = reorderedAgentTopics.splice(oldIndex, 1)
+          if (movedTopic) {
+            reorderedAgentTopics.splice(newIndex, 0, movedTopic)
           }
           
-          return { topics: [...otherTopics, ...newAgentTopics] }
+          // 找到第一个当前智能体话题在原数组中的位置
+          const firstAgentTopicIndex = state.topics.findIndex(topic => topic.agentId === agentId)
+          
+          // 重建完整的话题数组，保持其他智能体话题的位置
+          const newTopics = [...state.topics]
+          
+          // 移除所有当前智能体的话题
+          for (let i = newTopics.length - 1; i >= 0; i--) {
+            if (newTopics[i].agentId === agentId) {
+              newTopics.splice(i, 1)
+            }
+          }
+          
+          // 在原位置插入重排序后的话题
+          newTopics.splice(firstAgentTopicIndex >= 0 ? firstAgentTopicIndex : newTopics.length, 0, ...reorderedAgentTopics)
+          
+          return { topics: newTopics }
         })
       },
     }),

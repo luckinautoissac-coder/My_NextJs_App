@@ -295,23 +295,21 @@ export function TopicSidebar() {
           >
             <SortableContext items={currentTopics.map(topic => topic.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-1">
-                {currentTopics
-                  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-                  .map((topic) => (
-                    <SortableTopicItem
-                      key={topic.id}
-                      topic={topic}
-                      isActive={currentTopicId === topic.id}
-                      isEditing={editingId === topic.id}
-                      editName={editName}
-                      onSelect={() => setCurrentTopic(topic.id)}
-                      onStartEdit={() => handleEditStart(topic.id, topic.name)}
-                      onSaveEdit={handleEditSave}
-                      onCancelEdit={handleEditCancel}
-                      onDelete={() => handleDelete(topic.id)}
-                      onEditChange={setEditName}
-                    />
-                  ))}
+                {currentTopics.map((topic) => (
+                  <SortableTopicItem
+                    key={topic.id}
+                    topic={topic}
+                    isActive={currentTopicId === topic.id}
+                    isEditing={editingId === topic.id}
+                    editName={editName}
+                    onSelect={() => setCurrentTopic(topic.id)}
+                    onStartEdit={() => handleEditStart(topic.id, topic.name)}
+                    onSaveEdit={handleEditSave}
+                    onCancelEdit={handleEditCancel}
+                    onDelete={() => handleDelete(topic.id)}
+                    onEditChange={setEditName}
+                  />
+                ))}
               </div>
             </SortableContext>
           </DndContext>
