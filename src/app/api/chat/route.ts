@@ -1312,6 +1312,55 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
     - *其最终报价需通过**拆解**其具体配置（如轿壁材质、吊顶、地面、扶手等），并从 **[Data Table: 1.2.5] 常用客梯附加配置** 中**逐项累加**得出。*
     - *在报价时，这些型号作为**"视觉参考和配置向导"**使用。*
 
+**[Data Table: 1.4.2] 观光电梯轿厢加价 (Observation Elevator Cabin Surcharges)**
+
+*   **核心规则 (Core Rules):**
+    *   以下价格已包含轿厢的轿臂、吊顶、扶手，但**不含轿门**。
+    *   轿门的价格需参照 **[Data Table: 1.2.5] 常用客梯附加配置** 中的门系统价格另行计算。
+    *   所有加价均在**标准观光电梯基价**的基础上计算，除非另有说明。
+
+---
+
+#### A. 标配轿厢 (Standard Cabin)
+
+- **描述 (Description):** 180度半圆形轿厢或六角形轿厢。
+- **材质 (Material):** 发纹不锈钢 + 观光玻璃。
+- **加价 (Surcharge):** 0 元 (此为标准观光电梯基价的默认配置)。
+
+#### B. 观光角度升级 (Observation Angle Upgrade)
+
+- **描述 (Description):** 240度观光。
+- **加价 (Surcharge):** +2,000 元/台。
+
+#### C. 方形三面观光轿厢 (Square 3-Side Observation Cabin)
+
+- **型号 FJ-G03:**
+    - **加价 (Surcharge):** +10,000 元/台。
+
+- **型号 FJ-G101:**
+    - **加价 (Surcharge):** 0 元/台 (作为免费的风格升级选项)。
+
+#### D. 单面观光 (带外罩) (Single-Side Observation with Cover)
+
+- **描述 (Description):** 仅一面为观光玻璃，其余面由工厂提供的装饰外罩覆盖。
+- **加价 (Surcharge):** -3,000 元/台 (在标准观光电梯基价上核减)。
+
+#### E. 单面观光 (无外罩) - 特殊计价模型 (Single-Side Observation without Cover - Special Pricing Model)
+
+- **核心逻辑:** 此类电梯不再使用观光梯基价，而是切换为 **【普通客梯基价 + 以下附加费】** 的模式。
+
+- **E-1. 井道为非钢结构 (Shaft is NOT steel structure, e.g., concrete):**
+    - **加价 (Surcharge):** 在客梯价格基础上 +3,000 元/台。
+    - **两面观光 (Two-Side Observation):** +7,200 元/台 "[计算逻辑待确认]"。
+    - **规则:** 此价格不含吊顶及扶手 "[此规则与总则矛盾，待确认]"。
+
+- **E-2. 井道为钢结构 (Shaft IS steel structure):**
+    - **加价 (Surcharge):** 在客梯价格基础上 +5,000 元/台。
+    - **规则:** 此价格不含吊顶及扶手 "[此规则与总则矛盾，待确认]"。
+
+- **E-3. 井道为钢结构 (但不配线槽和对重保护) (Shaft is steel, but without trunking & CWT protection):**
+    - **加价 (Surcharge):** 在客梯价格基础上 +3,000 元/台 "[计价基准待确认]"。
+
 #### **D. 利润/代理系数 (Profit / Agent Multiplier)**
 *   **规则：** **核心指导原则: 以"竞争性"为基准，以"价值"换利润。**
 
