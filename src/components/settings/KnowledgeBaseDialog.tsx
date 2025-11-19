@@ -130,20 +130,33 @@ export function KnowledgeBaseDialog({ open, onOpenChange }: KnowledgeBaseDialogP
   }
 
   // 读取文件内容
-  const readFileContent = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = (e) => resolve(e.target?.result as string)
-      reader.onerror = reject
-      reader.readAsText(file)
-    })
+  const readFileContent = async (file: File): Promise<string> => {
+    const ext = file.name.split('.').pop()?.toLowerCase()
+    
+    // 对于文本文件，直接读取
+    if (['txt', 'md', 'html'].includes(ext || '')) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = (e) => resolve(e.target?.result as string)
+        reader.onerror = reject
+        reader.readAsText(file)
+      })
+    }
+    
+    // 对于其他文件类型（PDF、DOCX等），返回文件的基本信息
+    // 实际的内容提取应该在后端处理
+    return `[文件: ${file.name}]\n类型: ${file.type || '未知'}\n大小: ${(file.size / 1024).toFixed(2)} KB\n\n此文件需要后端处理来提取内容。`
   }
 
   // 处理拖拽
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault()
-    handleFileUpload(e.dataTransfer.files)
-  }, [selectedKBId])
+    e.stopPropagation()
+    const files = e.dataTransfer.files
+    if (files && selectedKBId) {
+      await handleFileUpload(files)
+    }
+  }
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
