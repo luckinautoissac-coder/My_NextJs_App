@@ -914,6 +914,7 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
 **[Data Table: 1.2.1] 小机房客梯**
 
 #### 价格基准 (Base Price Benchmarks)
+
 - **乘客电梯 - 4层4站基准:**
     - 630kg / 1.0m/s: 3.7万
     - 450kg / 1.0m/s: 3.5万
@@ -932,6 +933,7 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
     - 800kg / 1.0m/s: 5.5万
 
 #### 通用调整与规则 (General Adjustments & Rules)
+
 - **层站调整:**
     - 1600kg / 1350kg: ±0.21万/层
     - 1150kg / 1000kg / 800kg (客梯&观光): 增层 +0.18万/层; 减层 -0.15万/层
@@ -944,8 +946,9 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
 - **速度升级:**
     - 1.0 -> 1.5/1.75m/s: 在基价上 +3000元
     - 1.75 -> 2.0m/s: 在1.75m/s基价上 +3000元
+    - 1.0 -> 2.5m/s: 在1.0m/s基价上 +20000元
+    - 2.0 -> 3.0m/s: 在2.0m/s基价上 +30000元
 - **层门及门套:**
-
     - 标配：首层：304不锈钢，其他楼层：喷涂钢板（不加价）。
 
     **报价默认标配**，如客户要求，全层304不锈钢，加价为：（全层-1）+300元/层。
@@ -968,7 +971,7 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
 
 如客户要求，全层玻璃，加价为：（全层-1）+1700元/层。
 
-举例，客户要求6层全不锈钢，则加价为：（6-1）*300=1500元。
+举例，客户要求6层全发纹不锈钢，则加价为：（6-1）*400=2000元。
 - **观光梯说明:**
     - "钢板对重不加价" (Using steel plate counterweight incurs no extra charge).
 - **无机房:** 卧式主机方案+4500; 立式主机方案+2500. 以上两种方案的土建图不同，在出图前需说明所选方案，如未说明具体方案的，公司统一按卧式主机+4500的方案执行。
