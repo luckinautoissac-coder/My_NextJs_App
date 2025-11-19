@@ -75,7 +75,8 @@ export const useTopicStore = create<TopicState>()(
           
           // 移除所有当前智能体的话题
           for (let i = newTopics.length - 1; i >= 0; i--) {
-            if (newTopics[i].agentId === agentId) {
+            const topic = newTopics[i]
+            if (topic && topic.agentId === agentId) {
               newTopics.splice(i, 1)
             }
           }
