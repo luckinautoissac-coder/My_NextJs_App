@@ -1251,6 +1251,67 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
 - AFCL-V06: +8000
 - ...
 
+**[Data Table: 1.4.1] 乘客电梯可选轿厢加价 (Passenger Elevator Optional Cabin Surcharges)**
+
+*   **核心规则 (Core Rules):**
+    *   以下报价为净加价，不可下浮。
+    *   报价仅含**轿壁**，不包含轿门、吊顶、扶手。
+    *   所有加价均在**标配轿厢 (304发纹不锈钢)** 的基础上计算。
+
+---
+
+#### A. 标配及基础材质升级 (Standard & Base Material Upgrade)
+
+- **标配定义 (Standard Configuration):**
+    - 普通客梯、医梯: **304发纹不锈钢** (加价: 0 元)
+    - 观光梯: **发纹不锈钢 + 玻璃** (加价: 0 元)
+
+- **材质升级 (Material Upgrade):**
+    - 在钛金轿厢基础上升级为**黑钛金**或**玫瑰金**: +1000 元/台
+
+#### C. 商务型客梯 (Business Type)
+
+- **适用型号 (Applicable Models):** FJ-J102, J103, J104, J105, J106, J108
+- **加价 (Surcharge):** +3000 元/台
+- **材质说明 (Material Description):**
+    - 中心板: 镜面、蚀刻、发纹
+    - 辅助板: 发纹不锈钢
+    - 轿门: 发纹不锈钢
+
+#### D. 钛金/镜面/蚀刻/彩钢组合 (Titanium/Mirror/Etched/Color Steel Combinations)
+
+- **D1. 辅助板为钛金/镜面/彩钢板:**
+    - **加价 (Surcharge):** +4500 元/台
+    - *示例 (Example): FJ-J113 (彩饰钢板组合)*
+
+- **D2. 辅助板为钛金镜面/和纹:**
+    - **加价 (Surcharge):** +5000 元/台
+    - *规则: 此价格不含轿门。*
+    - *示例 (Example): FJ-J110, FJ-J111*
+    - *材质说明 (Material Description):*
+        - *侧壁和后壁中心板: 钛金、镜面、蚀刻、发纹、和纹*
+        - *辅助板: 钛金、蚀刻、发纹、和纹*
+
+#### E. 整体浮雕轿厢 (Full Embossed/Relief Cabin)
+
+- **加价 (Surcharge):** +30000 元/台
+- **材质说明 (Material Description):**
+    - 中心板: 浮雕大师、镜面、钛金
+    - 辅助板: 浮雕大师
+
+#### F. 特殊饰面轿厢 (Special Finish Cabin)
+
+- **适用材质 (Applicable Materials):** 木纹 (仿实木)、大理石、皮革
+- **加价 (Surcharge):** +13000 元/台
+
+#### G. 组合风格轿厢 (Composite Style Cabins)
+
+- **适用型号 (Applicable Models):** FJ-J109, FJ-J112, FJ-J114, FJ-J115
+- **定价逻辑 (Pricing Logic):**
+    - *以上型号为**风格效果展示**，其价格并非单一固定加价。*
+    - *其最终报价需通过**拆解**其具体配置（如轿壁材质、吊顶、地面、扶手等），并从 **[Data Table: 1.2.5] 常用客梯附加配置** 中**逐项累加**得出。*
+    - *在报价时，这些型号作为**"视觉参考和配置向导"**使用。*
+
 #### **D. 利润/代理系数 (Profit / Agent Multiplier)**
 *   **规则：** **核心指导原则: 以"竞争性"为基准，以"价值"换利润。**
 
