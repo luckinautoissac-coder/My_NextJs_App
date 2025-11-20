@@ -30,9 +30,11 @@ export interface Message {
 export interface ChatState {
   messages: Message[]
   isLoading: boolean
+  loadingTopics: Record<string, boolean> // 每个话题的加载状态
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => string
   updateMessage: (id: string, updates: Partial<Message>) => void
-  setLoading: (loading: boolean) => void
+  setLoading: (loading: boolean, topicId?: string) => void // 添加可选的 topicId 参数
+  isTopicLoading: (topicId?: string) => boolean // 新增：检查特定话题是否正在加载
   clearChat: () => void
   getMessagesByTopic: (topicId: string) => Message[]
   clearTopicMessages: (topicId: string) => void

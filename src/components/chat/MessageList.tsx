@@ -8,12 +8,13 @@ import { useTopicStore } from '@/store/topicStore'
 import { MessageCircle } from 'lucide-react'
 
 export function MessageList() {
-  const { getMessagesByTopic, isLoading } = useChatStore()
+  const { getMessagesByTopic, isTopicLoading } = useChatStore()
   const { currentTopicId } = useTopicStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isClient, setIsClient] = useState(false)
   
   const messages = currentTopicId ? getMessagesByTopic(currentTopicId) : []
+  const isLoading = isTopicLoading(currentTopicId) // 获取当前话题的加载状态
 
   useEffect(() => {
     setIsClient(true)

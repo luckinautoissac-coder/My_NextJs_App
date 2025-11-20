@@ -7,6 +7,7 @@ export const useChatStore = create<ChatState>()(
     (set, get) => ({
       messages: [],
       isLoading: false,
+      loadingTopics: {}, // 新增：每个话题的加载状态
       
       addMessage: (message) => {
         const newMessage: Message = {
@@ -28,7 +29,25 @@ export const useChatStore = create<ChatState>()(
         }))
       },
       
-      setLoading: (loading) => set({ isLoading: loading }),
+      setLoading: (loading, topicId) => {
+        if (topicId) {
+          // 为特定话题设置加载状态
+          set((state) => ({
+            loadingTopics: {
+              ...state.loadingTopics,
+              [topicId]: loading
+            }
+          }))
+        } else {
+          // 向后兼容：如果没有指定话题，使用全局加载状态
+          set({ isLoading: loading })
+        }
+      },
+      
+      isTopicLoading: (topicId) => {
+        const state = get()
+        return topicId ? (state.loadingTopics[topicId] || false) : state.isLoading
+      },
       
       clearChat: () => set({ messages: [] }),
       

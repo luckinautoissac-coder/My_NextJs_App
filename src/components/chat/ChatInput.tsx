@@ -39,7 +39,7 @@ if (typeof window !== 'undefined') {
 export function ChatInput() {
   const [input, setInput] = useState('')
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const { addMessage, setLoading, isLoading, clearTopicMessages, getMessagesByTopic, updateMessage } = useChatStore()
+  const { addMessage, setLoading, isTopicLoading, clearTopicMessages, getMessagesByTopic, updateMessage } = useChatStore()
   const { agents, currentAgentId } = useAgentStore()
   const { currentTopicId, addTopic, setCurrentTopic } = useTopicStore()
   const { apiKey, selectedModel, baseUrl, updateSettings } = useAPISettingsStore()
@@ -55,6 +55,7 @@ export function ChatInput() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const currentAgent = agents.find(agent => agent.id === currentAgentId)
+  const isLoading = isTopicLoading(currentTopicId) // 获取当前话题的加载状态
   
   // 获取选中的知识库信息
   const selectedKnowledgeBases = selectedKnowledgeBaseIds
@@ -485,7 +486,7 @@ export function ChatInput() {
       topicId: currentTopicId
     })
 
-    setLoading(true)
+    setLoading(true, currentTopicId)
 
     // 获取模型名称
     const modelInfo = ALL_MODELS.find(m => m.id === selectedModel)
@@ -550,7 +551,7 @@ export function ChatInput() {
         thinkingInfo: undefined
       })
     } finally {
-      setLoading(false)
+      setLoading(false, currentTopicId)
     }
   }
 
