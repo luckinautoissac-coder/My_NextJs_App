@@ -661,86 +661,203 @@ As the source factory, we cut out all unnecessary brand premiums and middleman c
 
 While the industry standard is 1-2 years, we provide an unprecedented **5-year warranty** on critical components: the Traction Machine, all Safety Gears (Speed Governor, Safety Clamp, Buffers), and the VVVF Door Operator System. Other parts are covered for 2 years (excluding wearing parts). This isn't just a policy; it's a public testament to our military-grade engineering and a direct financial guarantee that lowers your Total Cost of Ownership (TCO). This is a key tool for demonstrating confidence and converting price-focused discussions into long-term value propositions.
 
-- Target customer types: 
-  - **1. 地产开发商与总包方 / Real Estate Developers & General Contractors**
+### 目标客户深度画像与方案定制策略 (Detailed Customer Personas & Proposal Strategy)
 
-**他们是谁：** 这类客户是我们的业务基本盘，是新电梯项目最主要的采购方。他们负责开发住宅楼、写字楼、城市综合体等大型项目。
-**他们在乎什么：** 他们关注的是**项目整体成本效益、产品交付的及时性、以及供应商的工程配合能力**。我们的任务是确保电梯能作为项目的一个可靠环节，无缝对接地融入他们的建筑进度。
-**Who they are:** This is our core client base, the primary buyers for new elevator projects. They develop large-scale projects like residential towers, office buildings, and urban complexes.
-**What they care about:** They focus on **overall project cost-effectiveness, timely product delivery, and the supplier's engineering coordination capabilities.** Our job is to ensure our elevators are a reliable component of their project, seamlessly integrating into their construction schedule.
+**前置指令：** 在生成方案前，必须先根据上下文将客户归入以下某一类，并采用对应的"方案侧重点"进行内容构建。
 
-  - **2. 商业及公共设施业主 / Commercial & Public Facility Owners**
+#### **1. 地产开发商与总包方 (Real Estate Developers & General Contractors)**
 
-**他们是谁：** 指直接持有并运营购物中心、酒店、医院、机场、地铁站等物业的业主或管理方。
-**他们在乎什么：** 这类客户不仅采购新梯，更是**长期维保和老旧电梯改造**的关键客户。他们极度关注**电梯的运行稳定性、安全记录、乘客体验和长期运营成本 (TCO)**。我们的"终身管家服务"模式对他们有很强的吸引力。
-**Who they are:** This refers to the owners or operators who directly hold and manage properties like shopping malls, hotels, hospitals, airports, and subway stations.
-**What they care about:** They are not just buyers of new elevators but are also key clients for **long-term maintenance and modernization of old elevators.** They are extremely concerned with **operational stability, safety records, passenger experience, and the Total Cost of Ownership (TCO).** Our "lifelong concierge service" model is highly attractive to them.
+*   **深度画像：** 资金密集型玩家。他们不仅买电梯，更是在买"楼盘卖点"和"交付进度"。他们通常面临资金回笼压力，害怕供应商掉链子导致无法通过验收（交房延期）。
 
-  - **3. 战略情报伙伴 (商业经纪人与信息中介) / Strategic Intelligence Partners (Business Brokers & Information Intermediaries)**
+*   **深层痛点 (What keeps them up at night)：**
 
-    **他们是谁 (Who they are):**
-    他们是"生意的中介"，是连接资产买家与卖家的专业中间人。典型代表包括：商业地产经纪人 (Commercial Real Estate Agents)、企业并购顾问 (M&A Advisors)、投资银行家、以及在特定行业内拥有广泛人脉的信息掮客。他们的核心业务是"促成交易"，我们的电梯是他们交易链条中的一个潜在变量。
+    *   **现金流压力：** 寻求更有利的付款方式。
 
-    **他们在乎什么 (What they care about):**
-    1.  **交易成功率与速度 (Deal Velocity & Success Rate):** 这是他们的生命线。任何能扫除交易障碍（如老旧电梯）、加速流程的因素，他们都极度欢迎。
-    2.  **佣金与额外收入 (Commission & Ancillary Income):** 他们靠佣金为生。任何能为他们带来额外、合法收入的机会，都有吸引力。
-    3.  **资产投资回报 (Asset ROI):** 他们用财务语言思考。他们关心的是，"升级电梯"这项投入（CapEx），能为资产带来多大的价值提升（影响最终售价），投资回报（ROI）是否可观。
-    4.  **自身专业信誉 (Professional Credibility):** 向客户推荐可靠、专业的合作伙伴（如FUJICL），能提升他们作为顾问的价值和信誉。
+    *   **工期风险：** 电梯没装好，整栋楼没法验收，导致巨额违约金。
 
-  - **4. 海外代理商与合作伙伴 / Overseas Agents & Partners**
+    *   **楼盘溢价：** 希望用看起来很贵的电梯（高配置装潢）来提升楼盘档次，好卖高价。
 
-**他们是谁：** 他们是我们在全球近80个国家的"商业分身"。他们是懂当地市场、有人脉、有服务能力的本地企业。
-**他们在乎什么：** 他们不是最终用户，而是我们的渠道。他们在乎的是**产品的性价比、技术的可靠性、总部的支持力度（培训、备件、品牌）以及合作模式能否帮助他们在当地赚钱**。我们卖给他们的，其实是一整套"电梯生意解决方案"。
-**Who they are:** They are our "business avatars" in nearly 80 countries worldwide. They are local enterprises that understand the market, have the network, and possess service capabilities.
-**What they care about:** They are our channel, not the end-user. They care about the **product's price-performance ratio, technological reliability, the level of support from headquarters (training, spare parts, branding), and whether the partnership model can help them be profitable locally.** What we really sell them is a complete "elevator business solution."
+*   **方案侧重点 (Proposal Focus)：**
 
-  - **5. 建筑设计师与顾问公司 / Architects & Consulting Firms**
+    *   **视觉包装：** 重点展示轿厢装潢的豪华感（如"镜面蚀刻"、"大理石拼花"），强调有助于楼盘销售。
 
-**他们是谁：** 他们是项目中的"关键决策影响者"。他们不直接付款，但他们在设计图纸上指定使用哪个品牌和型号的电梯。
-**他们在乎什么：** 他们关注**产品的技术参数、美学设计、以及能否满足特殊的建筑需求**。我们强大的"非标定制"能力是打动他们的核心武器，尤其是在地标性建筑或高端项目中。
-**Who they are:** They are the "key decision influencers" in a project. They don't pay directly, but they specify which brand and model of elevator to use in the architectural plans.
-**What they care about:** They focus on **technical specifications, aesthetic design, and the ability to meet unique architectural requirements.** Our strong "non-standard customization" capability is our core weapon for impressing them, especially in landmark or high-end projects.
+    *   **项目管理：** 强调"准时交付记录"和"工程配合经验"，承诺不拖后腿。
 
-  - **6. 工业及特殊项目客户 / Industrial & Special Project Clients**
+    *   **成本结构：** 突出"同等配置下的价格优势"，帮他们省预算。
 
-**他们是谁：** 包括需要大载重货梯的工厂、仓储中心，以及需要安装私家电梯的别墅业主等。
-**他们在乎什么：** 这类客户的需求非常具体和功能导向。工业客户需要的是**皮实、耐用、安全的重型运载工具**；别墅业主则追求**静音、舒适、与家居风格融为一体**。对他们而言，我们是解决特定场景下垂直运输难题的专家。
-**Who they are:** This includes factories and warehouses needing heavy-duty freight elevators, as well as villa owners requiring private home elevators.
-**What they care about:** Their needs are highly specific and function-driven. Industrial clients need **robust, durable, and safe heavy-lifting equipment.** Villa owners seek **quiet, comfortable elevators that blend with their home decor.** For them, we are specialists who solve vertical transport challenges in unique scenarios.
+#### **2. 商业及公共设施业主 (Commercial & Public Facility Owners)**
 
-  - **7. 政府及公共采购部门 / Government & Public Procurement Departments**
+*   **深度画像：** 长期持有资产的运营者（如酒店、商场、医院）。电梯是他们的生产工具，停运一小时=损失真金白银。他们懂行，甚至有专门的工程部。
 
-**他们是谁：** 各级政府机构、公立学校、公立医院、以及负责保障性住房、城市更新项目的官方实体。他们通过正式的招投标流程进行采购。
-**他们在乎什么：** 这类客户对**预算的合规性、流程的透明度、以及供应商的资质和信誉**有极高要求。项目决策周期长，但一旦中标，通常意味着稳定的长期合作。他们看重的是**产品的长期耐用性和低故障率**，以确保公共服务的稳定和财政支出的效益最大化。
-**Who they are:** Government agencies at various levels, public schools, public hospitals, and official entities responsible for affordable housing or urban renewal projects. They procure through formal bidding and tendering processes.
-**What they care about:** This client type places extreme importance on **budget compliance, process transparency, and the supplier's qualifications and reputation.** While the decision-making cycle can be long, winning a bid often leads to a stable, long-term partnership. They value **product durability and low failure rates** to ensure the stability of public services and maximize the return on public expenditure.
+*   **深层痛点：**
 
-  - **8. 既有建筑业主及物业公司 (旧梯改造更新) / Existing Building Owners & Property Management Companies (for Modernization & Retrofitting)**
+    *   **投诉率：** 乘客被困或电梯异响会直接毁掉酒店/商场的口碑。
 
-**他们是谁：** 拥有大量老旧住宅楼、写字楼的物业管理公司或业主委员会。这些建筑的电梯面临老化、能耗高、不符合新安全标准等问题。
-**他们在乎什么：** 他们的核心需求是**"升级"而非"新建"**。他们关注的是：**如何在有限的预算内提升电梯的安全性、节能性和舒适度；施工方案能否尽量减少对楼内居民或用户的干扰；改造后的电梯能否与现有楼宇管理系统兼容**。这是一个巨大的存量市场。
-**Who they are:** Property management companies or homeowners' associations that manage older residential buildings or office towers. The elevators in these buildings face issues like aging, high energy consumption, or non-compliance with new safety standards.
-**What they care about:** Their core need is **"upgrading," not "new construction."** They focus on: **how to improve elevator safety, energy efficiency, and comfort within a limited budget; whether the installation plan can minimize disruption to residents or tenants; and if the modernized elevator can be integrated with the existing building management system.** This represents a massive existing market (stock market).
+    *   **能源账单：** 商业用电贵，关注节能指标。
 
-  - **9. 线上直采的终端客户 (DIY项目管理者) / Online Direct-Purchase End-Customers (DIY Project Managers)**
+    *   **TCO (总持有成本)：** 极其反感频繁修车、换件带来的不可控支出。
 
-**他们是谁：** 他们是信息获取能力和自主学习能力非常强的终端用户，典型代表就是想装别墅电梯的个人业主，也包括一些需要为自己小型工厂或仓库安装货梯的小企业主。他们通过搜索引擎、B2B平台（如阿里巴巴）、社交媒体（如抖音、小红书）直接找到我们工厂。
-**他们在乎什么：**
-**1.极致的性价比与价格透明：** 他们的核心驱动力是"剔除中间商差价"，坚信直接与工厂交易能获得最低价格。
-**2.产品信息的掌控权：** 他们乐于自己研究技术参数、对比不同品牌的产品细节，享受自己做决策的过程。
-**3.灵活性：** 他们希望将"产品采购"和"安装服务"解耦，分开处理，以寻求每个环节的最优成本。
-**Who they are:** These are tech-savvy and highly proactive end-users. The classic example is the villa owner, but it also includes small business owners needing a freight elevator for their own small factory or warehouse. They find us directly through search engines, B2B platforms (like Alibaba), or social media (like TikTok).
-**What they care about:**
-**1.Ultimate Cost-Effectiveness and Price Transparency:** Their primary motivation is to "cut out the middleman," believing that dealing directly with the factory yields the best price.
-**2.Control over Product Information:** They enjoy researching technical specifications and comparing product details across different brands, taking pride in making their own informed decisions.
-**3.Flexibility:** They want to decouple "product procurement" from "installation services," handling them separately to optimize costs at each stage.
+*   **方案侧重点：**
 
-  - **10. 电梯维保/安装同行 (作为零部件采购方) / Elevator Maintenance/Installation Peers (as Component Buyers)**
+    *   **运营数据：** 列出能耗数据，计算每年能省多少电费。
 
-**他们是谁：** 市场上存在大量中小型电梯维保公司或安装队。他们可能没有自己的生产能力，或者在维修某些非自有品牌电梯时，需要采购核心部件（如控制柜、曳引机、门机系统等）。
-**他们在乎什么：** 他们将我们视为一个**B2B的零部件供应商**。他们在乎的是**零部件的兼容性、质量可靠性、供货速度和技术支持**。通过向他们销售高质量的核心部件，我们不仅能增加收入，还能将我们的技术标准渗透到更广泛的市场，成为他们眼中"可靠的供应链伙伴"。
-**Who they are:** The market includes numerous small to medium-sized elevator maintenance companies or installation teams. They may lack their own manufacturing capabilities or need to purchase core components (like control cabinets, traction machines, door systems) when servicing non-proprietary elevator brands.
-**What they care about:** They view us as a **B2B component supplier.** They care about **component compatibility, quality reliability, speed of delivery, and technical support.** By selling high-quality core components to them, we not only generate additional revenue but also extend our technical standards into the broader market, positioning ourselves as their "reliable supply chain partner."
+    *   **稳定性承诺：** 必须把 **"5年核心部件质保"** 放在第一页，强调"前5年几乎零维修成本"。
+
+    *   **智能监控：** 推荐物联网(IoT)远程监控功能，满足其"掌控感"。
+
+#### **3. 战略情报伙伴/中介 (Strategic Brokers & Intermediaries)**
+
+*   **深度画像：** 靠信息差和人脉赚钱的中间人。他们通常不懂电梯技术，很怕在客户面前露怯。他们需要的是一个"懂事的军火库"——我们提供弹药，他们负责开枪。
+
+*   **深层痛点：**
+
+    *   **信誉风险：** 推荐的厂家如果烂尾，他在圈子里就混不下去了。
+
+    *   **沟通成本：** 讨厌复杂的表格，想要能直接转发给客户的"傻瓜式"精美资料。
+
+    *   **利益安全：** 担心厂家跳过他直接联系客户（切单）。
+
+*   **方案侧重点：**
+
+    *   **工具化资料：** 提供去品牌化（或可加他Logo）的精美PPT和ROI分析表。
+
+    *   **专业背书：** 强调我们的军工背景和出口近80国的资历，为他的推荐撑腰。
+
+    *   **佣金保护：** 在沟通中明确（或暗示）对合作伙伴利益的保护机制。
+
+#### **4. 海外代理商与合作伙伴 (Overseas Agents & Distributors)**
+
+*   **深度画像：** 我们的利益共同体。他们在当地不仅要卖梯，还要修梯。他们最怕两件事：一是产品质量差导致他们天天被客户骂；二是厂家支持不够，遇到技术难题没人管。
+
+*   **深层痛点：**
+
+    *   **安装难度：** 怕产品设计反人类，导致安装工时过长，吞噬利润。
+
+    *   **备件供应：** 怕坏了配件要等一个月，被终端客户索赔。
+
+    *   **价格保护：** 痛恨厂家在同一地区发展多个代理，搞价格战。
+
+*   **方案侧重点：**
+
+    *   **易安装性：** 强调"工厂预调试"和"乐高式安装说明"，能帮他们省人工费。
+
+    *   **赋能体系：** 详细列出"赠送随机备件包"、"技术培训计划"和"7x24远程支持"。
+
+    *   **利润空间：** 给出阶梯式报价，展示由于我们的低返修率带来的隐形利润。
+
+#### **5. 建筑设计师与顾问 (Architects & Consultants)**
+
+*   **深度画像：** 完美主义者。他们只关心电梯能不能塞进他们设计的奇葩井道里，以及装潢能不能匹配建筑风格。他们对价格不敏感（因为不是他们付钱），但对参数极其挑剔。
+
+*   **深层痛点：**
+
+    *   **设计受限：** 讨厌标准品，讨厌厂家说"这个尺寸做不了"。
+
+    *   **图纸配合：** 需要厂家能快速提供CAD/BIM图纸，方便他们以此为基础做设计。
+
+*   **方案侧重点：**
+
+    *   **极致非标：** 不谈性价比，只谈"井道利用率最大化"和"定制自由度"。
+
+    *   **材质美学：** 使用设计语言（如"拉丝质感"、"光影效果"）描述装潢，而非工业参数。
+
+    *   **图纸服务：** 主动承诺提供全套土建配合图纸。
+
+#### **6. 工业及特殊项目客户 (Industrial & Villa Projects)**
+
+*   **深度画像 (分两类)：**
+
+    *   **工厂主：** 实干家。担心叉车撞坏门、灰尘导致故障。只求皮实。
+
+    *   **别墅业主：** 为家人买单。担心老人小孩安全、运行噪音吵到休息、电梯太丑破坏豪宅装修。
+
+*   **深层痛点：**
+
+    *   *工厂：* 停工损失、暴力使用下的耐用性。
+
+    *   *别墅：* 安全（困人）、噪音、颜值。
+
+*   **方案侧重点：**
+
+    *   *工厂梯：* 强调"加厚钢板"、"防撞护栏"、"重载电机"、"防尘等级"。
+
+    *   *别墅梯：* 强调"静音接触器"、"停电自动平层(ARD)"、"专属定制装潢"、"不仅是电梯，更是家居艺术品"。
+
+#### **7. 政府及公共采购部门 (Government & Public Procurement)**
+
+*   **深度画像：** 风险厌恶者。他们不追求最新技术，但追求"绝对合规"和"政治正确"。决策流程长，看重程序正义。
+
+*   **深层痛点：**
+
+    *   **合规风险：** 害怕审计出问题，害怕因产品故障引发公共舆论危机。
+
+    *   **资质门槛：** 必须满足所有硬性指标认证。
+
+*   **方案侧重点：**
+
+    *   **资质堆砌：** 在方案最显眼处罗列ISO认证、CE认证、特种设备许可证。
+
+    *   **安全记录：** 强调军工血统带来的"零重大事故"记录。
+
+    *   **长期服务：** 承诺长期的备件供应和技术支持，消除后顾之忧。
+
+#### **8. 旧梯改造/更新业主 (Modernization & Retrofitting)**
+
+*   **深度画像：** 被旧电梯折磨的群体。通常预算有限，且住户意见难以统一。最怕施工扰民（噪音、灰尘）和长时间停梯（爬楼梯）。
+
+*   **深层痛点：**
+
+    *   **施工干扰：** 怕施工期太长，影响正常生活/办公。
+
+    *   **土建破坏：** 怕要砸墙、改井道，工程量浩大。
+
+    *   **兼容性：** 希望能保留导轨等旧部件以省钱。
+
+*   **方案侧重点：**
+
+    *   **最小干扰：** 推荐"无脚手架安装"或"模块化更新"方案，强调工期短。
+
+    *   **定制化改造：** 提供"保留旧导轨/对重"的经济型方案（需技术评估）。
+
+    *   **新旧对比：** 直观展示改造前后的能耗、噪音、速度对比，刺激决策。
+
+#### **9. 线上直采终端/DIY客户 (Online End-Users / DIY)**
+
+*   **深度画像：** 精明、多疑、爱钻研的个人买家。他们绕过当地代理商直接找工厂，就是为了省钱，但内心深处对跨国安装充满恐惧。
+
+*   **深层痛点：**
+
+    *   **信任危机：** 怕付了钱不发货，或者发的是垃圾。
+
+    *   **安装黑洞：** 怕货到了当地找不到人装，或者装不好。
+
+    *   **隐形消费：** 怕运费、关税等后续费用超支。
+
+*   **方案侧重点：**
+
+    *   **透明化：** 价格必须拆解得清清楚楚（FOB/CIF）。
+
+    *   **安全感：** 强推 **"成功套装"**（出厂视频验货 + 远程实时指导），证明即使没有专业背景也能搞定。
+
+    *   **客户见证：** 甩出同地区或同类型的成功案例照片。
+
+#### **10. 电梯维保/安装同行 (Peers - Component Buyers)**
+
+*   **深度画像：** 技术型买家。他们可能在修某台老旧的三菱或奥的斯电梯，急需一个兼容的控制柜或门机。他们对价格极其敏感，因为他们要赚差价。
+
+*   **深层痛点：**
+
+    *   **技术匹配：** 怕买回来的板子协议不通，装不上。
+
+    *   **发货速度：** 维修等不起，客户在催。
+
+*   **方案侧重点：**
+
+    *   **参数确认：** 直接上技术参数表和接口图纸，少说废话。
+
+    *   **通用性：** 强调我们的部件（如默纳克系统）具有极强的通用性和调试便利性。
+
+    *   **B2B价格：** 直接给到底价，不玩虚的，谋求长期复购。
 
 受众群体：高素养B2B客户，包括海外代理/经销商、开发商、业主、承包商、政府采购方、物业管理公司、建筑设计院及配件买家。各客户有着定价、项目合规、定制方案、长期服务、技术集成等多样化需求。
 
@@ -2734,159 +2851,203 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
 | 250kg | 0.4 m/s | 800x800x1000 | 800x1000 | 1500x1100 | 4000 | 1000 |
 | 300kg | 0.4 m/s | 900x900x1000 | 900x1000 | 1400x1200 | 4000 | 1000 |
 
-- Target customer types: 
+### 目标客户深度画像与方案定制策略 (Detailed Customer Personas & Proposal Strategy)
 
-  - **1. 地产开发商与总包方 / Real Estate Developers & General Contractors**
+**前置指令：** 在生成方案前，必须先根据上下文将客户归入以下某一类，并采用对应的"方案侧重点"进行内容构建。
 
-**他们是谁：** 这类客户是我们的业务基本盘，是新电梯项目最主要的采购方。他们负责开发住宅楼、写字楼、城市综合体等大型项目。
+#### **1. 地产开发商与总包方 (Real Estate Developers & General Contractors)**
 
-**他们在乎什么：** 他们关注的是**项目整体成本效益、产品交付的及时性、以及供应商的工程配合能力**。我们的任务是确保电梯能作为项目的一个可靠环节，无缝对接地融入他们的建筑进度。
+*   **深度画像：** 资金密集型玩家。他们不仅买电梯，更是在买"楼盘卖点"和"交付进度"。他们通常面临资金回笼压力，害怕供应商掉链子导致无法通过验收（交房延期）。
 
-**Who they are:** This is our core client base, the primary buyers for new elevator projects. They develop large-scale projects like residential towers, office buildings, and urban complexes.
+*   **深层痛点 (What keeps them up at night)：**
 
-**What they care about:** They focus on **overall project cost-effectiveness, timely product delivery, and the supplier's engineering coordination capabilities.** Our job is to ensure our elevators are a reliable component of their project, seamlessly integrating into their construction schedule.
+    *   **现金流压力：** 寻求更有利的付款方式。
 
-  - **2. 商业及公共设施业主 / Commercial & Public Facility Owners**
+    *   **工期风险：** 电梯没装好，整栋楼没法验收，导致巨额违约金。
 
-**他们是谁：** 指直接持有并运营购物中心、酒店、医院、机场、地铁站等物业的业主或管理方。
+    *   **楼盘溢价：** 希望用看起来很贵的电梯（高配置装潢）来提升楼盘档次，好卖高价。
 
-**他们在乎什么：** 这类客户不仅采购新梯，更是**长期维保和老旧电梯改造**的关键客户。他们极度关注**电梯的运行稳定性、安全记录、乘客体验和长期运营成本 (TCO)**。我们的"终身管家服务"模式对他们有很强的吸引力。
+*   **方案侧重点 (Proposal Focus)：**
 
-**Who they are:** This refers to the owners or operators who directly hold and manage properties like shopping malls, hotels, hospitals, airports, and subway stations.
+    *   **视觉包装：** 重点展示轿厢装潢的豪华感（如"镜面蚀刻"、"大理石拼花"），强调有助于楼盘销售。
 
-**What they care about:** They are not just buyers of new elevators but are also key clients for **long-term maintenance and modernization of old elevators.** They are extremely concerned with **operational stability, safety records, passenger experience, and the Total Cost of Ownership (TCO).** Our "lifelong concierge service" model is highly attractive to them.
+    *   **项目管理：** 强调"准时交付记录"和"工程配合经验"，承诺不拖后腿。
 
-  - **3. 战略情报伙伴 (商业经纪人与信息中介) / Strategic Intelligence Partners (Business Brokers & Information Intermediaries)**
+    *   **成本结构：** 突出"同等配置下的价格优势"，帮他们省预算。
 
-    **他们是谁 (Who they are):**
+#### **2. 商业及公共设施业主 (Commercial & Public Facility Owners)**
 
-    他们是"生意的中介"，是连接资产买家与卖家的专业中间人。典型代表包括：商业地产经纪人 (Commercial Real Estate Agents)、企业并购顾问 (M&A Advisors)、投资银行家、以及在特定行业内拥有广泛人脉的信息掮客。他们的核心业务是"促成交易"，我们的电梯是他们交易链条中的一个潜在变量。
+*   **深度画像：** 长期持有资产的运营者（如酒店、商场、医院）。电梯是他们的生产工具，停运一小时=损失真金白银。他们懂行，甚至有专门的工程部。
 
-    **他们在乎什么 (What they care about):**
+*   **深层痛点：**
 
-    1.  **交易成功率与速度 (Deal Velocity & Success Rate):** 这是他们的生命线。任何能扫除交易障碍（如老旧电梯）、加速流程的因素，他们都极度欢迎。
+    *   **投诉率：** 乘客被困或电梯异响会直接毁掉酒店/商场的口碑。
 
-    2.  **佣金与额外收入 (Commission & Ancillary Income):** 他们靠佣金为生。任何能为他们带来额外、合法收入的机会，都有吸引力。
+    *   **能源账单：** 商业用电贵，关注节能指标。
 
-    3.  **资产投资回报 (Asset ROI):** 他们用财务语言思考。他们关心的是，"升级电梯"这项投入（CapEx），能为资产带来多大的价值提升（影响最终售价），投资回报（ROI）是否可观。
+    *   **TCO (总持有成本)：** 极其反感频繁修车、换件带来的不可控支出。
 
-    4.  **自身专业信誉 (Professional Credibility):** 向客户推荐可靠、专业的合作伙伴（如FUJICL），能提升他们作为顾问的价值和信誉。
+*   **方案侧重点：**
 
-    **我们的价值主张 (Our Value Proposition to Them):**
+    *   **运营数据：** 列出能耗数据，计算每年能省多少电费。
 
-    *   **"我们帮你加速交易":** "当你经手的资产因电梯老旧而成为交易障碍时，我们免费提供专业的评估报告和预算方案，帮你把'问题'变成'价值提升点'。"
+    *   **稳定性承诺：** 必须把 **"5年核心部件质保"** 放在第一页，强调"前5年几乎零维修成本"。
 
-    *   **"我们帮你创造额外收入":** "我们提供标准化的推荐佣金协议，让你在促成主业的同时，轻松获得稳定、可观的额外收益。"
+    *   **智能监控：** 推荐物联网(IoT)远程监控功能，满足其"掌控感"。
 
-    *   **"我们是你的专业后盾":** "与我们军工级制造商合作为你的信誉背书。你只需传递信息，所有复杂的技术评估和方案设计都由我们完成。"
+#### **3. 战略情报伙伴/中介 (Strategic Brokers & Intermediaries)**
 
-    **核心行动准则 (The Rules of Engagement):**
+*   **深度画像：** 靠信息差和人脉赚钱的中间人。他们通常不懂电梯技术，很怕在客户面前露怯。他们需要的是一个"懂事的军火库"——我们提供弹药，他们负责开枪。
 
-    1.  **直奔主题，展示合作模式：** 与他们沟通时，无需过多介绍产品细节。应迅速切入"商业合作模式"，清晰地展示我们如何能帮助他们"加速交易"和"创造收入"。
+*   **深层痛点：**
 
-    2.  **提供"傻瓜式"合作工具：** 为他们准备好标准化的《推荐合作协议》、《信息登记表》和简明扼要的《价值主张介绍PPT》。让他们可以毫不费力地将机会转介给我们。
+    *   **信誉风险：** 推荐的厂家如果烂尾，他在圈子里就混不下去了。
 
-    3.  **以财务语言沟通：** 用ROI、CapEx、资产增值等他们熟悉的词汇来包装我们的电梯改造方案，让他们能轻松地转述给他们的客户。
+    *   **沟通成本：** 讨厌复杂的表格，想要能直接转发给客户的"傻瓜式"精美资料。
 
-    ---
+    *   **利益安全：** 担心厂家跳过他直接联系客户（切单）。
 
-    **★ VIP层级识别与升级策略：#10+ 战略联盟伙伴 (The Strategic Alliance Partner)**
+*   **方案侧重点：**
 
-    *   **识别信号 (Identification Signals):** 当你发现一个"战略情报伙伴"远不止于信息中介时——例如，他们是在中国深耕多年的"中国通" (China Hand)，在某个行业拥有极高的个人声望，其核心资产是强大的关系网 (Guanxi) 而非单一的项目信息——你必须立即将其标记为 **#10+ VIP**。
+    *   **工具化资料：** 提供去品牌化（或可加他Logo）的精美PPT和ROI分析表。
 
-    *   **核心区别 (Core Difference):** 普通#10号伙伴追求的是**"交易 (Transaction)"**；而#10+ VIP伙伴寻求的是**"联盟 (Alliance)"**。
+    *   **专业背书：** 强调我们的军工背景和出口近80国的资历，为他的推荐撑腰。
 
-    *   **行动升级 (Action Upgrade):** 一旦识别出#10+ VIP，必须**立即将沟通策略从"交易模式"切换到"联盟模式"**：
+    *   **佣金保护：** 在沟通中明确（或暗示）对合作伙伴利益的保护机制。
 
-        *   **禁止以佣金开场：** 关系是基础，利益是结果。
+#### **4. 海外代理商与合作伙伴 (Overseas Agents & Distributors)**
 
-        *   **建立个人链接：** 先做朋友，从喝咖啡、聊市场开始。
+*   **深度画像：** 我们的利益共同体。他们在当地不仅要卖梯，还要修梯。他们最怕两件事：一是产品质量差导致他们天天被客户骂；二是厂家支持不够，遇到技术难题没人管。
 
-        *   **先给予，再索取：** 主动为他们提供价值，问他们有什么需要你帮忙的。
+*   **深层痛点：**
 
-        *   **寻求长期互惠：** 探讨更灵活、更深度的合作，将他们发展为我们在本地市场的"战略盟友"。
+    *   **安装难度：** 怕产品设计反人类，导致安装工时过长，吞噬利润。
 
-  - **4. 海外代理商与合作伙伴 / Overseas Agents & Partners**
+    *   **备件供应：** 怕坏了配件要等一个月，被终端客户索赔。
 
-**他们是谁：** 他们是我们在全球近80个国家的"商业分身"。他们是懂当地市场、有人脉、有服务能力的本地企业。
+    *   **价格保护：** 痛恨厂家在同一地区发展多个代理，搞价格战。
 
-**他们在乎什么：** 他们不是最终用户，而是我们的渠道。他们在乎的是**产品的性价比、技术的可靠性、总部的支持力度（培训、备件、品牌）以及合作模式能否帮助他们在当地赚钱**。我们卖给他们的，其实是一整套"电梯生意解决方案"。
+*   **方案侧重点：**
 
-**Who they are:** They are our "business avatars" in nearly 80 countries worldwide. They are local enterprises that understand the market, have the network, and possess service capabilities.
+    *   **易安装性：** 强调"工厂预调试"和"乐高式安装说明"，能帮他们省人工费。
 
-**What they care about:** They are our channel, not the end-user. They care about the **product's price-performance ratio, technological reliability, the level of support from headquarters (training, spare parts, branding), and whether the partnership model can help them be profitable locally.** What we really sell them is a complete "elevator business solution."
+    *   **赋能体系：** 详细列出"赠送随机备件包"、"技术培训计划"和"7x24远程支持"。
 
-  - **5. 建筑设计师与顾问公司 / Architects & Consulting Firms**
+    *   **利润空间：** 给出阶梯式报价，展示由于我们的低返修率带来的隐形利润。
 
-**他们是谁：** 他们是项目中的"关键决策影响者"。他们不直接付款，但他们在设计图纸上指定使用哪个品牌和型号的电梯。
+#### **5. 建筑设计师与顾问 (Architects & Consultants)**
 
-**他们在乎什么：** 他们关注**产品的技术参数、美学设计、以及能否满足特殊的建筑需求**。我们强大的"非标定制"能力是打动他们的核心武器，尤其是在地标性建筑或高端项目中。
+*   **深度画像：** 完美主义者。他们只关心电梯能不能塞进他们设计的奇葩井道里，以及装潢能不能匹配建筑风格。他们对价格不敏感（因为不是他们付钱），但对参数极其挑剔。
 
-**Who they are:** They are the "key decision influencers" in a project. They don't pay directly, but they specify which brand and model of elevator to use in the architectural plans.
+*   **深层痛点：**
 
-**What they care about:** They focus on **technical specifications, aesthetic design, and the ability to meet unique architectural requirements.** Our strong "non-standard customization" capability is our core weapon for impressing them, especially in landmark or high-end projects.
+    *   **设计受限：** 讨厌标准品，讨厌厂家说"这个尺寸做不了"。
 
-  - **6. 工业及特殊项目客户 / Industrial & Special Project Clients**
+    *   **图纸配合：** 需要厂家能快速提供CAD/BIM图纸，方便他们以此为基础做设计。
 
-**他们是谁：** 包括需要大载重货梯的工厂、仓储中心，以及需要安装私家电梯的别墅业主等。
+*   **方案侧重点：**
 
-**他们在乎什么：** 这类客户的需求非常具体和功能导向。工业客户需要的是**皮实、耐用、安全的重型运载工具**；别墅业主则追求**静音、舒适、与家居风格融为一体**。对他们而言，我们是解决特定场景下垂直运输难题的专家。
+    *   **极致非标：** 不谈性价比，只谈"井道利用率最大化"和"定制自由度"。
 
-**Who they are:** This includes factories and warehouses needing heavy-duty freight elevators, as well as villa owners requiring private home elevators.
+    *   **材质美学：** 使用设计语言（如"拉丝质感"、"光影效果"）描述装潢，而非工业参数。
 
-**What they care about:** Their needs are highly specific and function-driven. Industrial clients need **robust, durable, and safe heavy-lifting equipment.** Villa owners seek **quiet, comfortable elevators that blend with their home decor.** For them, we are specialists who solve vertical transport challenges in unique scenarios.
+    *   **图纸服务：** 主动承诺提供全套土建配合图纸。
 
-  - **7. 政府及公共采购部门 / Government & Public Procurement Departments**
+#### **6. 工业及特殊项目客户 (Industrial & Villa Projects)**
 
-**他们是谁：** 各级政府机构、公立学校、公立医院、以及负责保障性住房、城市更新项目的官方实体。他们通过正式的招投标流程进行采购。
+*   **深度画像 (分两类)：**
 
-**他们在乎什么：** 这类客户对**预算的合规性、流程的透明度、以及供应商的资质和信誉**有极高要求。项目决策周期长，但一旦中标，通常意味着稳定的长期合作。他们看重的是**产品的长期耐用性和低故障率**，以确保公共服务的稳定和财政支出的效益最大化。
+    *   **工厂主：** 实干家。担心叉车撞坏门、灰尘导致故障。只求皮实。
 
-**Who they are:** Government agencies at various levels, public schools, public hospitals, and official entities responsible for affordable housing or urban renewal projects. They procure through formal bidding and tendering processes.
+    *   **别墅业主：** 为家人买单。担心老人小孩安全、运行噪音吵到休息、电梯太丑破坏豪宅装修。
 
-**What they care about:** This client type places extreme importance on **budget compliance, process transparency, and the supplier's qualifications and reputation.** While the decision-making cycle can be long, winning a bid often leads to a stable, long-term partnership. They value **product durability and low failure rates** to ensure the stability of public services and maximize the return on public expenditure.
+*   **深层痛点：**
 
-  - **8. 既有建筑业主及物业公司 (旧梯改造更新) / Existing Building Owners & Property Management Companies (for Modernization & Retrofitting)**
+    *   *工厂：* 停工损失、暴力使用下的耐用性。
 
-**他们是谁：** 拥有大量老旧住宅楼、写字楼的物业管理公司或业主委员会。这些建筑的电梯面临老化、能耗高、不符合新安全标准等问题。
+    *   *别墅：* 安全（困人）、噪音、颜值。
 
-**他们在乎什么：** 他们的核心需求是**"升级"而非"新建"**。他们关注的是：**如何在有限的预算内提升电梯的安全性、节能性和舒适度；施工方案能否尽量减少对楼内居民或用户的干扰；改造后的电梯能否与现有楼宇管理系统兼容**。这是一个巨大的存量市场。
+*   **方案侧重点：**
 
-**Who they are:** Property management companies or homeowners' associations that manage older residential buildings or office towers. The elevators in these buildings face issues like aging, high energy consumption, or non-compliance with new safety standards.
+    *   *工厂梯：* 强调"加厚钢板"、"防撞护栏"、"重载电机"、"防尘等级"。
 
-**What they care about:** Their core need is **"upgrading," not "new construction."** They focus on: **how to improve elevator safety, energy efficiency, and comfort within a limited budget; whether the installation plan can minimize disruption to residents or tenants; and if the modernized elevator can be integrated with the existing building management system.** This represents a massive existing market (stock market).
+    *   *别墅梯：* 强调"静音接触器"、"停电自动平层(ARD)"、"专属定制装潢"、"不仅是电梯，更是家居艺术品"。
 
-  - **9. 线上直采的终端客户 (DIY项目管理者) / Online Direct-Purchase End-Customers (DIY Project Managers)**
+#### **7. 政府及公共采购部门 (Government & Public Procurement)**
 
-**他们是谁：** 他们是信息获取能力和自主学习能力非常强的终端用户，典型代表就是您提到的想装别墅电梯的个人业主，也包括一些需要为自己小型工厂或仓库安装货梯的小企业主。他们通过搜索引擎、B2B平台（如阿里巴巴）、社交媒体（如抖音、小红书）直接找到我们工厂。
+*   **深度画像：** 风险厌恶者。他们不追求最新技术，但追求"绝对合规"和"政治正确"。决策流程长，看重程序正义。
 
-**他们在乎什么：**
+*   **深层痛点：**
 
-**1.极致的性价比与价格透明：** 他们的核心驱动力是"剔除中间商差价"，坚信直接与工厂交易能获得最低价格。
+    *   **合规风险：** 害怕审计出问题，害怕因产品故障引发公共舆论危机。
 
-**2.产品信息的掌控权：** 他们乐于自己研究技术参数、对比不同品牌的产品细节，享受自己做决策的过程。
+    *   **资质门槛：** 必须满足所有硬性指标认证。
 
-**3.灵活性：** 他们希望将"产品采购"和"安装服务"解耦，分开处理，以寻求每个环节的最优成本。
+*   **方案侧重点：**
 
-**Who they are:** These are tech-savvy and highly proactive end-users. The classic example is the villa owner you mentioned, but it also includes small business owners needing a freight elevator for their own small factory or warehouse. They find us directly through search engines, B2B platforms (like Alibaba), or social media (like TikTok).
+    *   **资质堆砌：** 在方案最显眼处罗列ISO认证、CE认证、特种设备许可证。
 
-**What they care about:**
+    *   **安全记录：** 强调军工血统带来的"零重大事故"记录。
 
-**1.Ultimate Cost-Effectiveness and Price Transparency:** Their primary motivation is to "cut out the middleman," believing that dealing directly with the factory yields the best price.
+    *   **长期服务：** 承诺长期的备件供应和技术支持，消除后顾之忧。
 
-**2.Control over Product Information:** They enjoy researching technical specifications and comparing product details across different brands, taking pride in making their own informed decisions.
+#### **8. 旧梯改造/更新业主 (Modernization & Retrofitting)**
 
-**3.Flexibility:** They want to decouple "product procurement" from "installation services," handling them separately to optimize costs at each stage.
+*   **深度画像：** 被旧电梯折磨的群体。通常预算有限，且住户意见难以统一。最怕施工扰民（噪音、灰尘）和长时间停梯（爬楼梯）。
 
-  - **10. 电梯维保/安装同行 (作为零部件采购方) / Elevator Maintenance/Installation Peers (as Component Buyers)**
+*   **深层痛点：**
 
-**他们是谁：** 市场上存在大量中小型电梯维保公司或安装队。他们可能没有自己的生产能力，或者在维修某些非自有品牌电梯时，需要采购核心部件（如控制柜、曳引机、门机系统等）。
+    *   **施工干扰：** 怕施工期太长，影响正常生活/办公。
 
-**他们在乎什么：** 他们将我们视为一个**B2B的零部件供应商**。他们在乎的是**零部件的兼容性、质量可靠性、供货速度和技术支持**。通过向他们销售高质量的核心部件，我们不仅能增加收入，还能将我们的技术标准渗透到更广泛的市场，成为他们眼中"可靠的供应链伙伴"。
+    *   **土建破坏：** 怕要砸墙、改井道，工程量浩大。
 
-**Who they are:** The market includes numerous small to medium-sized elevator maintenance companies or installation teams. They may lack their own manufacturing capabilities or need to purchase core components (like control cabinets, traction machines, door systems) when servicing non-proprietary elevator brands.
+    *   **兼容性：** 希望能保留导轨等旧部件以省钱。
 
-**What they care about:** They view us as a **B2B component supplier.** They care about **component compatibility, quality reliability, speed of delivery, and technical support.** By selling high-quality core components to them, we not only generate additional revenue but also extend our technical standards into the broader market, positioning ourselves as their "reliable supply chain partner."
+*   **方案侧重点：**
+
+    *   **最小干扰：** 推荐"无脚手架安装"或"模块化更新"方案，强调工期短。
+
+    *   **定制化改造：** 提供"保留旧导轨/对重"的经济型方案（需技术评估）。
+
+    *   **新旧对比：** 直观展示改造前后的能耗、噪音、速度对比，刺激决策。
+
+#### **9. 线上直采终端/DIY客户 (Online End-Users / DIY)**
+
+*   **深度画像：** 精明、多疑、爱钻研的个人买家。他们绕过当地代理商直接找工厂，就是为了省钱，但内心深处对跨国安装充满恐惧。
+
+*   **深层痛点：**
+
+    *   **信任危机：** 怕付了钱不发货，或者发的是垃圾。
+
+    *   **安装黑洞：** 怕货到了当地找不到人装，或者装不好。
+
+    *   **隐形消费：** 怕运费、关税等后续费用超支。
+
+*   **方案侧重点：**
+
+    *   **透明化：** 价格必须拆解得清清楚楚（FOB/CIF）。
+
+    *   **安全感：** 强推 **"成功套装"**（出厂视频验货 + 远程实时指导），证明即使没有专业背景也能搞定。
+
+    *   **客户见证：** 甩出同地区或同类型的成功案例照片。
+
+#### **10. 电梯维保/安装同行 (Peers - Component Buyers)**
+
+*   **深度画像：** 技术型买家。他们可能在修某台老旧的三菱或奥的斯电梯，急需一个兼容的控制柜或门机。他们对价格极其敏感，因为他们要赚差价。
+
+*   **深层痛点：**
+
+    *   **技术匹配：** 怕买回来的板子协议不通，装不上。
+
+    *   **发货速度：** 维修等不起，客户在催。
+
+*   **方案侧重点：**
+
+    *   **参数确认：** 直接上技术参数表和接口图纸，少说废话。
+
+    *   **通用性：** 强调我们的部件（如默纳克系统）具有极强的通用性和调试便利性。
+
+    *   **B2B价格：** 直接给到底价，不玩虚的，谋求长期复购。
 
 受众群体：高素养B2B客户，包括海外代理/经销商、开发商、业主、承包商、政府采购方、物业管理公司、建筑设计院及配件买家。各客户有着定价、项目合规、定制方案、长期服务、技术集成等多样化需求。
 
@@ -3283,106 +3444,203 @@ While the industry standard is 1-2 years, we provide an unprecedented **5-year w
 | 250kg | 0.4 m/s | 800x800x1000 | 800x1000 | 1500x1100 | 4000 | 1000 |
 | 300kg | 0.4 m/s | 900x900x1000 | 900x1000 | 1400x1200 | 4000 | 1000 |
 
-- Target customer types: 
+### 目标客户深度画像与方案定制策略 (Detailed Customer Personas & Proposal Strategy)
 
-  - **1. 地产开发商与总包方 / Real Estate Developers & General Contractors**
+**前置指令：** 在生成方案前，必须先根据上下文将客户归入以下某一类，并采用对应的"方案侧重点"进行内容构建。
 
-**他们是谁：** 这类客户是我们的业务基本盘，是新电梯项目最主要的采购方。他们负责开发住宅楼、写字楼、城市综合体等大型项目。
-**他们在乎什么：** 他们关注的是**项目整体成本效益、产品交付的及时性、以及供应商的工程配合能力**。我们的任务是确保电梯能作为项目的一个可靠环节，无缝对接地融入他们的建筑进度。
-**Who they are:** This is our core client base, the primary buyers for new elevator projects. They develop large-scale projects like residential towers, office buildings, and urban complexes.
-**What they care about:** They focus on **overall project cost-effectiveness, timely product delivery, and the supplier's engineering coordination capabilities.** Our job is to ensure our elevators are a reliable component of their project, seamlessly integrating into their construction schedule.
+#### **1. 地产开发商与总包方 (Real Estate Developers & General Contractors)**
 
-  - **2. 商业及公共设施业主 / Commercial & Public Facility Owners**
+*   **深度画像：** 资金密集型玩家。他们不仅买电梯，更是在买"楼盘卖点"和"交付进度"。他们通常面临资金回笼压力，害怕供应商掉链子导致无法通过验收（交房延期）。
 
-**他们是谁：** 指直接持有并运营购物中心、酒店、医院、机场、地铁站等物业的业主或管理方。
-**他们在乎什么：** 这类客户不仅采购新梯，更是**长期维保和老旧电梯改造**的关键客户。他们极度关注**电梯的运行稳定性、安全记录、乘客体验和长期运营成本 (TCO)**。我们的"终身管家服务"模式对他们有很强的吸引力。
-**Who they are:** This refers to the owners or operators who directly hold and manage properties like shopping malls, hotels, hospitals, airports, and subway stations.
-**What they care about:** They are not just buyers of new elevators but are also key clients for **long-term maintenance and modernization of old elevators.** They are extremely concerned with **operational stability, safety records, passenger experience, and the Total Cost of Ownership (TCO).** Our "lifelong concierge service" model is highly attractive to them.
+*   **深层痛点 (What keeps them up at night)：**
 
-  - **3. 战略情报伙伴 (商业经纪人与信息中介) / Strategic Intelligence Partners (Business Brokers & Information Intermediaries)**
+    *   **现金流压力：** 寻求更有利的付款方式。
 
-    **他们是谁 (Who they are):**
-    他们是"生意的中介"，是连接资产买家与卖家的专业中间人。典型代表包括：商业地产经纪人 (Commercial Real Estate Agents)、企业并购顾问 (M&A Advisors)、投资银行家、以及在特定行业内拥有广泛人脉的信息掮客。他们的核心业务是"促成交易"，我们的电梯是他们交易链条中的一个潜在变量。
+    *   **工期风险：** 电梯没装好，整栋楼没法验收，导致巨额违约金。
 
-    **他们在乎什么 (What they care about):**
-    1.  **交易成功率与速度 (Deal Velocity & Success Rate):** 这是他们的生命线。任何能扫除交易障碍（如老旧电梯）、加速流程的因素，他们都极度欢迎。
-    2.  **佣金与额外收入 (Commission & Ancillary Income):** 他们靠佣金为生。任何能为他们带来额外、合法收入的机会，都有吸引力。
-    3.  **资产投资回报 (Asset ROI):** 他们用财务语言思考。他们关心的是，"升级电梯"这项投入（CapEx），能为资产带来多大的价值提升（影响最终售价），投资回报（ROI）是否可观。
-    4.  **自身专业信誉 (Professional Credibility):** 向客户推荐可靠、专业的合作伙伴（如FUJICL），能提升他们作为顾问的价值和信誉。
+    *   **楼盘溢价：** 希望用看起来很贵的电梯（高配置装潢）来提升楼盘档次，好卖高价。
 
-    **我们的价值主张 (Our Value Proposition to Them):**
-    *   **"我们帮你加速交易":** "当你经手的资产因电梯老旧而成为交易障碍时，我们免费提供专业的评估报告和预算方案，帮你把'问题'变成'价值提升点'。"
-    *   **"我们帮你创造额外收入":** "我们提供标准化的推荐佣金协议，让你在促成主业的同时，轻松获得稳定、可观的额外收益。"
-    *   **"我们是你的专业后盾":** "与我们军工级制造商合作为你的信誉背书。你只需传递信息，所有复杂的技术评估和方案设计都由我们完成。"
+*   **方案侧重点 (Proposal Focus)：**
 
-    **核心行动准则 (The Rules of Engagement):**
-    1.  **直奔主题，展示合作模式：** 与他们沟通时，无需过多介绍产品细节。应迅速切入"商业合作模式"，清晰地展示我们如何能帮助他们"加速交易"和"创造收入"。
-    2.  **提供"傻瓜式"合作工具：** 为他们准备好标准化的《推荐合作协议》、《信息登记表》和简明扼要的《价值主张介绍PPT》。让他们可以毫不费力地将机会转介给我们。
-    3.  **以财务语言沟通：** 用ROI、CapEx、资产增值等他们熟悉的词汇来包装我们的电梯改造方案，让他们能轻松地转述给他们的客户。
+    *   **视觉包装：** 重点展示轿厢装潢的豪华感（如"镜面蚀刻"、"大理石拼花"），强调有助于楼盘销售。
 
-    **★ VIP层级识别与升级策略：#10+ 战略联盟伙伴 (The Strategic Alliance Partner)**
-    *   **识别信号 (Identification Signals):** 当你发现一个"战略情报伙伴"远不止于信息中介时——例如，他们是在中国深耕多年的"中国通" (China Hand)，在某个行业拥有极高的个人声望，其核心资产是强大的关系网 (Guanxi) 而非单一的项目信息——你必须立即将其标记为 **#10+ VIP**。
-    *   **核心区别 (Core Difference):** 普通#10号伙伴追求的是**"交易 (Transaction)"**；而#10+ VIP伙伴寻求的是**"联盟 (Alliance)"**。
-    *   **行动升级 (Action Upgrade):** 一旦识别出#10+ VIP，必须**立即将沟通策略从"交易模式"切换到"联盟模式"**：
-        *   **禁止以佣金开场：** 关系是基础，利益是结果。
-        *   **建立个人链接：** 先做朋友，从喝咖啡、聊市场开始。
-        *   **先给予，再索取：** 主动为他们提供价值，问他们有什么需要你帮忙的。
-        *   **寻求长期互惠：** 探讨更灵活、更深度的合作，将他们发展为我们在本地市场的"战略盟友"。
+    *   **项目管理：** 强调"准时交付记录"和"工程配合经验"，承诺不拖后腿。
 
-  - **4. 海外代理商与合作伙伴 / Overseas Agents & Partners**
+    *   **成本结构：** 突出"同等配置下的价格优势"，帮他们省预算。
 
-**他们是谁：** 他们是我们在全球近80个国家的"商业分身"。他们是懂当地市场、有人脉、有服务能力的本地企业。
-**他们在乎什么：** 他们不是最终用户，而是我们的渠道。他们在乎的是**产品的性价比、技术的可靠性、总部的支持力度（培训、备件、品牌）以及合作模式能否帮助他们在当地赚钱**。我们卖给他们的，其实是一整套"电梯生意解决方案"。
-**Who they are:** They are our "business avatars" in nearly 80 countries worldwide. They are local enterprises that understand the market, have the network, and possess service capabilities.
-**What they care about:** They are our channel, not the end-user. They care about the **product's price-performance ratio, technological reliability, the level of support from headquarters (training, spare parts, branding), and whether the partnership model can help them be profitable locally.** What we really sell them is a complete "elevator business solution."
+#### **2. 商业及公共设施业主 (Commercial & Public Facility Owners)**
 
-  - **5. 建筑设计师与顾问公司 / Architects & Consulting Firms**
+*   **深度画像：** 长期持有资产的运营者（如酒店、商场、医院）。电梯是他们的生产工具，停运一小时=损失真金白银。他们懂行，甚至有专门的工程部。
 
-**他们是谁：** 他们是项目中的"关键决策影响者"。他们不直接付款，但他们在设计图纸上指定使用哪个品牌和型号的电梯。
-**他们在乎什么：** 他们关注**产品的技术参数、美学设计、以及能否满足特殊的建筑需求**。我们强大的"非标定制"能力是打动他们的核心武器，尤其是在地标性建筑或高端项目中。
-**Who they are:** They are the "key decision influencers" in a project. They don't pay directly, but they specify which brand and model of elevator to use in the architectural plans.
-**What they care about:** They focus on **technical specifications, aesthetic design, and the ability to meet unique architectural requirements.** Our strong "non-standard customization" capability is our core weapon for impressing them, especially in landmark or high-end projects.
+*   **深层痛点：**
 
-  - **6. 工业及特殊项目客户 / Industrial & Special Project Clients**
+    *   **投诉率：** 乘客被困或电梯异响会直接毁掉酒店/商场的口碑。
 
-**他们是谁：** 包括需要大载重货梯的工厂、仓储中心，以及需要安装私家电梯的别墅业主等。
-**他们在乎什么：** 这类客户的需求非常具体和功能导向。工业客户需要的是**皮实、耐用、安全的重型运载工具**；别墅业主则追求**静音、舒适、与家居风格融为一体**。对他们而言，我们是解决特定场景下垂直运输难题的专家。
-**Who they are:** This includes factories and warehouses needing heavy-duty freight elevators, as well as villa owners requiring private home elevators.
-**What they care about:** Their needs are highly specific and function-driven. Industrial clients need **robust, durable, and safe heavy-lifting equipment.** Villa owners seek **quiet, comfortable elevators that blend with their home decor.** For them, we are specialists who solve vertical transport challenges in unique scenarios.
+    *   **能源账单：** 商业用电贵，关注节能指标。
 
-  - **7. 政府及公共采购部门 / Government & Public Procurement Departments**
+    *   **TCO (总持有成本)：** 极其反感频繁修车、换件带来的不可控支出。
 
-**他们是谁：** 各级政府机构、公立学校、公立医院、以及负责保障性住房、城市更新项目的官方实体。他们通过正式的招投标流程进行采购。
-**他们在乎什么：** 这类客户对**预算的合规性、流程的透明度、以及供应商的资质和信誉**有极高要求。项目决策周期长，但一旦中标，通常意味着稳定的长期合作。他们看重的是**产品的长期耐用性和低故障率**，以确保公共服务的稳定和财政支出的效益最大化。
-**Who they are:** Government agencies at various levels, public schools, public hospitals, and official entities responsible for affordable housing or urban renewal projects. They procure through formal bidding and tendering processes.
-**What they care about:** This client type places extreme importance on **budget compliance, process transparency, and the supplier's qualifications and reputation.** While the decision-making cycle can be long, winning a bid often leads to a stable, long-term partnership. They value **product durability and low failure rates** to ensure the stability of public services and maximize the return on public expenditure.
+*   **方案侧重点：**
 
-  - **8. 既有建筑业主及物业公司 (旧梯改造更新) / Existing Building Owners & Property Management Companies (for Modernization & Retrofitting)**
+    *   **运营数据：** 列出能耗数据，计算每年能省多少电费。
 
-**他们是谁：** 拥有大量老旧住宅楼、写字楼的物业管理公司或业主委员会。这些建筑的电梯面临老化、能耗高、不符合新安全标准等问题。
-**他们在乎什么：** 他们的核心需求是**"升级"而非"新建"**。他们关注的是：**如何在有限的预算内提升电梯的安全性、节能性和舒适度；施工方案能否尽量减少对楼内居民或用户的干扰；改造后的电梯能否与现有楼宇管理系统兼容**。这是一个巨大的存量市场。
-**Who they are:** Property management companies or homeowners' associations that manage older residential buildings or office towers. The elevators in these buildings face issues like aging, high energy consumption, or non-compliance with new safety standards.
-**What they care about:** Their core need is **"upgrading," not "new construction."** They focus on: **how to improve elevator safety, energy efficiency, and comfort within a limited budget; whether the installation plan can minimize disruption to residents or tenants; and if the modernized elevator can be integrated with the existing building management system.** This represents a massive existing market (stock market).
+    *   **稳定性承诺：** 必须把 **"5年核心部件质保"** 放在第一页，强调"前5年几乎零维修成本"。
 
-  - **9. 线上直采的终端客户 (DIY项目管理者) / Online Direct-Purchase End-Customers (DIY Project Managers)**
+    *   **智能监控：** 推荐物联网(IoT)远程监控功能，满足其"掌控感"。
 
-**他们是谁：** 他们是信息获取能力和自主学习能力非常强的终端用户，典型代表就是您提到的想装别墅电梯的个人业主，也包括一些需要为自己小型工厂或仓库安装货梯的小企业主。他们通过搜索引擎、B2B平台（如阿里巴巴）、社交媒体（如抖音、小红书）直接找到我们工厂。
-**他们在乎什么：**
-**1.极致的性价比与价格透明：** 他们的核心驱动力是"剔除中间商差价"，坚信直接与工厂交易能获得最低价格。
-**2.产品信息的掌控权：** 他们乐于自己研究技术参数、对比不同品牌的产品细节，享受自己做决策的过程。
-**3.灵活性：** 他们希望将"产品采购"和"安装服务"解耦，分开处理，以寻求每个环节的最优成本。
-**Who they are:** These are tech-savvy and highly proactive end-users. The classic example is the villa owner you mentioned, but it also includes small business owners needing a freight elevator for their own small factory or warehouse. They find us directly through search engines, B2B platforms (like Alibaba), or social media (like TikTok).
-**What they care about:**
-**1.Ultimate Cost-Effectiveness and Price Transparency:** Their primary motivation is to "cut out the middleman," believing that dealing directly with the factory yields the best price.
-**2.Control over Product Information:** They enjoy researching technical specifications and comparing product details across different brands, taking pride in making their own informed decisions.
-**3.Flexibility:** They want to decouple "product procurement" from "installation services," handling them separately to optimize costs at each stage.
+#### **3. 战略情报伙伴/中介 (Strategic Brokers & Intermediaries)**
 
-  - **10. 电梯维保/安装同行 (作为零部件采购方) / Elevator Maintenance/Installation Peers (as Component Buyers)**
+*   **深度画像：** 靠信息差和人脉赚钱的中间人。他们通常不懂电梯技术，很怕在客户面前露怯。他们需要的是一个"懂事的军火库"——我们提供弹药，他们负责开枪。
 
-**他们是谁：** 市场上存在大量中小型电梯维保公司或安装队。他们可能没有自己的生产能力，或者在维修某些非自有品牌电梯时，需要采购核心部件（如控制柜、曳引机、门机系统等）。
-**他们在乎什么：** 他们将我们视为一个**B2B的零部件供应商**。他们在乎的是**零部件的兼容性、质量可靠性、供货速度和技术支持**。通过向他们销售高质量的核心部件，我们不仅能增加收入，还能将我们的技术标准渗透到更广泛的市场，成为他们眼中"可靠的供应链伙伴"。
-**Who they are:** The market includes numerous small to medium-sized elevator maintenance companies or installation teams. They may lack their own manufacturing capabilities or need to purchase core components (like control cabinets, traction machines, door systems) when servicing non-proprietary elevator brands.
-**What they care about:** They view us as a **B2B component supplier.** They care about **component compatibility, quality reliability, speed of delivery, and technical support.** By selling high-quality core components to them, we not only generate additional revenue but also extend our technical standards into the broader market, positioning ourselves as their "reliable supply chain partner."
+*   **深层痛点：**
+
+    *   **信誉风险：** 推荐的厂家如果烂尾，他在圈子里就混不下去了。
+
+    *   **沟通成本：** 讨厌复杂的表格，想要能直接转发给客户的"傻瓜式"精美资料。
+
+    *   **利益安全：** 担心厂家跳过他直接联系客户（切单）。
+
+*   **方案侧重点：**
+
+    *   **工具化资料：** 提供去品牌化（或可加他Logo）的精美PPT和ROI分析表。
+
+    *   **专业背书：** 强调我们的军工背景和出口近80国的资历，为他的推荐撑腰。
+
+    *   **佣金保护：** 在沟通中明确（或暗示）对合作伙伴利益的保护机制。
+
+#### **4. 海外代理商与合作伙伴 (Overseas Agents & Distributors)**
+
+*   **深度画像：** 我们的利益共同体。他们在当地不仅要卖梯，还要修梯。他们最怕两件事：一是产品质量差导致他们天天被客户骂；二是厂家支持不够，遇到技术难题没人管。
+
+*   **深层痛点：**
+
+    *   **安装难度：** 怕产品设计反人类，导致安装工时过长，吞噬利润。
+
+    *   **备件供应：** 怕坏了配件要等一个月，被终端客户索赔。
+
+    *   **价格保护：** 痛恨厂家在同一地区发展多个代理，搞价格战。
+
+*   **方案侧重点：**
+
+    *   **易安装性：** 强调"工厂预调试"和"乐高式安装说明"，能帮他们省人工费。
+
+    *   **赋能体系：** 详细列出"赠送随机备件包"、"技术培训计划"和"7x24远程支持"。
+
+    *   **利润空间：** 给出阶梯式报价，展示由于我们的低返修率带来的隐形利润。
+
+#### **5. 建筑设计师与顾问 (Architects & Consultants)**
+
+*   **深度画像：** 完美主义者。他们只关心电梯能不能塞进他们设计的奇葩井道里，以及装潢能不能匹配建筑风格。他们对价格不敏感（因为不是他们付钱），但对参数极其挑剔。
+
+*   **深层痛点：**
+
+    *   **设计受限：** 讨厌标准品，讨厌厂家说"这个尺寸做不了"。
+
+    *   **图纸配合：** 需要厂家能快速提供CAD/BIM图纸，方便他们以此为基础做设计。
+
+*   **方案侧重点：**
+
+    *   **极致非标：** 不谈性价比，只谈"井道利用率最大化"和"定制自由度"。
+
+    *   **材质美学：** 使用设计语言（如"拉丝质感"、"光影效果"）描述装潢，而非工业参数。
+
+    *   **图纸服务：** 主动承诺提供全套土建配合图纸。
+
+#### **6. 工业及特殊项目客户 (Industrial & Villa Projects)**
+
+*   **深度画像 (分两类)：**
+
+    *   **工厂主：** 实干家。担心叉车撞坏门、灰尘导致故障。只求皮实。
+
+    *   **别墅业主：** 为家人买单。担心老人小孩安全、运行噪音吵到休息、电梯太丑破坏豪宅装修。
+
+*   **深层痛点：**
+
+    *   *工厂：* 停工损失、暴力使用下的耐用性。
+
+    *   *别墅：* 安全（困人）、噪音、颜值。
+
+*   **方案侧重点：**
+
+    *   *工厂梯：* 强调"加厚钢板"、"防撞护栏"、"重载电机"、"防尘等级"。
+
+    *   *别墅梯：* 强调"静音接触器"、"停电自动平层(ARD)"、"专属定制装潢"、"不仅是电梯，更是家居艺术品"。
+
+#### **7. 政府及公共采购部门 (Government & Public Procurement)**
+
+*   **深度画像：** 风险厌恶者。他们不追求最新技术，但追求"绝对合规"和"政治正确"。决策流程长，看重程序正义。
+
+*   **深层痛点：**
+
+    *   **合规风险：** 害怕审计出问题，害怕因产品故障引发公共舆论危机。
+
+    *   **资质门槛：** 必须满足所有硬性指标认证。
+
+*   **方案侧重点：**
+
+    *   **资质堆砌：** 在方案最显眼处罗列ISO认证、CE认证、特种设备许可证。
+
+    *   **安全记录：** 强调军工血统带来的"零重大事故"记录。
+
+    *   **长期服务：** 承诺长期的备件供应和技术支持，消除后顾之忧。
+
+#### **8. 旧梯改造/更新业主 (Modernization & Retrofitting)**
+
+*   **深度画像：** 被旧电梯折磨的群体。通常预算有限，且住户意见难以统一。最怕施工扰民（噪音、灰尘）和长时间停梯（爬楼梯）。
+
+*   **深层痛点：**
+
+    *   **施工干扰：** 怕施工期太长，影响正常生活/办公。
+
+    *   **土建破坏：** 怕要砸墙、改井道，工程量浩大。
+
+    *   **兼容性：** 希望能保留导轨等旧部件以省钱。
+
+*   **方案侧重点：**
+
+    *   **最小干扰：** 推荐"无脚手架安装"或"模块化更新"方案，强调工期短。
+
+    *   **定制化改造：** 提供"保留旧导轨/对重"的经济型方案（需技术评估）。
+
+    *   **新旧对比：** 直观展示改造前后的能耗、噪音、速度对比，刺激决策。
+
+#### **9. 线上直采终端/DIY客户 (Online End-Users / DIY)**
+
+*   **深度画像：** 精明、多疑、爱钻研的个人买家。他们绕过当地代理商直接找工厂，就是为了省钱，但内心深处对跨国安装充满恐惧。
+
+*   **深层痛点：**
+
+    *   **信任危机：** 怕付了钱不发货，或者发的是垃圾。
+
+    *   **安装黑洞：** 怕货到了当地找不到人装，或者装不好。
+
+    *   **隐形消费：** 怕运费、关税等后续费用超支。
+
+*   **方案侧重点：**
+
+    *   **透明化：** 价格必须拆解得清清楚楚（FOB/CIF）。
+
+    *   **安全感：** 强推 **"成功套装"**（出厂视频验货 + 远程实时指导），证明即使没有专业背景也能搞定。
+
+    *   **客户见证：** 甩出同地区或同类型的成功案例照片。
+
+#### **10. 电梯维保/安装同行 (Peers - Component Buyers)**
+
+*   **深度画像：** 技术型买家。他们可能在修某台老旧的三菱或奥的斯电梯，急需一个兼容的控制柜或门机。他们对价格极其敏感，因为他们要赚差价。
+
+*   **深层痛点：**
+
+    *   **技术匹配：** 怕买回来的板子协议不通，装不上。
+
+    *   **发货速度：** 维修等不起，客户在催。
+
+*   **方案侧重点：**
+
+    *   **参数确认：** 直接上技术参数表和接口图纸，少说废话。
+
+    *   **通用性：** 强调我们的部件（如默纳克系统）具有极强的通用性和调试便利性。
+
+    *   **B2B价格：** 直接给到底价，不玩虚的，谋求长期复购。
 
 受众群体：高素养B2B客户，包括海外代理/经销商、开发商、业主、承包商、政府采购方、物业管理公司、建筑设计院及配件买家。各客户有着定价、项目合规、定制方案、长期服务、技术集成等多样化需求。
 
