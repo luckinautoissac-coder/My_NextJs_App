@@ -204,7 +204,25 @@ export function MessageItem({ message }: MessageItemProps) {
   
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(message.content)
+      // 获取要复制的内容
+      let contentToCopy = message.content
+      
+      // 如果是多模型回复，复制当前选中的模型回复
+      if (message.modelResponses && message.modelResponses.length > 0 && message.selectedModelId) {
+        const selectedResponse = message.modelResponses.find(
+          r => r.modelId === message.selectedModelId
+        )
+        if (selectedResponse) {
+          contentToCopy = selectedResponse.content
+        }
+      }
+      
+      // 确保内容是字符串
+      const textContent = typeof contentToCopy === 'string' 
+        ? contentToCopy 
+        : String(contentToCopy)
+      
+      await navigator.clipboard.writeText(textContent)
       toast.success('消息已复制到剪贴板')
     } catch (error) {
       toast.error('复制失败')

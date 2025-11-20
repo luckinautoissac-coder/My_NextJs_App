@@ -17,7 +17,14 @@ function CodeBlock({ children, className, ...props }: any) {
   
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(children)
+      // 确保 children 是字符串类型
+      const textContent = typeof children === 'string' 
+        ? children 
+        : Array.isArray(children)
+          ? children.join('')
+          : String(children)
+      
+      await navigator.clipboard.writeText(textContent)
       setCopied(true)
       toast.success('代码已复制到剪贴板')
       setTimeout(() => setCopied(false), 2000)
