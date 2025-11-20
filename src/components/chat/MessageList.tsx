@@ -14,7 +14,7 @@ export function MessageList() {
   const [isClient, setIsClient] = useState(false)
   
   const messages = currentTopicId ? getMessagesByTopic(currentTopicId) : []
-  const isLoading = isTopicLoading(currentTopicId) // 获取当前话题的加载状态
+  const isLoading = isTopicLoading(currentTopicId ?? undefined) // 获取当前话题的加载状态
 
   useEffect(() => {
     setIsClient(true)

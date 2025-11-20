@@ -55,7 +55,7 @@ export function ChatInput() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const currentAgent = agents.find(agent => agent.id === currentAgentId)
-  const isLoading = isTopicLoading(currentTopicId) // 获取当前话题的加载状态
+  const isLoading = isTopicLoading(currentTopicId ?? undefined) // 获取当前话题的加载状态
   
   // 获取选中的知识库信息
   const selectedKnowledgeBases = selectedKnowledgeBaseIds
@@ -486,7 +486,7 @@ export function ChatInput() {
       topicId: currentTopicId
     })
 
-    setLoading(true, currentTopicId)
+    setLoading(true, currentTopicId ?? undefined)
 
     // 获取模型名称
     const modelInfo = ALL_MODELS.find(m => m.id === selectedModel)
@@ -551,7 +551,7 @@ export function ChatInput() {
         thinkingInfo: undefined
       })
     } finally {
-      setLoading(false, currentTopicId)
+      setLoading(false, currentTopicId ?? undefined)
     }
   }
 
