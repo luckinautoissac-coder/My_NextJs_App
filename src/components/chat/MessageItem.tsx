@@ -189,7 +189,6 @@ export function MessageItem({ message }: MessageItemProps) {
   }
 
   const isUser = message.role === 'user'
-  const [isHovered, setIsHovered] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState(message.content)
   const [isRegenerating, setIsRegenerating] = useState(false)
@@ -239,7 +238,11 @@ export function MessageItem({ message }: MessageItemProps) {
     }
   }
 
-  const handleRegenerate = async () => {
+  const handleRegenerate = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     if (!currentAgent || !currentTopicId || !apiKey || isRegenerating) return
     
     setIsRegenerating(true)
@@ -327,11 +330,19 @@ export function MessageItem({ message }: MessageItemProps) {
     }
   }
 
-  const handleEdit = () => {
+  const handleEdit = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     setIsEditing(true)
   }
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     if (editContent.trim() !== message.content) {
       updateMessage(message.id, { content: editContent.trim() })
       toast.success('消息已更新')
@@ -339,19 +350,31 @@ export function MessageItem({ message }: MessageItemProps) {
     setIsEditing(false)
   }
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     setEditContent(message.content)
     setIsEditing(false)
   }
 
-  const handleDelete = () => {
+  const handleDelete = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     if (confirm('确定要删除这条消息吗？')) {
       deleteMessage(message.id)
       toast.success('消息已删除')
     }
   }
 
-  const handleSwitchModel = async (modelId: string, modelName: string) => {
+  const handleSwitchModel = async (modelId: string, modelName: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     if (!currentAgent || !currentTopicId || !apiKey) return
 
     // 检查是否已经有这个模型的回复
@@ -426,7 +449,11 @@ export function MessageItem({ message }: MessageItemProps) {
     }
   }
 
-  const handleBranch = () => {
+  const handleBranch = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     if (!currentTopicId || !currentAgent) return
     
     // 创建分支：复制当前对话到新话题
@@ -461,7 +488,11 @@ export function MessageItem({ message }: MessageItemProps) {
     toast.success(`已创建包含${branchMessages.length}条消息的分支话题，并切换到新话题`)
   }
 
-  const handleMultiSelect = () => {
+  const handleMultiSelect = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     toast.info('多选功能开发中，需要实现选择状态管理')
   }
 
@@ -478,8 +509,6 @@ export function MessageItem({ message }: MessageItemProps) {
         'group flex w-full gap-3 hover:bg-gray-50/50 transition-colors',
         isUser ? 'justify-end' : 'justify-start'
       )}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {!isUser && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
@@ -523,10 +552,10 @@ export function MessageItem({ message }: MessageItemProps) {
                 autoFocus
               />
               <div className="flex gap-2">
-                <Button size="sm" onClick={handleSaveEdit} className="h-6 px-2 text-xs">
+                <Button size="sm" onClick={(e) => handleSaveEdit(e)} className="h-6 px-2 text-xs">
                   保存
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleCancelEdit} className="h-6 px-2 text-xs">
+                <Button size="sm" variant="outline" onClick={(e) => handleCancelEdit(e)} className="h-6 px-2 text-xs">
                   取消
                 </Button>
               </div>
@@ -585,7 +614,7 @@ export function MessageItem({ message }: MessageItemProps) {
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 hover:bg-white/20"
-              onClick={handleRegenerate}
+              onClick={(e) => handleRegenerate(e)}
               title="重新生成"
             >
               <RefreshCw className="h-3 w-3" />
@@ -594,7 +623,7 @@ export function MessageItem({ message }: MessageItemProps) {
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 hover:bg-white/20"
-              onClick={handleEdit}
+              onClick={(e) => handleEdit(e)}
               title="编辑"
             >
               <Edit className="h-3 w-3" />
@@ -612,7 +641,7 @@ export function MessageItem({ message }: MessageItemProps) {
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 hover:bg-white/20"
-              onClick={handleDelete}
+              onClick={(e) => handleDelete(e)}
               title="删除"
             >
               <Trash2 className="h-3 w-3" />
@@ -636,7 +665,7 @@ export function MessageItem({ message }: MessageItemProps) {
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 hover:bg-gray-200"
-              onClick={handleRegenerate}
+              onClick={(e) => handleRegenerate(e)}
               disabled={isRegenerating}
               title="重新生成"
             >
@@ -650,7 +679,7 @@ export function MessageItem({ message }: MessageItemProps) {
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 hover:bg-gray-200"
-              onClick={handleDelete}
+              onClick={(e) => handleDelete(e)}
               title="删除"
             >
               <Trash2 className="h-3 w-3" />
@@ -669,15 +698,15 @@ export function MessageItem({ message }: MessageItemProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleEdit}>
+                <DropdownMenuItem onClick={(e) => handleEdit(e)}>
                   <Edit className="h-4 w-4 mr-2" />
                   编辑
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleBranch}>
+                <DropdownMenuItem onClick={(e) => handleBranch(e)}>
                   <GitBranch className="h-4 w-4 mr-2" />
                   分支
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleMultiSelect}>
+                <DropdownMenuItem onClick={(e) => handleMultiSelect(e)}>
                   <CheckSquare className="h-4 w-4 mr-2" />
                   多选
                 </DropdownMenuItem>
