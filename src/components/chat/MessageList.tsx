@@ -13,8 +13,8 @@ export function MessageList() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isClient, setIsClient] = useState(false)
-  const isAtBottomRef = useRef(true)
-  const lastMessageCountRef = useRef(0)
+  const prevMessageCountRef = useRef(0)
+  const prevTopicIdRef = useRef<string | null>(null)
   
   const messages = currentTopicId ? getMessagesByTopic(currentTopicId) : []
   const isLoading = isTopicLoading(currentTopicId ?? undefined)
@@ -23,52 +23,44 @@ export function MessageList() {
     setIsClient(true)
   }, [])
 
-  // 保存滚动位置并检测是否在底部
-  const handleScroll = () => {
-    const container = containerRef.current
-    if (!container) return
-    
-    const { scrollTop, scrollHeight, clientHeight } = container
-    const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 50
-    isAtBottomRef.current = isAtBottom
-  }
-
-  // 滚动到底部（仅在需要时）
+  // 滚动到底部
   const scrollToBottom = () => {
-    const container = containerRef.current
-    if (!container) return
-    
-    // 使用requestAnimationFrame确保DOM已更新
-    requestAnimationFrame(() => {
-      container.scrollTop = container.scrollHeight
-    })
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
-  // 只在消息数量增加时才滚动
+  // 只在真正需要时才自动滚动
   useEffect(() => {
-    const messagesLength = messages.length
-    
-    // 如果消息数量增加（有新消息）
-    if (messagesLength > lastMessageCountRef.current) {
-      // 只有当用户之前在底部时才自动滚动
-      if (isAtBottomRef.current) {
-        scrollToBottom()
-      }
-      // 如果不在底部，保持原位置不动
-    }
-    
-    lastMessageCountRef.current = messagesLength
-  }, [messages.length])
-  
-  // 监听话题切换，重置状态
-  useEffect(() => {
-    lastMessageCountRef.current = messages.length
-    isAtBottomRef.current = true
-    // 话题切换时滚动到底部
-    if (messages.length > 0) {
+    // 话题切换了
+    if (currentTopicId !== prevTopicIdRef.current) {
+      prevTopicIdRef.current = currentTopicId
+      prevMessageCountRef.current = messages.length
+      // 话题切换时滚动到底部
       setTimeout(() => scrollToBottom(), 100)
+      return
     }
-  }, [currentTopicId])
+
+    // 消息数量增加了（有新消息）
+    if (messages.length > prevMessageCountRef.current) {
+      prevMessageCountRef.current = messages.length
+      
+      // 检查用户是否在底部
+      const container = containerRef.current
+      if (container) {
+        const { scrollTop, scrollHeight, clientHeight } = container
+        const isNearBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 100
+        
+        // 只有当用户在底部附近时才自动滚动
+        if (isNearBottom) {
+          setTimeout(() => scrollToBottom(), 100)
+        }
+      }
+    } else {
+      // 消息数量没变，更新计数但不滚动
+      prevMessageCountRef.current = messages.length
+    }
+  }, [messages.length, currentTopicId])
 
   if (!isClient || !currentTopicId || (messages.length === 0 && !isLoading)) {
     return (
@@ -91,7 +83,6 @@ export function MessageList() {
       <div 
         ref={containerRef}
         className="flex-1 overflow-y-auto px-2 min-w-0"
-        onScroll={handleScroll}
       >
         <div className="space-y-4 py-4 min-w-0">
           {messages.map((message) => (
