@@ -13,7 +13,7 @@ export function MessageList() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isClient, setIsClient] = useState(false)
-  const prevMessageCountRef = useRef(0)
+  const lastMessageIdRef = useRef<string | null>(null)
   const prevTopicIdRef = useRef<string | null>(null)
   
   const messages = currentTopicId ? getMessagesByTopic(currentTopicId) : []
@@ -23,44 +23,51 @@ export function MessageList() {
     setIsClient(true)
   }, [])
 
-  // 滚动到底部
+  // 滚动到底部的函数
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
-  // 只在真正需要时才自动滚动
+  // 只在话题切换时自动滚动
   useEffect(() => {
-    // 话题切换了
     if (currentTopicId !== prevTopicIdRef.current) {
       prevTopicIdRef.current = currentTopicId
-      prevMessageCountRef.current = messages.length
+      // 重置最后消息ID
+      if (messages.length > 0) {
+        lastMessageIdRef.current = messages[messages.length - 1].id
+      }
       // 话题切换时滚动到底部
       setTimeout(() => scrollToBottom(), 100)
       return
     }
 
-    // 消息数量增加了（有新消息）
-    if (messages.length > prevMessageCountRef.current) {
-      prevMessageCountRef.current = messages.length
+    // 检查是否有真正的新消息（通过ID判断）
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1]
       
-      // 检查用户是否在底部
-      const container = containerRef.current
-      if (container) {
-        const { scrollTop, scrollHeight, clientHeight } = container
-        const isNearBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 100
+      // 如果最后一条消息的ID变了，说明有新消息
+      if (lastMessage.id !== lastMessageIdRef.current) {
+        const wasAtBottom = checkIfAtBottom()
+        lastMessageIdRef.current = lastMessage.id
         
-        // 只有当用户在底部附近时才自动滚动
-        if (isNearBottom) {
+        // 只有当用户本来就在底部时才自动滚动
+        if (wasAtBottom) {
           setTimeout(() => scrollToBottom(), 100)
         }
       }
-    } else {
-      // 消息数量没变，更新计数但不滚动
-      prevMessageCountRef.current = messages.length
     }
-  }, [messages.length, currentTopicId])
+  }, [messages, currentTopicId])
+
+  // 检查用户是否在底部
+  const checkIfAtBottom = (): boolean => {
+    const container = containerRef.current
+    if (!container) return true
+    
+    const { scrollTop, scrollHeight, clientHeight } = container
+    return Math.abs(scrollHeight - scrollTop - clientHeight) < 150
+  }
 
   if (!isClient || !currentTopicId || (messages.length === 0 && !isLoading)) {
     return (
