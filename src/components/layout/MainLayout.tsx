@@ -49,17 +49,16 @@ export function MainLayout() {
 
       {/* Main Chat Area */}
       <div className="flex flex-1 flex-col chat-area">
-        {/* Chat Area */}
-        <div className="flex flex-1 flex-col overflow-hidden min-w-0 relative">
-          {/* 模型选择 - 左上角浮动 */}
-          <div className="absolute top-4 left-4 z-20 flex items-center gap-3 bg-white rounded-lg shadow-md px-3 py-2 border border-gray-200">
-            {/* 模型选择下拉框 */}
+        {/* Fixed Header - 顶部冻结栏 */}
+        <div className="flex items-center justify-between border-b bg-white px-4 py-2.5 relative z-10 flex-shrink-0">
+          {/* 左侧：模型选择 */}
+          <div className="flex items-center gap-3">
             <Select 
               value={selectedModel} 
               onValueChange={handleModelChange}
               disabled={enabledModelOptions.length === 0}
             >
-              <SelectTrigger className="w-64 h-8 text-sm border-gray-300">
+              <SelectTrigger className="w-64 h-9 text-sm">
                 <SelectValue placeholder="选择模型" />
               </SelectTrigger>
               <SelectContent>
@@ -102,6 +101,15 @@ export function MainLayout() {
             )}
           </div>
 
+          {/* 中间：预留空间给Toast */}
+          <div className="flex-1" />
+
+          {/* 右侧：预留空间 */}
+          <div className="w-64" />
+        </div>
+
+        {/* Chat Area - 聊天区域 */}
+        <div className="flex flex-1 flex-col overflow-hidden min-w-0">
           <MessageList />
           <ChatInput />
         </div>

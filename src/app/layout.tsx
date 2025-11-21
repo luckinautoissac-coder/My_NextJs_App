@@ -16,7 +16,12 @@ export default function RootLayout({
 		<html lang="zh-CN">
 			<body className="antialiased" suppressHydrationWarning={true}>
 				{children}
-				<Toaster position="top-center" richColors />
+				<Toaster 
+					position="top-center" 
+					richColors 
+					closeButton
+					duration={3000}
+				/>
 			</body>
 		</html>
 	);
