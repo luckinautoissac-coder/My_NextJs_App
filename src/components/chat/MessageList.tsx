@@ -13,73 +13,62 @@ export function MessageList() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isClient, setIsClient] = useState(false)
-  const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
-  const prevMessagesLengthRef = useRef(0)
-  const isUserScrollingRef = useRef(false)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const isAtBottomRef = useRef(true)
+  const lastMessageCountRef = useRef(0)
   
   const messages = currentTopicId ? getMessagesByTopic(currentTopicId) : []
-  const isLoading = isTopicLoading(currentTopicId ?? undefined) // 获取当前话题的加载状态
+  const isLoading = isTopicLoading(currentTopicId ?? undefined)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  const scrollToBottom = () => {
-    // 只有在没有用户交互的情况下才滚动
-    if (!isUserScrollingRef.current) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
-  // 检测用户是否手动滚动
+  // 保存滚动位置并检测是否在底部
   const handleScroll = () => {
     const container = containerRef.current
     if (!container) return
     
-    // 标记用户正在滚动
-    isUserScrollingRef.current = true
-    
-    // 清除之前的定时器
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current)
-    }
-    
-    // 1秒后重置用户滚动标记
-    scrollTimeoutRef.current = setTimeout(() => {
-      isUserScrollingRef.current = false
-    }, 1000)
-    
     const { scrollTop, scrollHeight, clientHeight } = container
     const isAtBottom = Math.abs(scrollHeight - scrollTop - clientHeight) < 50
-    
-    // 如果用户滚动到底部，启用自动滚动；否则禁用
-    setShouldAutoScroll(isAtBottom)
+    isAtBottomRef.current = isAtBottom
   }
 
-  // 只在消息数量真正增加时才自动滚动
+  // 滚动到底部（仅在需要时）
+  const scrollToBottom = () => {
+    const container = containerRef.current
+    if (!container) return
+    
+    // 使用requestAnimationFrame确保DOM已更新
+    requestAnimationFrame(() => {
+      container.scrollTop = container.scrollHeight
+    })
+  }
+
+  // 只在消息数量增加时才滚动
   useEffect(() => {
     const messagesLength = messages.length
     
-    // 只有在消息数量增加时才滚动（新消息到来）
-    if (shouldAutoScroll && messagesLength > prevMessagesLengthRef.current) {
-      // 短暂延迟确保DOM已更新
-      setTimeout(() => {
+    // 如果消息数量增加（有新消息）
+    if (messagesLength > lastMessageCountRef.current) {
+      // 只有当用户之前在底部时才自动滚动
+      if (isAtBottomRef.current) {
         scrollToBottom()
-      }, 100)
+      }
+      // 如果不在底部，保持原位置不动
     }
     
-    prevMessagesLengthRef.current = messagesLength
-  }, [messages.length, shouldAutoScroll])
+    lastMessageCountRef.current = messagesLength
+  }, [messages.length])
   
-  // 清理定时器
+  // 监听话题切换，重置状态
   useEffect(() => {
-    return () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
+    lastMessageCountRef.current = messages.length
+    isAtBottomRef.current = true
+    // 话题切换时滚动到底部
+    if (messages.length > 0) {
+      setTimeout(() => scrollToBottom(), 100)
     }
-  }, [])
+  }, [currentTopicId])
 
   if (!isClient || !currentTopicId || (messages.length === 0 && !isLoading)) {
     return (
