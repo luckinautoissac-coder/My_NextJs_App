@@ -14,7 +14,11 @@ function CodeBlock({ children, className, ...props }: any) {
   const match = /language-(\w+)/.exec(className || '')
   const language = match ? match[1] : ''
   
-  const handleCopy = async () => {
+  const handleCopy = async (e: React.MouseEvent) => {
+    // 阻止事件冒泡和默认行为，防止触发焦点变化
+    e.preventDefault()
+    e.stopPropagation()
+    
     try {
       // 确保 children 是字符串类型
       const textContent = typeof children === 'string' 
@@ -25,7 +29,12 @@ function CodeBlock({ children, className, ...props }: any) {
       
       await navigator.clipboard.writeText(textContent)
       setCopied(true)
-      toast.success('代码已复制到剪贴板')
+      
+      // 延迟显示 toast，避免立即触发重新渲染
+      setTimeout(() => {
+        toast.success('代码已复制到剪贴板')
+      }, 50)
+      
       setTimeout(() => setCopied(false), 2000)
     } catch (error) {
       toast.error('复制失败')

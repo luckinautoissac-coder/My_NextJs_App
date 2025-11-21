@@ -202,7 +202,13 @@ export function MessageItem({ message }: MessageItemProps) {
   
   const currentAgent = agents.find(agent => agent.id === currentAgentId)
   
-  const handleCopy = async () => {
+  const handleCopy = async (e?: React.MouseEvent) => {
+    // 阻止事件冒泡和默认行为，防止触发焦点变化
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+    
     try {
       // 获取要复制的内容
       let contentToCopy = message.content
@@ -223,7 +229,11 @@ export function MessageItem({ message }: MessageItemProps) {
         : String(contentToCopy)
       
       await navigator.clipboard.writeText(textContent)
-      toast.success('消息已复制到剪贴板')
+      
+      // 延迟显示 toast，避免立即触发重新渲染
+      setTimeout(() => {
+        toast.success('消息已复制到剪贴板')
+      }, 50)
     } catch (error) {
       toast.error('复制失败')
     }
@@ -593,7 +603,7 @@ export function MessageItem({ message }: MessageItemProps) {
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 hover:bg-white/20"
-              onClick={handleCopy}
+              onClick={(e) => handleCopy(e)}
               title="复制"
             >
               <Copy className="h-3 w-3" />
@@ -617,7 +627,7 @@ export function MessageItem({ message }: MessageItemProps) {
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0 hover:bg-gray-200"
-              onClick={handleCopy}
+              onClick={(e) => handleCopy(e)}
               title="复制"
             >
               <Copy className="h-3 w-3" />
