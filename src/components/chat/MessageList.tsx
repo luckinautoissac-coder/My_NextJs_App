@@ -35,8 +35,9 @@ export function MessageList() {
     if (currentTopicId !== prevTopicIdRef.current) {
       prevTopicIdRef.current = currentTopicId
       // 重置最后消息ID
-      if (messages.length > 0) {
-        lastMessageIdRef.current = messages[messages.length - 1].id
+      const lastMessage = messages[messages.length - 1]
+      if (lastMessage) {
+        lastMessageIdRef.current = lastMessage.id
       }
       // 话题切换时滚动到底部
       setTimeout(() => scrollToBottom(), 100)
@@ -44,9 +45,8 @@ export function MessageList() {
     }
 
     // 检查是否有真正的新消息（通过ID判断）
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1]
-      
+    const lastMessage = messages[messages.length - 1]
+    if (lastMessage) {
       // 如果最后一条消息的ID变了，说明有新消息
       if (lastMessage.id !== lastMessageIdRef.current) {
         const wasAtBottom = checkIfAtBottom()
