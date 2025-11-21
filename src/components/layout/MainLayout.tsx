@@ -49,51 +49,49 @@ export function MainLayout() {
 
       {/* Main Chat Area */}
       <div className="flex flex-1 flex-col chat-area">
-        {/* Fixed Header - 模型选择与思维链控制 */}
-        <div className="flex items-center justify-center border-b bg-white px-6 py-3 relative z-10 flex-shrink-0">
-          <div className="flex items-center gap-4">
+        {/* Chat Area */}
+        <div className="flex flex-1 flex-col overflow-hidden min-w-0 relative">
+          {/* 模型选择 - 左上角浮动 */}
+          <div className="absolute top-4 left-4 z-20 flex items-center gap-3 bg-white rounded-lg shadow-md px-3 py-2 border border-gray-200">
             {/* 模型选择下拉框 */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 whitespace-nowrap">当前模型:</span>
-              <Select 
-                value={selectedModel} 
-                onValueChange={handleModelChange}
-                disabled={enabledModelOptions.length === 0}
-              >
-                <SelectTrigger className="w-72 flex-shrink-0">
-                  <SelectValue placeholder="选择模型" />
-                </SelectTrigger>
-                <SelectContent>
-                  {enabledModelOptions.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      <div className="flex items-center gap-2">
-                        <span>{option.label}</span>
-                        {option.model.isFree && (
-                          <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
-                            免费
-                          </span>
-                        )}
-                               {isDeepThinkingModel(option.id) && (
-                                 <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
-                                   思维链
-                                 </span>
-                               )}
-                               {option.id.includes('gemini-2.5-pro') && (
-                                 <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
-                                   超强记忆
-                                 </span>
-                               )}
-                      </div>
-                    </SelectItem>
-                  ))}
-                  {enabledModelOptions.length === 0 && (
-                    <SelectItem value="" disabled>
-                      请先在模型设置中添加模型
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select 
+              value={selectedModel} 
+              onValueChange={handleModelChange}
+              disabled={enabledModelOptions.length === 0}
+            >
+              <SelectTrigger className="w-64 h-8 text-sm border-gray-300">
+                <SelectValue placeholder="选择模型" />
+              </SelectTrigger>
+              <SelectContent>
+                {enabledModelOptions.map((option) => (
+                  <SelectItem key={option.id} value={option.id}>
+                    <div className="flex items-center gap-2">
+                      <span>{option.label}</span>
+                      {option.model.isFree && (
+                        <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+                          免费
+                        </span>
+                      )}
+                      {isDeepThinkingModel(option.id) && (
+                        <span className="text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">
+                          思维链
+                        </span>
+                      )}
+                      {option.id.includes('gemini-2.5-pro') && (
+                        <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">
+                          超强记忆
+                        </span>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
+                {enabledModelOptions.length === 0 && (
+                  <SelectItem value="" disabled>
+                    请先在模型设置中添加模型
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
 
             {/* 思维链控制 - 仅在深度思考模型时显示 */}
             {isCurrentModelDeepThinking && (
@@ -103,10 +101,7 @@ export function MainLayout() {
               </>
             )}
           </div>
-        </div>
 
-        {/* Chat Area */}
-        <div className="flex flex-1 flex-col overflow-hidden min-w-0">
           <MessageList />
           <ChatInput />
         </div>
