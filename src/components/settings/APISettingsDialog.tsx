@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Settings, ExternalLink, Plus, Trash2 } from 'lucide-react'
+import { Settings, ExternalLink, Plus, Trash2, Loader2, Zap } from 'lucide-react'
 import { useAPISettingsStore } from '@/store/apiSettingsStore'
 import { ModelManagementDialog } from './ModelManagementDialog'
 import { ALL_MODELS, MODEL_PROVIDERS } from '@/data/models'
@@ -47,6 +47,43 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
     selectedModel
   })
   const [modelManagementOpen, setModelManagementOpen] = useState(false)
+  const [isTesting, setIsTesting] = useState(false)
+
+  const handleTestConnection = async () => {
+    if (!tempSettings.apiKey.trim()) {
+      toast.error('请输入 API Key')
+      return
+    }
+
+    setIsTesting(true)
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: 'Hello',
+          agentId: 'general-assistant',
+          apiKey: tempSettings.apiKey,
+          model: tempSettings.selectedModel,
+          baseUrl: tempSettings.baseUrl
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success('连接成功！API Key 有效')
+      } else {
+        toast.error(`连接失败: ${data.error || '未知错误'}`)
+      }
+    } catch (error) {
+      toast.error('网络连接失败，请检查网络')
+    } finally {
+      setIsTesting(false)
+    }
+  }
 
   const handleSave = () => {
     if (!tempSettings.apiKey.trim()) {
@@ -236,6 +273,25 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
           </div>
 
           <DialogFooter>
+            <Button 
+              type="button" 
+              variant="secondary" 
+              onClick={handleTestConnection}
+              disabled={isTesting || !tempSettings.apiKey}
+              className="mr-auto"
+            >
+              {isTesting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  测试中...
+                </>
+              ) : (
+                <>
+                  <Zap className="mr-2 h-4 w-4" />
+                  测试连接
+                </>
+              )}
+            </Button>
             <Button variant="outline" onClick={handleCancel}>
               取消
             </Button>

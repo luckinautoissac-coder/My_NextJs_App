@@ -541,11 +541,12 @@ export function ChatInput() {
 
     } catch (error) {
       console.error('发送消息失败:', error)
-      toast.error(error instanceof Error ? error.message : '发送消息失败，请重试')
+      const errorMessage = error instanceof Error ? error.message : '发送消息失败，请重试'
+      toast.error(errorMessage)
       
       // 更新思考消息为错误状态
       updateMessage(thinkingMessageId, {
-        content: '抱歉，我现在无法回复。请检查网络连接或稍后重试。',
+        content: `❌ ${errorMessage}`,
         status: 'error',
         messageType: 'normal',
         thinkingInfo: undefined

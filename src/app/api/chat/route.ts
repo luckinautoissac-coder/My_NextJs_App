@@ -4234,7 +4234,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 调用 AIHUBMIX API
-    const apiBaseUrl = baseUrl || AIHUBMIX_BASE_URL
+    const apiBaseUrl = (baseUrl || AIHUBMIX_BASE_URL).replace(/\/$/, '')
     const selectedModel = model || 'gpt-4o-mini'
     
     // 智能token管理：根据不同模型和消息长度动态设置max_tokens
@@ -4381,25 +4381,36 @@ export async function POST(request: NextRequest) {
     })
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
+      const errorText = await response.text()
+      let errorData
+      try {
+        errorData = JSON.parse(errorText)
+      } catch {
+        errorData = { error: { message: errorText } }
+      }
+      
+      console.error('AIHUBMIX API Error:', response.status, errorText)
       
       let errorMessage = '请求失败'
       switch (response.status) {
         case 401:
-          errorMessage = 'API Key 无效，请检查您的密钥'
+          errorMessage = 'API Key 无效或已过期，请检查您的密钥'
+          break
+        case 402:
+          errorMessage = '账户余额不足，请充值后重试'
           break
         case 429:
           errorMessage = '请求过于频繁，请稍后重试'
           break
         case 500:
-          errorMessage = '服务器内部错误，请稍后重试'
+          errorMessage = 'AI服务商服务器内部错误，请稍后重试'
           break
         default:
           errorMessage = errorData.error?.message || `请求失败 (${response.status})`
       }
 
       return NextResponse.json(
-        { error: errorMessage },
+        { error: errorMessage, details: errorData },
         { status: response.status }
       )
     }
@@ -4407,8 +4418,9 @@ export async function POST(request: NextRequest) {
     const data = await response.json()
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid API response format:', JSON.stringify(data))
       return NextResponse.json(
-        { error: 'API 返回格式异常' },
+        { error: 'API 返回格式异常，无法解析回复' },
         { status: 500 }
       )
     }
