@@ -20,11 +20,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
-import { Settings, ExternalLink, Plus, Trash2, Loader2, Zap } from 'lucide-react'
+import { Settings, ExternalLink, Plus, Trash2, Loader2, Zap, AlertCircle } from 'lucide-react'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useAPISettingsStore } from '@/store/apiSettingsStore'
 import { ModelManagementDialog } from './ModelManagementDialog'
+import { DiagnosticPanel } from '@/components/debug/DiagnosticPanel'
 import { ALL_MODELS, MODEL_PROVIDERS } from '@/data/models'
 import { toast } from 'sonner'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface APISettingsDialogProps {
   open: boolean
@@ -143,7 +146,7 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-[550px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
@@ -153,8 +156,15 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
               配置您的 AIHUBMIX API 连接和模型选择
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="grid gap-4 py-3">
+
+          <Tabs defaultValue="settings" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="settings">基础设置</TabsTrigger>
+              <TabsTrigger value="diagnostic">连接诊断</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="settings" className="space-y-4 mt-4">
+          <div className="grid gap-4">
             {/* 1. API Key */}
             <div className="grid gap-2">
               <Label htmlFor="apikey">1. API Key</Label>
@@ -270,6 +280,17 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
                 访问官网 <ExternalLink className="h-3 w-3 ml-1" />
               </Button>
             </div>
+
+            {/* 充值提示 */}
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>充值后无法使用？</AlertTitle>
+              <AlertDescription className="text-xs space-y-1">
+                <p>• <strong>等待 1-2 分钟</strong>：充值后系统需要时间同步余额</p>
+                <p>• <strong>切换到"连接诊断"</strong>：运行诊断工具检查连接状态</p>
+                <p>• <strong>重新生成 API Key</strong>：如果问题持续，尝试生成新密钥</p>
+              </AlertDescription>
+            </Alert>
           </div>
 
           <DialogFooter>
@@ -288,7 +309,7 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
               ) : (
                 <>
                   <Zap className="mr-2 h-4 w-4" />
-                  测试连接
+                  快速测试
                 </>
               )}
             </Button>
@@ -299,6 +320,17 @@ export function APISettingsDialog({ open, onOpenChange }: APISettingsDialogProps
               保存设置
             </Button>
           </DialogFooter>
+            </TabsContent>
+
+            <TabsContent value="diagnostic" className="mt-4">
+              <DiagnosticPanel />
+              <DialogFooter className="mt-4">
+                <Button variant="outline" onClick={handleCancel} className="w-full">
+                  关闭
+                </Button>
+              </DialogFooter>
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
 

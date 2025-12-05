@@ -11,10 +11,9 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
-import { Plus, MessageSquare, Edit2, Trash2, GripVertical, RefreshCw } from 'lucide-react'
+import { Plus, MessageSquare, Edit2, Trash2, GripVertical } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { ClearStorageButton } from '@/components/debug/ClearStorageButton'
 import {
   DndContext,
   closestCenter,
@@ -315,14 +314,6 @@ export function TopicSidebar() {
             </SortableContext>
           </DndContext>
         )}
-      </div>
-
-      {/* Footer - Clear Cache Button */}
-      <div className="border-t bg-white p-3">
-        <ClearStorageButton />
-        <p className="mt-2 text-xs text-gray-500 text-center">
-          遇到问题？清除缓存试试
-        </p>
       </div>
     </div>
   )
