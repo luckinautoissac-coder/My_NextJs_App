@@ -1,37 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { ChatState, Message } from '@/types/chat'
-
-// 辅助函数：获取用户ID
-function getUserId(): string {
-  if (typeof window !== 'undefined') {
-    let userId = localStorage.getItem('__user_id__')
-    if (!userId) {
-      userId = 'user_' + Math.random().toString(36).substring(2, 15)
-      localStorage.setItem('__user_id__', userId)
-    }
-    return userId
-  }
-  return 'server'
-}
-
-// API调用函数
-async function apiCall(url: string, options?: RequestInit) {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'x-user-id': getUserId(),
-      ...options?.headers
-    }
-  })
-  
-  if (!response.ok) {
-    throw new Error(`API请求失败: ${response.statusText}`)
-  }
-  
-  return response.json()
-}
+import { 
+  saveMessageToSupabase, 
+  getMessagesFromSupabase, 
+  updateMessageInSupabase, 
+  deleteMessageFromSupabase,
+  getUserId
+} from '@/lib/supabase'
 
 export const useChatStore = create<ChatState>()(
   persist(
@@ -45,6 +21,7 @@ export const useChatStore = create<ChatState>()(
           ...message,
           id: typeof window !== 'undefined' ? crypto.randomUUID() : `msg_${Date.now()}_${Math.random()}`,
           timestamp: new Date(),
+          userId: getUserId()
         }
         
         // 立即更新本地状态
@@ -52,12 +29,9 @@ export const useChatStore = create<ChatState>()(
           messages: [...state.messages, newMessage],
         }))
         
-        // 异步保存到VPS
-        apiCall('/api/messages', {
-          method: 'POST',
-          body: JSON.stringify(newMessage)
-        }).catch(error => {
-          console.error('保存消息到VPS失败:', error)
+        // 异步保存到Supabase
+        saveMessageToSupabase(newMessage).catch(error => {
+          console.error('保存消息到Supabase失败:', error)
         })
         
         return newMessage.id
@@ -71,12 +45,9 @@ export const useChatStore = create<ChatState>()(
           ),
         }))
         
-        // 异步更新VPS
-        apiCall('/api/messages', {
-          method: 'PATCH',
-          body: JSON.stringify({ id, ...updates })
-        }).catch(error => {
-          console.error('更新消息到VPS失败:', error)
+        // 异步更新Supabase
+        updateMessageInSupabase(id, updates).catch(error => {
+          console.error('更新消息到Supabase失败:', error)
         })
       },
       
@@ -127,11 +98,9 @@ export const useChatStore = create<ChatState>()(
           messages: state.messages.filter((msg) => msg.id !== id),
         }))
         
-        // 异步删除VPS数据
-        apiCall(`/api/messages?id=${id}`, {
-          method: 'DELETE'
-        }).catch(error => {
-          console.error('删除VPS消息失败:', error)
+        // 异步删除Supabase数据
+        deleteMessageFromSupabase(id).catch(error => {
+          console.error('删除Supabase消息失败:', error)
         })
       },
 
@@ -224,60 +193,41 @@ export const useChatStore = create<ChatState>()(
             return restoredMessage
           })
           
-          // 从VPS加载完整消息列表（带详细日志）
+          // 从Supabase加载完整消息列表
           const localMessageCount = state.messages.length
-          console.log('🔍 [调试] localStorage中有', localMessageCount, '条消息')
+          console.log('📦 [Supabase] localStorage中有', localMessageCount, '条消息')
           
-          apiCall('/api/messages')
+          getMessagesFromSupabase()
             .then(data => {
-              // API直接返回消息数组
-              const messagesArray = Array.isArray(data) ? data : data.messages || []
-              console.log('🔍 [调试] VPS返回', messagesArray.length, '条消息')
-              console.log('🔍 [调试] VPS返回的原始数据（前3条）:', messagesArray.slice(0, 3))
+              console.log('☁️ [Supabase] 云端返回', data.length, '条消息')
               
-              if (messagesArray.length === 0) {
-                console.warn('⚠️ VPS返回空数组，保留localStorage数据')
+              if (data.length === 0 && localMessageCount > 0) {
+                console.log('⚠️ [Supabase] 云端为空，保留localStorage数据')
                 return
               }
               
-              const messages = messagesArray.map((msg: any) => ({
-                ...msg,
-                timestamp: new Date(msg.timestamp),
-                // 恢复Date对象
-                ...(msg.thinkingInfo && {
-                  thinkingInfo: {
-                    ...msg.thinkingInfo,
-                    startTime: new Date(msg.thinkingInfo.startTime)
-                  }
-                }),
-                // 解析JSON字段
-                ...(typeof msg.model_responses === 'string' && {
-                  modelResponses: JSON.parse(msg.model_responses)
-                }),
-                ...(msg.model_responses && typeof msg.model_responses === 'object' && {
-                  modelResponses: msg.model_responses
-                }),
-                ...(typeof msg.thinking_info === 'string' && {
-                  thinkingInfo: JSON.parse(msg.thinking_info)
-                }),
-                ...(msg.thinking_info && typeof msg.thinking_info === 'object' && {
-                  thinkingInfo: msg.thinking_info
-                }),
-                // 字段名映射：数据库snake_case转为前端camelCase
-                selectedModelId: msg.selected_model_id || msg.selectedModelId,
-                userId: msg.user_id || msg.userId,
-                topicId: msg.topic_id || msg.topicId
-              }))
-              
-              console.log('✅ [调试] 处理后的消息数据（前3条）:', messages.slice(0, 3))
-              console.log('✅ [调试] 使用VPS的', messages.length, '条消息')
-              
-              // 替换为VPS数据
-              useChatStore.setState({ messages })
+              if (data.length > 0) {
+                const messages = data.map((msg: any) => ({
+                  ...msg,
+                  timestamp: new Date(msg.timestamp),
+                  userId: msg.user_id,
+                  topicId: msg.topic_id,
+                  messageType: msg.message_type,
+                  selectedModelId: msg.selected_model_id,
+                  modelResponses: msg.model_responses,
+                  thinkingInfo: msg.thinking_info ? {
+                    ...msg.thinking_info,
+                    startTime: new Date(msg.thinking_info.startTime)
+                  } : undefined
+                }))
+                
+                console.log('✅ [Supabase] 使用云端的', messages.length, '条消息')
+                useChatStore.setState({ messages })
+              }
             })
             .catch(error => {
-              console.error('❌ [调试] 从VPS加载消息失败:', error)
-              console.error('❌ [调试] 错误详情:', error.message, error.stack)
+              console.error('❌ [Supabase] 加载消息失败:', error)
+              console.log('⚠️ [Supabase] 保留localStorage数据')
             })
         }
       }
