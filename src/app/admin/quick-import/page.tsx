@@ -45,33 +45,61 @@ export default function QuickImportPage() {
       setProgress(`✅ 找到 ${messages.length} 条消息和 ${topics.length} 个话题`)
       await new Promise(resolve => setTimeout(resolve, 500))
       
-      // 第3步：批量导入消息到VPS（一次性上传）
-      setProgress(`第3步：批量导入消息到VPS (共 ${messages.length} 条)...`)
+      // 第3步：分批导入消息到VPS（避免payload过大）
+      setProgress(`第3步：分批导入消息到VPS (共 ${messages.length} 条)...`)
       
-      const bulkImportResponse = await fetch('/api/messages/bulk-import', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages })
-      })
+      const batchSize = 500 // 每批500条，避免超过Vercel 4.5MB限制
+      let totalSuccess = 0
+      let totalFailed = 0
       
-      const bulkImportData = await bulkImportResponse.json()
-      
-      if (!bulkImportData.success) {
-        throw new Error('批量导入失败: ' + bulkImportData.error)
+      for (let i = 0; i < messages.length; i += batchSize) {
+        const batch = messages.slice(i, i + batchSize)
+        const batchNumber = Math.floor(i / batchSize) + 1
+        const totalBatches = Math.ceil(messages.length / batchSize)
+        
+        setProgress(`第3步：导入批次 ${batchNumber}/${totalBatches}... (已完成 ${totalSuccess}/${messages.length} 条)`)
+        
+        try {
+          const bulkImportResponse = await fetch('/api/messages/bulk-import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: batch })
+          })
+          
+          if (!bulkImportResponse.ok) {
+            throw new Error(`HTTP ${bulkImportResponse.status}`)
+          }
+          
+          const bulkImportData = await bulkImportResponse.json()
+          
+          if (!bulkImportData.success) {
+            throw new Error('批量导入失败: ' + bulkImportData.error)
+          }
+          
+          totalSuccess += bulkImportData.successCount
+          totalFailed += bulkImportData.failedCount
+          
+        } catch (batchError) {
+          console.error(`批次 ${batchNumber} 导入失败:`, batchError)
+          totalFailed += batch.length
+        }
+        
+        // 稍微延迟，避免请求过快
+        await new Promise(resolve => setTimeout(resolve, 200))
       }
       
-      const successCount = bulkImportData.successCount
-      const failedCount = bulkImportData.failedCount
-      
-      setProgress(`✅ 导入完成：成功 ${successCount} 条，失败 ${failedCount} 条`)
+      setProgress(`✅ 导入完成：成功 ${totalSuccess} 条，失败 ${totalFailed} 条`)
       
       // 完成
       setStatus('success')
       
+      const successCount = totalSuccess
+      const failedCount = totalFailed
+      
       if (failedCount === 0) {
         setFinalMessage(`🎉 完美！成功导入全部 ${successCount} 条消息到VPS云端！
 
-⚡ 批量导入完成，速度快了100倍！
+⚡ 分批导入完成，速度提升100倍！
 
 📋 重要：现在需要执行最后一步：
 1. 点击下方"前往首页"按钮
@@ -85,7 +113,7 @@ export default function QuickImportPage() {
       } else {
         setFinalMessage(`✅ 导入完成：成功 ${successCount} 条，失败 ${failedCount} 条
 
-⚡ 批量导入完成！
+⚡ 分批导入完成！
 
 大部分数据已保存到VPS云端。
 
@@ -169,12 +197,12 @@ export default function QuickImportPage() {
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>✅ 检查并更新数据库表结构</li>
                   <li>✅ 读取备份文件中的所有数据</li>
-                  <li>✅ 批量导入消息到VPS云端数据库（一次性上传）</li>
+                  <li>✅ 分批导入消息到VPS（每批500条，避免超时）</li>
                   <li>✅ 同步话题数据</li>
                   <li>✅ 自动清理localStorage缓存</li>
                 </ul>
                 <p className="text-xs text-green-600 mt-2 font-medium">
-                  ⚡ 使用批量导入技术，6MB数据约30秒-2分钟完成！
+                  ⚡ 使用分批导入技术，6MB数据约1-3分钟完成！
                 </p>
               </div>
             </>
@@ -257,13 +285,16 @@ export default function QuickImportPage() {
         <AlertDescription>
           <strong>为什么不需要恢复localStorage？</strong>
           <p className="mt-2 text-sm">
-            这个工具直接从JSON备份文件读取数据并导入到VPS云端数据库，
+            这个工具直接从JSON备份文件读取数据并分批导入到VPS云端数据库（每批500条），
             跳过了恢复到localStorage的步骤，节省了大量时间（从1小时缩短到几分钟）。
           </p>
           <p className="mt-2 text-sm">
             导入完成后，访问首页时系统会自动从VPS加载所有数据，
             localStorage只会保留最近20条消息作为缓存（几百KB），
             永久解决了localStorage满载问题。
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            💡 分批上传避免了Vercel 4.5MB payload限制，确保大文件也能顺利导入。
           </p>
         </AlertDescription>
       </Alert>
