@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -10,9 +10,11 @@ export default function StorageCleanupPage() {
   const [status, setStatus] = useState<'idle' | 'calculating' | 'cleaned' | 'error'>('idle')
   const [beforeSize, setBeforeSize] = useState<number>(0)
   const [afterSize, setAfterSize] = useState<number>(0)
+  const [currentSize, setCurrentSize] = useState<number>(0)
 
   // 计算localStorage使用量
   const calculateStorageSize = () => {
+    if (typeof window === 'undefined') return 0
     let total = 0
     for (let key in localStorage) {
       if (localStorage.hasOwnProperty(key)) {
@@ -21,6 +23,11 @@ export default function StorageCleanupPage() {
     }
     return total / 1024 // 转换为KB
   }
+
+  // 在客户端加载后计算存储大小
+  useEffect(() => {
+    setCurrentSize(calculateStorageSize())
+  }, [])
 
   // 清理localStorage（保留必要配置）
   const handleCleanup = () => {
@@ -57,8 +64,6 @@ export default function StorageCleanupPage() {
       setStatus('error')
     }
   }
-
-  const currentSize = calculateStorageSize()
 
   return (
     <div className="container max-w-4xl mx-auto p-6 space-y-6">
