@@ -227,13 +227,40 @@ export const useChatStore = create<ChatState>()(
           // 从VPS加载完整消息列表
           apiCall('/api/messages')
             .then(data => {
-              if (data.success && data.messages) {
-                const messages = data.messages.map((msg: any) => ({
+              // API直接返回消息数组
+              const messagesArray = Array.isArray(data) ? data : data.messages || []
+              if (messagesArray.length > 0) {
+                const messages = messagesArray.map((msg: any) => ({
                   ...msg,
-                  timestamp: new Date(msg.timestamp)
+                  timestamp: new Date(msg.timestamp),
+                  // 恢复Date对象
+                  ...(msg.thinkingInfo && {
+                    thinkingInfo: {
+                      ...msg.thinkingInfo,
+                      startTime: new Date(msg.thinkingInfo.startTime)
+                    }
+                  }),
+                  // 解析JSON字段
+                  ...(typeof msg.model_responses === 'string' && {
+                    modelResponses: JSON.parse(msg.model_responses)
+                  }),
+                  ...(msg.model_responses && typeof msg.model_responses === 'object' && {
+                    modelResponses: msg.model_responses
+                  }),
+                  ...(typeof msg.thinking_info === 'string' && {
+                    thinkingInfo: JSON.parse(msg.thinking_info)
+                  }),
+                  ...(msg.thinking_info && typeof msg.thinking_info === 'object' && {
+                    thinkingInfo: msg.thinking_info
+                  }),
+                  // 字段名映射：数据库snake_case转为前端camelCase
+                  selectedModelId: msg.selected_model_id || msg.selectedModelId
                 }))
-                // 合并VPS数据和本地缓存
+                console.log('从VPS加载了', messages.length, '条消息')
+                // 替换为VPS数据
                 useChatStore.setState({ messages })
+              } else {
+                console.log('VPS中没有消息，保留本地缓存')
               }
             })
             .catch(error => {
