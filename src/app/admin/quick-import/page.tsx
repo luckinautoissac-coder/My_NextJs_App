@@ -90,6 +90,31 @@ export default function QuickImportPage() {
       
       setProgress(`✅ 导入完成：成功 ${totalSuccess} 条，失败 ${totalFailed} 条`)
       
+      // 第4步：恢复话题数据到localStorage
+      setProgress(`第4步：恢复话题数据...`)
+      
+      try {
+        // 将话题数据写入localStorage，这样前端就能显示话题列表了
+        if (topics.length > 0) {
+          const topicStoreData = {
+            state: {
+              topics: topics,
+              currentTopicId: null
+            },
+            version: 0
+          }
+          localStorage.setItem('topic-store', JSON.stringify(topicStoreData))
+          setProgress(`✅ 话题数据已恢复：${topics.length} 个话题`)
+        } else {
+          setProgress(`⚠️ 没有找到话题数据`)
+        }
+      } catch (topicError) {
+        console.error('恢复话题数据失败:', topicError)
+        setProgress(`⚠️ 话题数据恢复失败，但消息已导入`)
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
       // 完成
       setStatus('success')
       
@@ -97,34 +122,34 @@ export default function QuickImportPage() {
       const failedCount = totalFailed
       
       if (failedCount === 0) {
-        setFinalMessage(`🎉 完美！成功导入全部 ${successCount} 条消息到VPS云端！
+        setFinalMessage(`🎉 完美！导入完成！
 
-⚡ 分批导入完成，速度提升100倍！
+✅ 消息：${successCount} 条已保存到VPS云端
+✅ 话题：${topics.length} 个已自动恢复
 
-📋 重要：现在需要执行最后一步：
+📋 现在只需要：
 1. 点击下方"前往首页"按钮
-2. 按 F12 打开控制台
-3. 在Console输入：localStorage.clear()
-4. 按回车执行
-5. 关闭控制台，按 Ctrl+F5 刷新页面
-6. 所有数据会自动从VPS云端加载
+2. 按 Ctrl+F5 强制刷新页面
+3. 所有话题和消息都会显示出来！
 
-🎊 恭喜！localStorage满载问题已彻底解决！`)
+💡 系统会自动：
+• 从VPS加载消息数据（${successCount}条）
+• 从localStorage读取话题列表（${topics.length}个）
+• localStorage只保留少量缓存，不会再满载
+
+🎊 恭喜！问题已彻底解决！`)
       } else {
-        setFinalMessage(`✅ 导入完成：成功 ${successCount} 条，失败 ${failedCount} 条
+        setFinalMessage(`✅ 导入完成！
 
-⚡ 分批导入完成！
+✅ 消息：成功 ${successCount} 条，失败 ${failedCount} 条
+✅ 话题：${topics.length} 个已自动恢复
 
-大部分数据已保存到VPS云端。
-
-📋 现在需要执行最后一步：
+📋 现在只需要：
 1. 点击下方"前往首页"按钮
-2. 按 F12 打开控制台
-3. 在Console输入：localStorage.clear()
-4. 按回车执行
-5. 关闭控制台，按 Ctrl+F5 刷新页面
+2. 按 Ctrl+F5 强制刷新页面
+3. 所有话题和消息都会显示出来！
 
-💡 localStorage满载问题已解决！`)
+💡 虽然有少量消息失败，但大部分数据已保存到VPS云端！`)
       }
       
       setProgress('✅ 全部完成！')
@@ -197,12 +222,12 @@ export default function QuickImportPage() {
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>✅ 检查并更新数据库表结构</li>
                   <li>✅ 读取备份文件中的所有数据</li>
-                  <li>✅ 分批导入消息到VPS（每批500条，避免超时）</li>
-                  <li>✅ 同步话题数据</li>
-                  <li>✅ 自动清理localStorage缓存</li>
+                  <li>✅ 分批导入消息到VPS（每批500条）</li>
+                  <li>✅ 自动恢复话题数据到localStorage</li>
+                  <li>✅ 完成后可直接使用，无需手动操作</li>
                 </ul>
                 <p className="text-xs text-green-600 mt-2 font-medium">
-                  ⚡ 使用分批导入技术，6MB数据约1-3分钟完成！
+                  ⚡ 6MB数据约1-3分钟完成！导入后直接刷新首页即可使用！
                 </p>
               </div>
             </>
@@ -233,23 +258,39 @@ export default function QuickImportPage() {
                 </AlertDescription>
               </Alert>
               
-              <div className="flex gap-4">
+              <div className="space-y-3">
                 <Button
                   onClick={() => window.location.href = '/'}
-                  className="flex-1"
+                  className="w-full"
                   size="lg"
                 >
-                  前往首页开始使用
+                  🎉 前往首页开始使用（按Ctrl+F5刷新）
                 </Button>
                 
-                <Button
-                  onClick={() => window.open('/admin/db-test', '_blank')}
-                  variant="outline"
-                  className="flex-1"
-                  size="lg"
-                >
-                  验证VPS数据
-                </Button>
+                <div className="flex gap-4">
+                  <Button
+                    onClick={() => window.open('/admin/db-test', '_blank')}
+                    variant="outline"
+                    className="flex-1"
+                    size="sm"
+                  >
+                    验证VPS数据
+                  </Button>
+                  
+                  <Button
+                    onClick={() => {
+                      setStatus('idle')
+                      setProgress('')
+                      setFinalMessage('')
+                      setFile(null)
+                    }}
+                    variant="outline"
+                    className="flex-1"
+                    size="sm"
+                  >
+                    重新导入
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -283,18 +324,23 @@ export default function QuickImportPage() {
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          <strong>为什么不需要恢复localStorage？</strong>
+          <strong>工作原理说明</strong>
           <p className="mt-2 text-sm">
-            这个工具直接从JSON备份文件读取数据并分批导入到VPS云端数据库（每批500条），
-            跳过了恢复到localStorage的步骤，节省了大量时间（从1小时缩短到几分钟）。
+            <strong>消息数据（主要占空间）：</strong><br/>
+            直接从JSON分批导入到VPS云端数据库（每批500条），
+            永久保存在VPS（100GB空间），localStorage只保留最近20条缓存。
           </p>
           <p className="mt-2 text-sm">
-            导入完成后，访问首页时系统会自动从VPS加载所有数据，
-            localStorage只会保留最近20条消息作为缓存（几百KB），
-            永久解决了localStorage满载问题。
+            <strong>话题数据（很小）：</strong><br/>
+            自动恢复到localStorage，因为话题数据很小（几十KB），
+            不会造成localStorage满载问题。
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            💡 分批上传避免了Vercel 4.5MB payload限制，确保大文件也能顺利导入。
+          <p className="mt-2 text-sm">
+            <strong>结果：</strong><br/>
+            ✅ 消息从VPS加载（无限容量）<br/>
+            ✅ 话题从localStorage加载（几十KB）<br/>
+            ✅ localStorage总占用 &lt; 500KB，永远不会满载<br/>
+            ✅ 导入时间从1小时缩短到1-3分钟
           </p>
         </AlertDescription>
       </Alert>
