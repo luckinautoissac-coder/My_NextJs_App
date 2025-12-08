@@ -92,7 +92,8 @@ export async function POST(request: NextRequest) {
       success: true,
       successCount,
       failedCount,
-      errors: errors.slice(0, 10) // 只返回前10个错误
+      errors: errors.slice(0, 20), // 返回前20个错误
+      totalErrors: errors.length
     })
 
   } catch (error: any) {

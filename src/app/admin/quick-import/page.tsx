@@ -90,27 +90,31 @@ export default function QuickImportPage() {
       
       setProgress(`✅ 导入完成：成功 ${totalSuccess} 条，失败 ${totalFailed} 条`)
       
-      // 第4步：恢复话题数据到localStorage
-      setProgress(`第4步：恢复话题数据...`)
-      
-      try {
-        // 将话题数据写入localStorage，这样前端就能显示话题列表了
-        if (topics.length > 0) {
-          const topicStoreData = {
-            state: {
-              topics: topics,
-              currentTopicId: null
-            },
-            version: 0
+      // 第4步：恢复话题数据到localStorage（仅在导入成功时）
+      if (totalSuccess > 0) {
+        setProgress(`第4步：恢复话题数据...`)
+        
+        try {
+          // 将话题数据写入localStorage，这样前端就能显示话题列表了
+          if (topics.length > 0) {
+            const topicStoreData = {
+              state: {
+                topics: topics,
+                currentTopicId: null
+              },
+              version: 0
+            }
+            localStorage.setItem('topic-store', JSON.stringify(topicStoreData))
+            setProgress(`✅ 话题数据已恢复：${topics.length} 个话题`)
+          } else {
+            setProgress(`⚠️ 没有找到话题数据`)
           }
-          localStorage.setItem('topic-store', JSON.stringify(topicStoreData))
-          setProgress(`✅ 话题数据已恢复：${topics.length} 个话题`)
-        } else {
-          setProgress(`⚠️ 没有找到话题数据`)
+        } catch (topicError) {
+          console.error('恢复话题数据失败:', topicError)
+          setProgress(`⚠️ 话题数据恢复失败，但消息已导入`)
         }
-      } catch (topicError) {
-        console.error('恢复话题数据失败:', topicError)
-        setProgress(`⚠️ 话题数据恢复失败，但消息已导入`)
+      } else {
+        setProgress(`⚠️ 所有消息导入失败，跳过话题恢复`)
       }
       
       await new Promise(resolve => setTimeout(resolve, 500))
