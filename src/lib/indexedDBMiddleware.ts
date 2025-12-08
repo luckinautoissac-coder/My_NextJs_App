@@ -3,7 +3,7 @@
  * 替代 localStorage，解决存储空间限制问题
  */
 
-import { StateCreator, StoreMutatorIdentifier } from 'zustand'
+import type { StateCreator, StoreMutatorIdentifier } from 'zustand'
 import * as indexedDB from '@/lib/indexedDB'
 
 type IndexedDBPersist = <
