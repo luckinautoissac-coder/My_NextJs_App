@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-<parameter name="persist" from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 import type { ChatState, Message } from '@/types/chat'
 
 // 辅助函数：获取用户ID
