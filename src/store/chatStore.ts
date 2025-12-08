@@ -225,10 +225,21 @@ export const useChatStore = create<ChatState>()(
           })
           
           // 从VPS加载完整消息列表
+          const localMessageCount = state.messages.length
+          console.log('localStorage中有', localMessageCount, '条消息')
+          
           apiCall('/api/messages')
             .then(data => {
               // API直接返回消息数组
               const messagesArray = Array.isArray(data) ? data : data.messages || []
+              console.log('VPS中有', messagesArray.length, '条消息')
+              
+              // 🔥 关键修复：优先使用数据更多的来源
+              if (messagesArray.length === 0 && localMessageCount > 0) {
+                console.log('✅ VPS为空，保留localStorage的', localMessageCount, '条消息')
+                return // 不覆盖本地数据
+              }
+              
               if (messagesArray.length > 0) {
                 const messages = messagesArray.map((msg: any) => ({
                   ...msg,
@@ -256,15 +267,13 @@ export const useChatStore = create<ChatState>()(
                   // 字段名映射：数据库snake_case转为前端camelCase
                   selectedModelId: msg.selected_model_id || msg.selectedModelId
                 }))
-                console.log('从VPS加载了', messages.length, '条消息')
+                console.log('✅ 使用VPS的', messages.length, '条消息（比本地多）')
                 // 替换为VPS数据
                 useChatStore.setState({ messages })
-              } else {
-                console.log('VPS中没有消息，保留本地缓存')
               }
             })
             .catch(error => {
-              console.error('从VPS加载消息失败:', error)
+              console.error('从VPS加载消息失败:', error, '- 保留localStorage数据')
             })
         }
       }
