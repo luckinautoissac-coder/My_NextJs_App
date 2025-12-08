@@ -14,14 +14,12 @@ export async function GET(request: NextRequest) {
     
     const messages = await getMessages(userId, topicId || undefined)
     
-    return NextResponse.json({ 
-      success: true,
-      messages 
-    })
+    // 直接返回消息数组（兼容测试页面）
+    return NextResponse.json(messages)
   } catch (error) {
     console.error('获取消息失败:', error)
     return NextResponse.json(
-      { success: false, error: '获取消息失败' },
+      { error: '获取消息失败' },
       { status: 500 }
     )
   }
