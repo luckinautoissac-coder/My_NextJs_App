@@ -10,9 +10,20 @@ export default function EmergencyFixPage() {
   const [fixed, setFixed] = useState(false)
 
   useEffect(() => {
-    // 自动清空localStorage
+    // 自动清空localStorage，但保留userId
     try {
+      // 先保存userId
+      const userId = localStorage.getItem('__user_id__')
+      
+      // 清空所有数据
       localStorage.clear()
+      
+      // 恢复userId（这样才能查询到VPS的消息）
+      if (userId) {
+        localStorage.setItem('__user_id__', userId)
+        console.log('✅ 保留了userId:', userId)
+      }
+      
       setFixed(true)
     } catch (error) {
       console.error('清空localStorage失败:', error)

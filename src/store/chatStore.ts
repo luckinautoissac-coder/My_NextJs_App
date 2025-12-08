@@ -224,60 +224,61 @@ export const useChatStore = create<ChatState>()(
             return restoredMessage
           })
           
-          // 【临时禁用VPS加载】完全使用localStorage数据
+          // 从VPS加载完整消息列表（带详细日志）
           const localMessageCount = state.messages.length
-          console.log('✅ localStorage中有', localMessageCount, '条消息（使用本地数据，暂不从VPS加载）')
+          console.log('🔍 [调试] localStorage中有', localMessageCount, '条消息')
           
-          // 注释掉VPS加载逻辑，等问题解决后再启用
-          /*
           apiCall('/api/messages')
             .then(data => {
               // API直接返回消息数组
               const messagesArray = Array.isArray(data) ? data : data.messages || []
-              console.log('VPS中有', messagesArray.length, '条消息')
+              console.log('🔍 [调试] VPS返回', messagesArray.length, '条消息')
+              console.log('🔍 [调试] VPS返回的原始数据（前3条）:', messagesArray.slice(0, 3))
               
-              // 🔥 关键修复：优先使用数据更多的来源
-              if (messagesArray.length === 0 && localMessageCount > 0) {
-                console.log('✅ VPS为空，保留localStorage的', localMessageCount, '条消息')
-                return // 不覆盖本地数据
+              if (messagesArray.length === 0) {
+                console.warn('⚠️ VPS返回空数组，保留localStorage数据')
+                return
               }
               
-              if (messagesArray.length > 0) {
-                const messages = messagesArray.map((msg: any) => ({
-                  ...msg,
-                  timestamp: new Date(msg.timestamp),
-                  // 恢复Date对象
-                  ...(msg.thinkingInfo && {
-                    thinkingInfo: {
-                      ...msg.thinkingInfo,
-                      startTime: new Date(msg.thinkingInfo.startTime)
-                    }
-                  }),
-                  // 解析JSON字段
-                  ...(typeof msg.model_responses === 'string' && {
-                    modelResponses: JSON.parse(msg.model_responses)
-                  }),
-                  ...(msg.model_responses && typeof msg.model_responses === 'object' && {
-                    modelResponses: msg.model_responses
-                  }),
-                  ...(typeof msg.thinking_info === 'string' && {
-                    thinkingInfo: JSON.parse(msg.thinking_info)
-                  }),
-                  ...(msg.thinking_info && typeof msg.thinking_info === 'object' && {
-                    thinkingInfo: msg.thinking_info
-                  }),
-                  // 字段名映射：数据库snake_case转为前端camelCase
-                  selectedModelId: msg.selected_model_id || msg.selectedModelId
-                }))
-                console.log('✅ 使用VPS的', messages.length, '条消息（比本地多）')
-                // 替换为VPS数据
-                useChatStore.setState({ messages })
-              }
+              const messages = messagesArray.map((msg: any) => ({
+                ...msg,
+                timestamp: new Date(msg.timestamp),
+                // 恢复Date对象
+                ...(msg.thinkingInfo && {
+                  thinkingInfo: {
+                    ...msg.thinkingInfo,
+                    startTime: new Date(msg.thinkingInfo.startTime)
+                  }
+                }),
+                // 解析JSON字段
+                ...(typeof msg.model_responses === 'string' && {
+                  modelResponses: JSON.parse(msg.model_responses)
+                }),
+                ...(msg.model_responses && typeof msg.model_responses === 'object' && {
+                  modelResponses: msg.model_responses
+                }),
+                ...(typeof msg.thinking_info === 'string' && {
+                  thinkingInfo: JSON.parse(msg.thinking_info)
+                }),
+                ...(msg.thinking_info && typeof msg.thinking_info === 'object' && {
+                  thinkingInfo: msg.thinking_info
+                }),
+                // 字段名映射：数据库snake_case转为前端camelCase
+                selectedModelId: msg.selected_model_id || msg.selectedModelId,
+                userId: msg.user_id || msg.userId,
+                topicId: msg.topic_id || msg.topicId
+              }))
+              
+              console.log('✅ [调试] 处理后的消息数据（前3条）:', messages.slice(0, 3))
+              console.log('✅ [调试] 使用VPS的', messages.length, '条消息')
+              
+              // 替换为VPS数据
+              useChatStore.setState({ messages })
             })
             .catch(error => {
-              console.error('从VPS加载消息失败:', error, '- 保留localStorage数据')
+              console.error('❌ [调试] 从VPS加载消息失败:', error)
+              console.error('❌ [调试] 错误详情:', error.message, error.stack)
             })
-          */
         }
       }
     }
