@@ -8,6 +8,7 @@ export interface ModelResponse {
 
 export interface Message {
   id: string
+  userId?: string // 用户ID，用于云端存储
   content: string
   role: 'user' | 'assistant' | 'system'
   timestamp: Date
