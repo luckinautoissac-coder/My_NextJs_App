@@ -40,30 +40,57 @@ export async function saveMessage(message: {
   selectedModelId?: string
   thinkingInfo?: any
 }) {
-  const [result] = await pool.execute(
-    `INSERT INTO messages (id, user_id, topic_id, role, content, message_type, status, timestamp, model_responses, selected_model_id, thinking_info)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE 
-       content = VALUES(content), 
-       status = VALUES(status),
-       model_responses = VALUES(model_responses),
-       selected_model_id = VALUES(selected_model_id),
-       thinking_info = VALUES(thinking_info)`,
-    [
-      message.id,
-      message.userId,
-      message.topicId || null,
-      message.role,
-      message.content,
-      message.messageType || 'normal',
-      message.status || 'sent',
-      message.timestamp,
-      message.modelResponses ? JSON.stringify(message.modelResponses) : null,
-      message.selectedModelId || null,
-      message.thinkingInfo ? JSON.stringify(message.thinkingInfo) : null
-    ]
-  )
-  return result
+  try {
+    // 尝试使用完整字段
+    const [result] = await pool.execute(
+      `INSERT INTO messages (id, user_id, topic_id, role, content, message_type, status, timestamp, model_responses, selected_model_id, thinking_info)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE 
+         content = VALUES(content), 
+         status = VALUES(status),
+         model_responses = VALUES(model_responses),
+         selected_model_id = VALUES(selected_model_id),
+         thinking_info = VALUES(thinking_info)`,
+      [
+        message.id,
+        message.userId,
+        message.topicId || null,
+        message.role,
+        message.content,
+        message.messageType || 'normal',
+        message.status || 'sent',
+        message.timestamp,
+        message.modelResponses ? JSON.stringify(message.modelResponses) : null,
+        message.selectedModelId || null,
+        message.thinkingInfo ? JSON.stringify(message.thinkingInfo) : null
+      ]
+    )
+    return result
+  } catch (error: any) {
+    // 如果字段不存在，回退到基本字段
+    if (error.code === 'ER_BAD_FIELD_ERROR' || error.errno === 1054) {
+      console.log('使用基本字段保存（数据库表需要更新）')
+      const [result] = await pool.execute(
+        `INSERT INTO messages (id, user_id, topic_id, role, content, message_type, status, timestamp)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE 
+           content = VALUES(content), 
+           status = VALUES(status)`,
+        [
+          message.id,
+          message.userId,
+          message.topicId || null,
+          message.role,
+          message.content,
+          message.messageType || 'normal',
+          message.status || 'sent',
+          message.timestamp
+        ]
+      )
+      return result
+    }
+    throw error
+  }
 }
 
 // 获取消息
