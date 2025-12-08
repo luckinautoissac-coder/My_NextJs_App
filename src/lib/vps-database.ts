@@ -36,11 +36,19 @@ export async function saveMessage(message: {
   messageType?: string
   status?: string
   timestamp: Date
+  modelResponses?: any[]
+  selectedModelId?: string
+  thinkingInfo?: any
 }) {
   const [result] = await pool.execute(
-    `INSERT INTO messages (id, user_id, topic_id, role, content, message_type, status, timestamp)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE content = VALUES(content), status = VALUES(status)`,
+    `INSERT INTO messages (id, user_id, topic_id, role, content, message_type, status, timestamp, model_responses, selected_model_id, thinking_info)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE 
+       content = VALUES(content), 
+       status = VALUES(status),
+       model_responses = VALUES(model_responses),
+       selected_model_id = VALUES(selected_model_id),
+       thinking_info = VALUES(thinking_info)`,
     [
       message.id,
       message.userId,
@@ -49,7 +57,10 @@ export async function saveMessage(message: {
       message.content,
       message.messageType || 'normal',
       message.status || 'sent',
-      message.timestamp
+      message.timestamp,
+      message.modelResponses ? JSON.stringify(message.modelResponses) : null,
+      message.selectedModelId || null,
+      message.thinkingInfo ? JSON.stringify(message.thinkingInfo) : null
     ]
   )
   return result

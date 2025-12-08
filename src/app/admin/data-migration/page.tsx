@@ -90,14 +90,21 @@ export default function DataMigrationPage() {
           const message = messages[i]
           setMessage(`正在导入消息 ${i + 1}/${messages.length}...`)
           
-          const response = await fetch('/api/messages', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(message)
-          })
-          
-          if (!response.ok) {
-            throw new Error(`导入消息 ${message.id} 失败`)
+          try {
+            const response = await fetch('/api/messages', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(message)
+            })
+            
+            if (!response.ok) {
+              const errorData = await response.json()
+              console.error('导入失败:', errorData)
+              throw new Error(`导入消息 ${message.id} 失败: ${errorData.error || '未知错误'}`)
+            }
+          } catch (fetchError) {
+            console.error('请求错误:', fetchError)
+            throw new Error(`导入消息 ${i + 1} 时网络错误: ${fetchError instanceof Error ? fetchError.message : '未知错误'}`)
           }
           
           // 避免请求过快
