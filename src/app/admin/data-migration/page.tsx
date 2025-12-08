@@ -10,6 +10,7 @@ export default function DataMigrationPage() {
   const [status, setStatus] = useState<'idle' | 'exporting' | 'importing' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
   const [stats, setStats] = useState<{ messages: number; agents: number; topics: number } | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   // 导出localStorage数据
   const handleExport = () => {
@@ -201,20 +202,45 @@ export default function DataMigrationPage() {
             上传刚才导出的JSON文件，数据将保存到云端VPS数据库
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <input
-            type="file"
-            accept=".json"
-            onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (file) {
-                handleImport(file)
+        <CardContent className="space-y-4">
+          <div>
+            <input
+              type="file"
+              accept=".json"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  setSelectedFile(file)
+                  setStatus('idle')
+                  setMessage('')
+                }
+              }}
+              disabled={status === 'exporting' || status === 'importing'}
+              className="w-full p-2 border rounded"
+              id="file-input"
+            />
+            {selectedFile && (
+              <p className="text-sm text-green-600 mt-2">
+                ✅ 已选择文件: {selectedFile.name}
+              </p>
+            )}
+          </div>
+          
+          <Button
+            onClick={() => {
+              if (selectedFile) {
+                handleImport(selectedFile)
               }
             }}
-            disabled={status === 'exporting' || status === 'importing'}
+            disabled={!selectedFile || status === 'exporting' || status === 'importing'}
             className="w-full"
-          />
-          <p className="text-xs text-muted-foreground mt-2">
+            size="lg"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            {status === 'importing' ? '正在上传中...' : '开始上传到云端'}
+          </Button>
+          
+          <p className="text-xs text-muted-foreground">
             ☁️ 数据将上传到VPS MySQL数据库（100GB容量）
           </p>
         </CardContent>
