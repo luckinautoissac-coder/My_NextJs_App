@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Supabase客户端（客户端使用）
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-)
+// 在构建时如果环境变量不存在，使用占位符
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+
+export const supabase = createClient(supabaseUrl, supabaseKey)
 
 // 获取用户ID
 export function getUserId(): string {
@@ -19,8 +20,18 @@ export function getUserId(): string {
   return 'anonymous'
 }
 
+// 检查Supabase是否配置
+function isSupabaseConfigured(): boolean {
+  return supabaseUrl !== 'https://placeholder.supabase.co' && supabaseKey !== 'placeholder-key'
+}
+
 // 保存消息到Supabase
 export async function saveMessageToSupabase(message: any) {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase未配置，跳过保存')
+    return null
+  }
+
   const { data, error } = await supabase
     .from('messages')
     .upsert({
@@ -48,6 +59,11 @@ export async function saveMessageToSupabase(message: any) {
 
 // 从Supabase获取消息
 export async function getMessagesFromSupabase(userId?: string, topicId?: string) {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase未配置，返回空数组')
+    return []
+  }
+
   let query = supabase
     .from('messages')
     .select('*')
@@ -70,6 +86,11 @@ export async function getMessagesFromSupabase(userId?: string, topicId?: string)
 
 // 更新消息
 export async function updateMessageInSupabase(id: string, updates: any) {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase未配置，跳过更新')
+    return
+  }
+
   const { error } = await supabase
     .from('messages')
     .update(updates)
@@ -84,6 +105,11 @@ export async function updateMessageInSupabase(id: string, updates: any) {
 
 // 删除消息
 export async function deleteMessageFromSupabase(id: string) {
+  if (!isSupabaseConfigured()) {
+    console.warn('Supabase未配置，跳过删除')
+    return
+  }
+
   const { error } = await supabase
     .from('messages')
     .delete()
