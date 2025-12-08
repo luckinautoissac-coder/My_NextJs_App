@@ -11,6 +11,7 @@ export default function DataMigrationPage() {
   const [message, setMessage] = useState('')
   const [stats, setStats] = useState<{ messages: number; agents: number; topics: number } | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [restoreFile, setRestoreFile] = useState<File | null>(null)
 
   // 导出localStorage数据
   const handleExport = () => {
@@ -68,6 +69,48 @@ export default function DataMigrationPage() {
       console.error('Export error:', error)
       setStatus('error')
       setMessage('❌ 导出失败：' + (error instanceof Error ? error.message : '未知错误'))
+    }
+  }
+
+  // 【新增】恢复到localStorage（紧急修复）
+  const handleRestore = async (file: File) => {
+    try {
+      setStatus('importing')
+      setMessage('正在恢复到localStorage...')
+      
+      const text = await file.text()
+      const data = JSON.parse(text)
+      
+      // 恢复所有store数据到localStorage
+      if (data['chat-store']) {
+        localStorage.setItem('chat-store', JSON.stringify(data['chat-store']))
+      }
+      if (data['topic-store']) {
+        localStorage.setItem('topic-store', JSON.stringify(data['topic-store']))
+      }
+      if (data['agent-store']) {
+        localStorage.setItem('agent-store', JSON.stringify(data['agent-store']))
+      }
+      if (data['api-store']) {
+        localStorage.setItem('api-store', JSON.stringify(data['api-store']))
+      }
+      
+      const messageCount = data['chat-store']?.state?.messages?.length || 0
+      const topicCount = data['topic-store']?.state?.topics?.length || 0
+      
+      setStatus('success')
+      setMessage(`✅ 恢复成功！${messageCount} 条消息、${topicCount} 个话题已恢复到localStorage`)
+      
+      setTimeout(() => {
+        if (confirm('数据已恢复到浏览器！是否刷新页面？')) {
+          window.location.href = '/'
+        }
+      }, 1500)
+      
+    } catch (error) {
+      console.error('Restore error:', error)
+      setStatus('error')
+      setMessage('❌ 恢复失败：' + (error instanceof Error ? error.message : '未知错误'))
     }
   }
 
@@ -190,6 +233,61 @@ export default function DataMigrationPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* 🚨 紧急恢复 */}
+      <Card className="border-orange-500 bg-orange-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-orange-700">
+            <AlertCircle className="h-5 w-5" />
+            🚨 紧急恢复（如果误清空了localStorage）
+          </CardTitle>
+          <CardDescription className="text-orange-600">
+            如果你已经清空了localStorage导致话题列表消失，可以用这个工具恢复备份的JSON文件
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <input
+              type="file"
+              accept=".json"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) {
+                  setRestoreFile(file)
+                  setStatus('idle')
+                  setMessage('')
+                }
+              }}
+              disabled={status === 'exporting' || status === 'importing'}
+              className="w-full p-2 border rounded"
+              id="restore-file-input"
+            />
+            {restoreFile && (
+              <p className="text-sm text-green-600 mt-2">
+                ✅ 已选择文件: {restoreFile.name}
+              </p>
+            )}
+          </div>
+          
+          <Button
+            onClick={() => {
+              if (restoreFile) {
+                handleRestore(restoreFile)
+              }
+            }}
+            disabled={!restoreFile || status === 'exporting' || status === 'importing'}
+            className="w-full bg-orange-600 hover:bg-orange-700"
+            size="lg"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            {status === 'importing' ? '正在恢复...' : '立即恢复到浏览器'}
+          </Button>
+          
+          <p className="text-xs text-orange-600">
+            ⚠️ 这会将备份的数据恢复到localStorage，然后你就能看到所有话题和消息了！
+          </p>
+        </CardContent>
+      </Card>
 
       {/* 步骤1：导出 */}
       <Card>
