@@ -12,6 +12,40 @@ export default function DataMigrationPage() {
   const [stats, setStats] = useState<{ messages: number; agents: number; topics: number } | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [restoreFile, setRestoreFile] = useState<File | null>(null)
+  const [dbReady, setDbReady] = useState<boolean | null>(null)
+  const [dbCheckMessage, setDbCheckMessage] = useState('')
+
+  // 检查并准备数据库
+  const handleDbSetup = async () => {
+    try {
+      setStatus('importing')
+      setDbCheckMessage('正在检查数据库表结构...')
+      
+      const response = await fetch('/api/db-setup', {
+        method: 'POST'
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        setDbReady(true)
+        setStatus('success')
+        if (data.alreadyUpToDate) {
+          setDbCheckMessage('✅ 数据库表结构已是最新，可以开始导入！')
+        } else {
+          setDbCheckMessage(`✅ 数据库表结构更新成功！${data.updates.join('、')}`)
+        }
+      } else {
+        setDbReady(false)
+        setStatus('error')
+        setDbCheckMessage(`❌ 数据库检查失败：${data.error}`)
+      }
+    } catch (error) {
+      setDbReady(false)
+      setStatus('error')
+      setDbCheckMessage(`❌ 数据库连接失败：${error instanceof Error ? error.message : '未知错误'}`)
+    }
+  }
 
   // 导出localStorage数据
   const handleExport = () => {
@@ -200,6 +234,23 @@ export default function DataMigrationPage() {
         </p>
       </div>
 
+      {/* 🚨 超级警告 */}
+      <Alert variant="destructive" className="border-red-600 bg-red-50">
+        <AlertCircle className="h-5 w-5 text-red-600" />
+        <AlertDescription className="text-red-700">
+          <strong className="text-lg block mb-2">🚨 千万不要提前清空localStorage！</strong>
+          <p className="mb-2">必须严格按照以下顺序操作：</p>
+          <ol className="list-decimal list-inside space-y-1 font-medium">
+            <li>恢复数据到localStorage（使用下方的橙色紧急恢复区域）</li>
+            <li>数据库准备检查（点击蓝色卡片的按钮，等待✅）</li>
+            <li>导入到VPS（上传JSON文件，等待成功）</li>
+            <li>验证VPS数据（访问 <a href="/admin/db-test" className="underline" target="_blank">/admin/db-test</a>，确认能看到消息）</li>
+            <li>【最后一步】清空localStorage（只在确认VPS有数据后！）</li>
+          </ol>
+          <p className="mt-2 text-sm">⚠️ 如果在VPS导入成功前清空localStorage，所有数据都会丢失！</p>
+        </AlertDescription>
+      </Alert>
+
       {/* 状态提示 */}
       {status !== 'idle' && (
         <Alert variant={status === 'error' ? 'destructive' : 'default'}>
@@ -289,6 +340,44 @@ export default function DataMigrationPage() {
         </CardContent>
       </Card>
 
+      {/* 数据库准备检查 */}
+      <Card className="border-blue-500 bg-blue-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-700">
+            <Database className="h-5 w-5" />
+            ⚙️ 数据库准备检查（导入前必做！）
+          </CardTitle>
+          <CardDescription className="text-blue-600">
+            在导入数据到VPS之前，需要先检查并更新数据库表结构
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button
+            onClick={handleDbSetup}
+            disabled={status === 'exporting' || status === 'importing'}
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            size="lg"
+          >
+            <Database className="h-4 w-4 mr-2" />
+            {status === 'importing' && !dbCheckMessage ? '正在检查...' : '检查并准备数据库'}
+          </Button>
+          
+          {dbCheckMessage && (
+            <Alert variant={dbReady ? 'default' : 'destructive'}>
+              <div className="flex items-center gap-2">
+                {dbReady && <CheckCircle2 className="h-4 w-4" />}
+                {dbReady === false && <AlertCircle className="h-4 w-4" />}
+                <AlertDescription>{dbCheckMessage}</AlertDescription>
+              </div>
+            </Alert>
+          )}
+          
+          <p className="text-xs text-blue-600">
+            ⚠️ 如果不执行这一步，导入数据时可能会失败！
+          </p>
+        </CardContent>
+      </Card>
+
       {/* 步骤1：导出 */}
       <Card>
         <CardHeader>
@@ -316,7 +405,7 @@ export default function DataMigrationPage() {
       </Card>
 
       {/* 步骤2：导入 */}
-      <Card>
+      <Card className={dbReady === false ? 'opacity-50' : ''}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
@@ -327,6 +416,15 @@ export default function DataMigrationPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {dbReady === false && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                ⚠️ 请先完成上方的"数据库准备检查"！
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <div>
             <input
               type="file"
@@ -339,7 +437,7 @@ export default function DataMigrationPage() {
                   setMessage('')
                 }
               }}
-              disabled={status === 'exporting' || status === 'importing'}
+              disabled={dbReady === false || status === 'exporting' || status === 'importing'}
               className="w-full p-2 border rounded"
               id="file-input"
             />
@@ -356,7 +454,7 @@ export default function DataMigrationPage() {
                 handleImport(selectedFile)
               }
             }}
-            disabled={!selectedFile || status === 'exporting' || status === 'importing'}
+            disabled={dbReady !== true || !selectedFile || status === 'exporting' || status === 'importing'}
             className="w-full"
             size="lg"
           >
@@ -367,6 +465,49 @@ export default function DataMigrationPage() {
           <p className="text-xs text-muted-foreground">
             ☁️ 数据将上传到VPS MySQL数据库（100GB容量）
           </p>
+        </CardContent>
+      </Card>
+
+      {/* 步骤3：验证 */}
+      <Card className="border-green-500 bg-green-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-green-700">
+            <CheckCircle2 className="h-5 w-5" />
+            步骤3：验证VPS数据（导入后必做！）
+          </CardTitle>
+          <CardDescription className="text-green-600">
+            在清空localStorage之前，必须先验证VPS中有完整数据！
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button
+            onClick={() => {
+              window.open('/admin/db-test', '_blank')
+            }}
+            className="w-full bg-green-600 hover:bg-green-700"
+            size="lg"
+          >
+            <Database className="h-4 w-4 mr-2" />
+            打开数据验证页面
+          </Button>
+          
+          <div className="text-sm space-y-2">
+            <p className="font-medium">验证步骤：</p>
+            <ol className="list-decimal list-inside space-y-1 text-green-700">
+              <li>点击上方按钮打开验证页面</li>
+              <li>点击"读取消息"按钮</li>
+              <li>确认能看到"✅ 成功读取 XXX 条消息"</li>
+              <li>检查消息列表，确认数据完整</li>
+              <li>只有验证成功后，才能清空localStorage！</li>
+            </ol>
+          </div>
+          
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="text-xs">
+              ⚠️ 如果验证失败或消息数为0，绝对不要清空localStorage！请联系技术支持。
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
 
@@ -403,14 +544,17 @@ export default function DataMigrationPage() {
       </Card>
 
       {/* 注意事项 */}
-      <Alert>
+      <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          <strong>重要提示：</strong>
+          <strong>🚨 极其重要的警告：</strong>
           <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-            <li>迁移前请确保已在Vercel配置好VPS数据库环境变量</li>
+            <li><strong className="text-red-600">【步骤1】先恢复localStorage数据（紧急恢复区域）</strong></li>
+            <li><strong className="text-red-600">【步骤2】点击"数据库准备检查"，等待成功✅</strong></li>
+            <li><strong className="text-red-600">【步骤3】导入数据到VPS，等待成功✅</strong></li>
+            <li><strong className="text-red-600">【步骤4】访问 /admin/db-test 验证VPS有数据</strong></li>
+            <li><strong className="text-red-600">【步骤5】确认VPS有数据后，才能清空localStorage！</strong></li>
             <li>导出的JSON文件请妥善保存，作为数据备份</li>
-            <li>导入完成后可以清理localStorage释放浏览器空间</li>
             <li>如有大量数据，导入可能需要几分钟时间</li>
           </ul>
         </AlertDescription>
