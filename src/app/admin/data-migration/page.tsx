@@ -85,10 +85,13 @@ export default function DataMigrationPage() {
       // 上传消息数据
       if (data['chat-store']?.state?.messages) {
         const messages = data['chat-store'].state.messages
+        let successCount = 0
+        let failedCount = 0
+        const failedMessages: string[] = []
         
         for (let i = 0; i < messages.length; i++) {
           const message = messages[i]
-          setMessage(`正在导入消息 ${i + 1}/${messages.length}...`)
+          setMessage(`正在导入消息 ${i + 1}/${messages.length}... (成功: ${successCount}, 失败: ${failedCount})`)
           
           try {
             const response = await fetch('/api/messages', {
@@ -99,25 +102,41 @@ export default function DataMigrationPage() {
             
             if (!response.ok) {
               const errorData = await response.json()
-              console.error('导入失败:', errorData)
-              throw new Error(`导入消息 ${message.id} 失败: ${errorData.error || '未知错误'}`)
+              console.error(`消息 ${i + 1} 导入失败:`, errorData)
+              failedCount++
+              failedMessages.push(`消息 ${i + 1} (ID: ${message.id.substring(0, 8)}...)`)
+              // 继续导入下一条，不中断
+              continue
             }
+            successCount++
           } catch (fetchError) {
-            console.error('请求错误:', fetchError)
-            throw new Error(`导入消息 ${i + 1} 时网络错误: ${fetchError instanceof Error ? fetchError.message : '未知错误'}`)
+            console.error(`消息 ${i + 1} 请求错误:`, fetchError)
+            failedCount++
+            failedMessages.push(`消息 ${i + 1} (网络错误)`)
+            // 继续导入下一条，不中断
+            continue
           }
           
           // 避免请求过快
           await new Promise(resolve => setTimeout(resolve, 50))
         }
+        
+        // 显示最终结果
+        if (failedCount === 0) {
+          setStatus('success')
+          setMessage(`✅ 成功导入全部 ${successCount} 条消息到VPS数据库！`)
+        } else {
+          setStatus('success')
+          setMessage(`⚠️ 导入完成：成功 ${successCount} 条，失败 ${failedCount} 条。\n失败的消息: ${failedMessages.slice(0, 5).join(', ')}${failedCount > 5 ? '...' : ''}`)
+        }
+      } else {
+        setStatus('success')
+        setMessage('✅ 没有消息需要导入')
       }
-      
-      setStatus('success')
-      setMessage(`✅ 成功导入 ${data['chat-store']?.state?.messages?.length || 0} 条消息到VPS数据库！`)
       
       // 提示刷新页面
       setTimeout(() => {
-        if (confirm('数据已成功导入到云端！是否刷新页面加载新数据？')) {
+        if (confirm('数据已导入到云端！是否刷新页面加载新数据？')) {
           window.location.reload()
         }
       }, 2000)
