@@ -67,29 +67,44 @@ export async function saveMessage(message: {
     )
     return result
   } catch (error: any) {
+    // 详细记录错误信息
+    console.error('保存消息失败，尝试使用基本字段:', {
+      errorCode: error.code,
+      errorNumber: error.errno,
+      sqlMessage: error.sqlMessage,
+      messageId: message.id
+    })
+    
     // 如果字段不存在，回退到基本字段
-    if (error.code === 'ER_BAD_FIELD_ERROR' || error.errno === 1054) {
+    if (error.code === 'ER_BAD_FIELD_ERROR' || error.errno === 1054 || error.sqlMessage?.includes('Unknown column')) {
       console.log('使用基本字段保存（数据库表需要更新）')
-      const [result] = await pool.execute(
-        `INSERT INTO messages (id, user_id, topic_id, role, content, message_type, status, timestamp)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE 
-           content = VALUES(content), 
-           status = VALUES(status)`,
-        [
-          message.id,
-          message.userId,
-          message.topicId || null,
-          message.role,
-          message.content,
-          message.messageType || 'normal',
-          message.status || 'sent',
-          message.timestamp
-        ]
-      )
-      return result
+      try {
+        const [result] = await pool.execute(
+          `INSERT INTO messages (id, user_id, topic_id, role, content, message_type, status, timestamp)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+           ON DUPLICATE KEY UPDATE 
+             content = VALUES(content), 
+             status = VALUES(status)`,
+          [
+            message.id,
+            message.userId,
+            message.topicId || null,
+            message.role,
+            message.content,
+            message.messageType || 'normal',
+            message.status || 'sent',
+            message.timestamp
+          ]
+        )
+        return result
+      } catch (fallbackError: any) {
+        console.error('基本字段保存也失败:', fallbackError)
+        throw new Error(`数据库保存失败: ${fallbackError.message}`)
+      }
     }
-    throw error
+    
+    // 其他错误直接抛出
+    throw new Error(`数据库错误(${error.code}): ${error.message}`)
   }
 }
 
