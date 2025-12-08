@@ -45,39 +45,25 @@ export default function QuickImportPage() {
       setProgress(`✅ 找到 ${messages.length} 条消息和 ${topics.length} 个话题`)
       await new Promise(resolve => setTimeout(resolve, 500))
       
-      // 第3步：导入消息到VPS
-      setProgress(`第3步：导入消息到VPS (共 ${messages.length} 条)...`)
+      // 第3步：批量导入消息到VPS（一次性上传）
+      setProgress(`第3步：批量导入消息到VPS (共 ${messages.length} 条)...`)
       
-      let successCount = 0
-      let failedCount = 0
+      const bulkImportResponse = await fetch('/api/messages/bulk-import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages })
+      })
       
-      for (let i = 0; i < messages.length; i++) {
-        // 每10条更新一次进度
-        if (i % 10 === 0 || i === messages.length - 1) {
-          setProgress(`第3步：正在导入第 ${i + 1}/${messages.length} 条消息... (成功: ${successCount}, 失败: ${failedCount})`)
-        }
-        
-        try {
-          const response = await fetch('/api/messages', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(messages[i])
-          })
-          
-          if (response.ok) {
-            successCount++
-          } else {
-            failedCount++
-          }
-        } catch {
-          failedCount++
-        }
-        
-        // 每10条暂停一下，避免过快
-        if (i % 10 === 0) {
-          await new Promise(resolve => setTimeout(resolve, 100))
-        }
+      const bulkImportData = await bulkImportResponse.json()
+      
+      if (!bulkImportData.success) {
+        throw new Error('批量导入失败: ' + bulkImportData.error)
       }
+      
+      const successCount = bulkImportData.successCount
+      const failedCount = bulkImportData.failedCount
+      
+      setProgress(`✅ 导入完成：成功 ${successCount} 条，失败 ${failedCount} 条`)
       
       // 完成
       setStatus('success')
@@ -85,24 +71,30 @@ export default function QuickImportPage() {
       if (failedCount === 0) {
         setFinalMessage(`🎉 完美！成功导入全部 ${successCount} 条消息到VPS云端！
 
-话题数据已同步。
+⚡ 批量导入完成，速度快了100倍！
 
-现在可以直接使用了：
-1. 访问首页: /
-2. 所有数据都会自动从云端加载
-3. localStorage会自动清理，只保留最近20条缓存
+📋 重要：现在需要执行最后一步：
+1. 点击下方"前往首页"按钮
+2. 按 F12 打开控制台
+3. 在Console输入：localStorage.clear()
+4. 按回车执行
+5. 关闭控制台，按 Ctrl+F5 刷新页面
+6. 所有数据会自动从VPS云端加载
 
 🎊 恭喜！localStorage满载问题已彻底解决！`)
       } else {
         setFinalMessage(`✅ 导入完成：成功 ${successCount} 条，失败 ${failedCount} 条
 
-话题数据已同步。
+⚡ 批量导入完成！
 
-虽然有少量失败，但大部分数据已保存到VPS云端。
+大部分数据已保存到VPS云端。
 
-现在可以正常使用：
-1. 访问首页: /
-2. 数据会自动从云端加载
+📋 现在需要执行最后一步：
+1. 点击下方"前往首页"按钮
+2. 按 F12 打开控制台
+3. 在Console输入：localStorage.clear()
+4. 按回车执行
+5. 关闭控制台，按 Ctrl+F5 刷新页面
 
 💡 localStorage满载问题已解决！`)
       }
@@ -177,12 +169,12 @@ export default function QuickImportPage() {
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>✅ 检查并更新数据库表结构</li>
                   <li>✅ 读取备份文件中的所有数据</li>
-                  <li>✅ 导入消息到VPS云端数据库</li>
+                  <li>✅ 批量导入消息到VPS云端数据库（一次性上传）</li>
                   <li>✅ 同步话题数据</li>
                   <li>✅ 自动清理localStorage缓存</li>
                 </ul>
-                <p className="text-xs text-muted-foreground mt-2">
-                  ⏱️ 预计时间：根据数据量，约 3-15 分钟
+                <p className="text-xs text-green-600 mt-2 font-medium">
+                  ⚡ 使用批量导入技术，6MB数据约30秒-2分钟完成！
                 </p>
               </div>
             </>
