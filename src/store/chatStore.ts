@@ -1,13 +1,44 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+<parameter name="persist" from 'zustand/middleware'
 import type { ChatState, Message } from '@/types/chat'
+
+// 辅助函数：获取用户ID
+function getUserId(): string {
+  if (typeof window !== 'undefined') {
+    let userId = localStorage.getItem('__user_id__')
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).substring(2, 15)
+      localStorage.setItem('__user_id__', userId)
+    }
+    return userId
+  }
+  return 'server'
+}
+
+// API调用函数
+async function apiCall(url: string, options?: RequestInit) {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'x-user-id': getUserId(),
+      ...options?.headers
+    }
+  })
+  
+  if (!response.ok) {
+    throw new Error(`API请求失败: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
 
 export const useChatStore = create<ChatState>()(
   persist(
     (set, get) => ({
       messages: [],
       isLoading: false,
-      loadingTopics: {}, // 新增：每个话题的加载状态
+      loadingTopics: {},
       
       addMessage: (message) => {
         const newMessage: Message = {
@@ -15,18 +46,38 @@ export const useChatStore = create<ChatState>()(
           id: typeof window !== 'undefined' ? crypto.randomUUID() : `msg_${Date.now()}_${Math.random()}`,
           timestamp: new Date(),
         }
+        
+        // 立即更新本地状态
         set((state) => ({
           messages: [...state.messages, newMessage],
         }))
+        
+        // 异步保存到VPS
+        apiCall('/api/messages', {
+          method: 'POST',
+          body: JSON.stringify(newMessage)
+        }).catch(error => {
+          console.error('保存消息到VPS失败:', error)
+        })
+        
         return newMessage.id
       },
       
       updateMessage: (id, updates) => {
+        // 立即更新本地状态
         set((state) => ({
           messages: state.messages.map((msg) =>
             msg.id === id ? { ...msg, ...updates } : msg
           ),
         }))
+        
+        // 异步更新VPS
+        apiCall('/api/messages', {
+          method: 'PATCH',
+          body: JSON.stringify({ id, ...updates })
+        }).catch(error => {
+          console.error('更新消息到VPS失败:', error)
+        })
       },
       
       setLoading: (loading, topicId) => {
@@ -71,9 +122,17 @@ export const useChatStore = create<ChatState>()(
       },
 
       deleteMessage: (id) => {
+        // 立即更新本地状态
         set((state) => ({
           messages: state.messages.filter((msg) => msg.id !== id),
         }))
+        
+        // 异步删除VPS数据
+        apiCall(`/api/messages?id=${id}`, {
+          method: 'DELETE'
+        }).catch(error => {
+          console.error('删除VPS消息失败:', error)
+        })
       },
 
       addModelResponse: (messageId, modelResponse) => {
@@ -121,31 +180,65 @@ export const useChatStore = create<ChatState>()(
       },
     }),
     {
-      name: 'chat-store',
+      name: 'chat-cache', // 改名以区分
       partialize: (state) => ({ 
-        messages: state.messages
+        // 只缓存最近20条消息作为快速访问缓存
+        messages: state.messages.slice(-20)
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
           // 恢复 Date 对象
-          state.messages = state.messages.map(message => ({
-            ...message,
-            timestamp: new Date(message.timestamp),
-            // 恢复 thinkingInfo 中的 startTime
-            ...(message.thinkingInfo && {
-              thinkingInfo: {
-                ...message.thinkingInfo,
-                startTime: new Date(message.thinkingInfo.startTime)
+          state.messages = state.messages.map(message => {
+            const restoredMessage = {
+              ...message,
+              timestamp: new Date(message.timestamp),
+              ...(message.thinkingInfo && {
+                thinkingInfo: {
+                  ...message.thinkingInfo,
+                  startTime: new Date(message.thinkingInfo.startTime)
+                }
+              }),
+              ...(message.modelResponses && {
+                modelResponses: message.modelResponses.map(response => ({
+                  ...response,
+                  timestamp: response.timestamp ? new Date(response.timestamp) : new Date()
+                }))
+              })
+            }
+
+            // 清理异常的思考消息
+            if (restoredMessage.messageType === 'thinking' && restoredMessage.thinkingInfo?.startTime) {
+              const elapsed = (new Date().getTime() - restoredMessage.thinkingInfo.startTime.getTime()) / 1000
+              if (elapsed > 300) {
+                console.warn('清理异常的思考消息:', message.id)
+                return {
+                  ...restoredMessage,
+                  content: '❌ 消息加载失败（数据异常）',
+                  status: 'error' as const,
+                  messageType: 'normal' as const,
+                  thinkingInfo: undefined
+                }
               }
-            }),
-            // 恢复 modelResponses 中的 timestamp
-            ...(message.modelResponses && {
-              modelResponses: message.modelResponses.map(response => ({
-                ...response,
-                timestamp: response.timestamp ? new Date(response.timestamp) : new Date()
-              }))
+            }
+
+            return restoredMessage
+          })
+          
+          // 从VPS加载完整消息列表
+          apiCall('/api/messages')
+            .then(data => {
+              if (data.success && data.messages) {
+                const messages = data.messages.map((msg: any) => ({
+                  ...msg,
+                  timestamp: new Date(msg.timestamp)
+                }))
+                // 合并VPS数据和本地缓存
+                useChatStore.setState({ messages })
+              }
             })
-          }))
+            .catch(error => {
+              console.error('从VPS加载消息失败:', error)
+            })
         }
       }
     }

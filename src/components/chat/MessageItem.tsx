@@ -28,6 +28,7 @@ import { MarkdownRenderer } from './MarkdownRenderer'
 // 思考消息组件
 function ThinkingMessage({ message }: { message: Message }) {
   const [duration, setDuration] = useState(0)
+  const { updateMessage } = useChatStore()
 
   // 更新思考时长
   useEffect(() => {
@@ -36,7 +37,21 @@ function ThinkingMessage({ message }: { message: Message }) {
     const updateDuration = () => {
       const now = new Date()
       const elapsed = Math.floor((now.getTime() - message.thinkingInfo!.startTime.getTime()) / 1000)
-      setDuration(elapsed)
+      
+      // 安全检查：如果思考时间超过5分钟（300秒），说明是数据异常或超时
+      // 自动将消息转换为错误状态并清理thinkingInfo
+      if (elapsed > 300) {
+        console.warn('检测到异常的思考时间(超过5分钟)，自动清理异常数据')
+        updateMessage(message.id, {
+          content: '❌ 请求超时（思考时间超过5分钟，可能是网络问题或API服务异常）',
+          status: 'error',
+          messageType: 'normal',
+          thinkingInfo: undefined
+        })
+        setDuration(0)
+      } else {
+        setDuration(elapsed)
+      }
     }
 
     // 立即更新一次
@@ -46,7 +61,7 @@ function ThinkingMessage({ message }: { message: Message }) {
     const interval = setInterval(updateDuration, 1000)
 
     return () => clearInterval(interval)
-  }, [message.thinkingInfo?.startTime])
+  }, [message.thinkingInfo?.startTime, message.id, updateMessage])
 
   // 根据时长获取思考阶段
   const getThinkingPhase = (seconds: number) => {

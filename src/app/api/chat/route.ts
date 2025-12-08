@@ -4365,70 +4365,92 @@ export async function POST(request: NextRequest) {
 
     console.log(`Model: ${selectedModel}, Thinking Chain: ${thinkingChain?.level || 'none'}, History messages: ${conversationHistory?.length || 0} -> ${actualHistoryCount}, Max allowed: ${maxHistoryMessages}, Estimated input tokens: ${estimatedInputTokens}, Max output tokens: ${maxTokens}`)
     
-    const response = await fetch(`${apiBaseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: selectedModel,
-        messages: messages,
-        max_tokens: maxTokens,
-        temperature: temperature,
-        stream: false
-      }),
-    })
+    // 创建带超时的AbortController
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 240000) // 4分钟超时,留1分钟给前端处理
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      let errorData
-      try {
-        errorData = JSON.parse(errorText)
-      } catch {
-        errorData = { error: { message: errorText } }
+    try {
+      const response = await fetch(`${apiBaseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: messages,
+          max_tokens: maxTokens,
+          temperature: temperature,
+          stream: false
+        }),
+        signal: controller.signal
+      })
+
+      clearTimeout(timeoutId)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        let errorData
+        try {
+          errorData = JSON.parse(errorText)
+        } catch {
+          errorData = { error: { message: errorText } }
+        }
+        
+        console.error('AIHUBMIX API Error:', response.status, errorText)
+        
+        let errorMessage = '请求失败'
+        switch (response.status) {
+          case 401:
+            errorMessage = 'API Key 无效或已过期，请检查您的密钥'
+            break
+          case 402:
+            errorMessage = '账户余额不足，请充值后重试'
+            break
+          case 429:
+            errorMessage = '请求过于频繁，请稍后重试'
+            break
+          case 500:
+            errorMessage = 'AI服务商服务器内部错误，请稍后重试'
+            break
+          default:
+            errorMessage = errorData.error?.message || `请求失败 (${response.status})`
+        }
+
+        return NextResponse.json(
+          { error: errorMessage, details: errorData },
+          { status: response.status }
+        )
+      }
+
+      const data = await response.json()
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        console.error('Invalid API response format:', JSON.stringify(data))
+        return NextResponse.json(
+          { error: 'API 返回格式异常，无法解析回复' },
+          { status: 500 }
+        )
+      }
+
+      return NextResponse.json({
+        response: data.choices[0].message.content.trim(),
+        agentName: agentConfig.name
+      })
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      
+      // 检查是否是超时错误
+      if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+        console.error('API request timeout after 4 minutes')
+        return NextResponse.json(
+          { error: 'AI响应超时(4分钟)，模型思考时间过长，请稍后重试或更换模型' },
+          { status: 504 }
+        )
       }
       
-      console.error('AIHUBMIX API Error:', response.status, errorText)
-      
-      let errorMessage = '请求失败'
-      switch (response.status) {
-        case 401:
-          errorMessage = 'API Key 无效或已过期，请检查您的密钥'
-          break
-        case 402:
-          errorMessage = '账户余额不足，请充值后重试'
-          break
-        case 429:
-          errorMessage = '请求过于频繁，请稍后重试'
-          break
-        case 500:
-          errorMessage = 'AI服务商服务器内部错误，请稍后重试'
-          break
-        default:
-          errorMessage = errorData.error?.message || `请求失败 (${response.status})`
-      }
-
-      return NextResponse.json(
-        { error: errorMessage, details: errorData },
-        { status: response.status }
-      )
+      throw fetchError
     }
-
-    const data = await response.json()
-    
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      console.error('Invalid API response format:', JSON.stringify(data))
-      return NextResponse.json(
-        { error: 'API 返回格式异常，无法解析回复' },
-        { status: 500 }
-      )
-    }
-
-    return NextResponse.json({
-      response: data.choices[0].message.content.trim(),
-      agentName: agentConfig.name
-    })
 
   } catch (error) {
     console.error('Chat API error:', error)

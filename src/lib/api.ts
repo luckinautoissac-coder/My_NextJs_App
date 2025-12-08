@@ -23,34 +23,49 @@ export async function sendMessage(
   }
 
   try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message,
-        agentId,
-        apiKey,
-        model,
-        baseUrl,
-        thinkingChain,
-        conversationHistory
-      }),
-    })
+    // 创建一个带超时的AbortController
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 300000) // 5分钟超时
 
-    const data = await response.json()
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          agentId,
+          apiKey,
+          model,
+          baseUrl,
+          thinkingChain,
+          conversationHistory
+        }),
+        signal: controller.signal
+      })
 
-    if (!response.ok) {
-      throw new Error(data.error || '请求失败')
-    }
+      clearTimeout(timeoutId)
 
-    return {
-      response: data.response
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || '请求失败')
+      }
+
+      return {
+        response: data.response
+      }
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      throw fetchError
     }
 
   } catch (error) {
     if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error('请求超时(5分钟),AI思考时间过长,请稍后重试')
+      }
       throw error
     }
     
