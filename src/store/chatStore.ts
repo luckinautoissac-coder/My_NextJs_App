@@ -224,10 +224,12 @@ export const useChatStore = create<ChatState>()(
             return restoredMessage
           })
           
-          // 从VPS加载完整消息列表
+          // 【临时禁用VPS加载】完全使用localStorage数据
           const localMessageCount = state.messages.length
-          console.log('localStorage中有', localMessageCount, '条消息')
+          console.log('✅ localStorage中有', localMessageCount, '条消息（使用本地数据，暂不从VPS加载）')
           
+          // 注释掉VPS加载逻辑，等问题解决后再启用
+          /*
           apiCall('/api/messages')
             .then(data => {
               // API直接返回消息数组
@@ -275,6 +277,7 @@ export const useChatStore = create<ChatState>()(
             .catch(error => {
               console.error('从VPS加载消息失败:', error, '- 保留localStorage数据')
             })
+          */
         }
       }
     }
