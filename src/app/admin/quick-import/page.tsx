@@ -18,21 +18,6 @@ export default function QuickImportPage() {
     try {
       setStatus('working')
       
-      // 第0步：确保userId存在并恢复
-      setProgress('第0步：准备用户身份...')
-      
-      // 从备份文件中提取userId
-      const backupUserId = data['chat-store']?.state?.messages?.[0]?.userId
-      if (backupUserId) {
-        localStorage.setItem('__user_id__', backupUserId)
-        setProgress(`✅ 用户身份已恢复: ${backupUserId}`)
-        console.log('✅ 恢复了备份中的userId:', backupUserId)
-      } else {
-        setProgress('⚠️ 备份中没有找到userId，将使用当前userId')
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
       // 第1步：检查数据库
       setProgress('第1步：检查数据库表结构...')
       const dbSetupResponse = await fetch('/api/db-setup', { method: 'POST' })
@@ -49,6 +34,18 @@ export default function QuickImportPage() {
       setProgress('第2步：读取备份文件...')
       const text = await file.text()
       const data = JSON.parse(text)
+      
+      // 第2.5步：恢复userId
+      setProgress('第2步：准备用户身份...')
+      const backupUserId = data['chat-store']?.state?.messages?.[0]?.userId
+      if (backupUserId) {
+        localStorage.setItem('__user_id__', backupUserId)
+        setProgress(`✅ 用户身份已恢复: ${backupUserId}`)
+        console.log('✅ 恢复了备份中的userId:', backupUserId)
+      } else {
+        setProgress('⚠️ 备份中没有找到userId，将使用当前userId')
+      }
+      await new Promise(resolve => setTimeout(resolve, 500))
       
       const messages = data['chat-store']?.state?.messages || []
       const topics = data['topic-store']?.state?.topics || []
