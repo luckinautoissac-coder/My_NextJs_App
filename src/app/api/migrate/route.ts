@@ -2,19 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { saveMessageToSupabase, getUserId } from '@/lib/supabase'
 import { supabase } from '@/lib/supabase'
 
-// POST - 迁移数据到Supabase（支持分批上传）
+// POST - 迁移数据到Supabase（支持分批上传，保持原始userId）
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id') || getUserId()
-    
     // 处理大文件的请求体
     let messages = []
     let topics = []
+    let preserveUserId = true // 保持原始userId
     
     try {
       const body = await request.json()
       messages = body.messages || []
       topics = body.topics || []
+      preserveUserId = body.preserveUserId !== false // 默认保持原始userId
     } catch (parseError) {
       console.error('JSON解析失败:', parseError)
       return NextResponse.json(
@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
     let messageCount = 0
     let topicCount = 0
     const errors: string[] = []
+    const userIds = new Set<string>() // 记录所有userId
     
     // 迁移话题（批量操作）
     if (topics && Array.isArray(topics) && topics.length > 0) {
@@ -40,14 +41,23 @@ export async function POST(request: NextRequest) {
       for (let i = 0; i < topics.length; i += batchSize) {
         const batch = topics.slice(i, i + batchSize)
         try {
-          const topicsToInsert = batch.map(topic => ({
-            id: topic.id,
-            user_id: userId,
-            title: topic.title || topic.name || '未命名话题',
-            agent_id: topic.agentId,
-            created_at: topic.createdAt,
-            updated_at: topic.updatedAt
-          }))
+          const topicsToInsert = batch.map(topic => {
+            // 保持原始userId或使用当前userId
+            const topicUserId = preserveUserId && topic.userId 
+              ? topic.userId 
+              : (request.headers.get('x-user-id') || getUserId())
+            
+            userIds.add(topicUserId)
+            
+            return {
+              id: topic.id,
+              user_id: topicUserId,
+              title: topic.title || topic.name || '未命名话题',
+              agent_id: topic.agentId,
+              created_at: topic.createdAt,
+              updated_at: topic.updatedAt
+            }
+          })
           
           const { error } = await supabase
             .from('topics')
@@ -75,19 +85,28 @@ export async function POST(request: NextRequest) {
       for (let i = 0; i < messages.length; i += batchSize) {
         const batch = messages.slice(i, i + batchSize)
         try {
-          const messagesToInsert = batch.map(msg => ({
-            id: msg.id,
-            user_id: userId,
-            topic_id: msg.topicId || null,
-            role: msg.role,
-            content: msg.content || '',
-            message_type: msg.messageType || 'normal',
-            status: msg.status || 'sent',
-            timestamp: new Date(msg.timestamp),
-            model_responses: msg.modelResponses || null,
-            selected_model_id: msg.selectedModelId || null,
-            thinking_info: msg.thinkingInfo || null
-          }))
+          const messagesToInsert = batch.map(msg => {
+            // 保持原始userId或使用当前userId
+            const msgUserId = preserveUserId && msg.userId 
+              ? msg.userId 
+              : (request.headers.get('x-user-id') || getUserId())
+            
+            userIds.add(msgUserId)
+            
+            return {
+              id: msg.id,
+              user_id: msgUserId,
+              topic_id: msg.topicId || null,
+              role: msg.role,
+              content: msg.content || '',
+              message_type: msg.messageType || 'normal',
+              status: msg.status || 'sent',
+              timestamp: new Date(msg.timestamp),
+              model_responses: msg.modelResponses || null,
+              selected_model_id: msg.selectedModelId || null,
+              thinking_info: msg.thinkingInfo || null
+            }
+          })
           
           const { error } = await supabase
             .from('messages')
@@ -112,6 +131,7 @@ export async function POST(request: NextRequest) {
         messages: messageCount,
         topics: topicCount
       },
+      userIds: Array.from(userIds), // 返回涉及的userId列表
       errors: errors.length > 0 ? errors : undefined
     })
   } catch (error) {

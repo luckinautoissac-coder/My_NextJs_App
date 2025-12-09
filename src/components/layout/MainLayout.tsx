@@ -85,7 +85,7 @@ export function MainLayout() {
                   </SelectItem>
                 ))}
                 {enabledModelOptions.length === 0 && (
-                  <SelectItem value="" disabled>
+                  <SelectItem value="no-model" disabled>
                     请先在模型设置中添加模型
                   </SelectItem>
                 )}
