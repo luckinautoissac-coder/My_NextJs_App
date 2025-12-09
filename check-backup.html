@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>备份文件检查工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .upload-area {
+            border: 2px dashed #4CAF50;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            background: #f9f9f9;
+            margin: 20px 0;
+        }
+        .upload-area:hover {
+            background: #f0f0f0;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .stats {
+            margin: 20px 0;
+        }
+        .stat-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-left: 4px solid #4CAF50;
+            border-radius: 3px;
+        }
+        .stat-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .stat-value {
+            font-size: 1.2em;
+            color: #333;
+            margin-left: 10px;
+        }
+        .preview {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 12px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 备份文件检查工具</h1>
+        <p style="text-align: center; color: #666;">选择你的备份JSON文件，我会帮你检查数据完整性</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <p style="font-size: 18px; margin: 0;">📁 点击或拖拽JSON文件到这里</p>
+            <p style="color: #999; margin-top: 10px;">支持 .json 格式</p>
+            <input type="file" id="fileInput" accept=".json">
+        </div>
+
+        <div id="result" class="result">
+            <h3 id="resultTitle">检查结果</h3>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const result = document.getElementById('result');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultContent = document.getElementById('resultContent');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#e8f5e9';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.background = '#f9f9f9';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#f9f9f9';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.json')) {
+                showResult('error', '错误', '请选择JSON格式的文件！');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    const data = JSON.parse(content);
+                    analyzeBackup(data, file.size);
+                } catch (error) {
+                    showResult('error', '解析失败', `文件格式错误：${error.message}`);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function analyzeBackup(data, fileSize) {
+            let html = '<div class="stats">';
+            
+            // 文件信息
+            html += `<div class="stat-item">
+                <span class="stat-label">📦 文件大小：</span>
+                <span class="stat-value">${(fileSize / 1024).toFixed(2)} KB</span>
+            </div>`;
+
+            // 检查数据结构
+            if (data.data) {
+                const { messages = [], topics = [], agents = [], settings = {} } = data.data;
+                
+                html += `<div class="stat-item">
+                    <span class="stat-label">💬 消息数量：</span>
+                    <span class="stat-value">${messages.length} 条</span>
+                </div>`;
+
+                html += `<div class="stat-item">
+                    <span class="stat-label">📝 话题数量：</span>
+                    <span class="stat-value">${topics.length} 个</span>
+                </div>`;
+
+                html += `<div class="stat-item">
+                    <span class="stat-label">🤖 智能体数量：</span>
+                    <span class="stat-value">${agents.length} 个</span>
+                </div>`;
+
+                // 检查是否有FUJICL-Alibaba相关数据
+                const fujicMessages = messages.filter(m => 
+                    m.content && m.content.toLowerCase().includes('fujicl')
+                );
+                const fujicTopics = topics.filter(t => 
+                    t.agentId && t.agentId.includes('FUJICL-Alibaba')
+                );
+
+                html += `<div class="stat-item">
+                    <span class="stat-label">🔍 FUJICL相关消息：</span>
+                    <span class="stat-value">${fujicMessages.length} 条</span>
+                </div>`;
+
+                html += `<div class="stat-item">
+                    <span class="stat-label">🔍 FUJICL相关话题：</span>
+                    <span class="stat-value">${fujicTopics.length} 个</span>
+                </div>`;
+
+                // 数据完整性检查
+                let issues = [];
+                if (messages.length === 0) issues.push('❌ 消息为空');
+                if (topics.length === 0) issues.push('⚠️ 没有话题');
+                
+                if (issues.length > 0) {
+                    html += `<div class="stat-item" style="border-color: #ff9800;">
+                        <span class="stat-label">⚠️ 注意：</span>
+                        <span class="stat-value">${issues.join(', ')}</span>
+                    </div>`;
+                } else {
+                    html += `<div class="stat-item" style="border-color: #4CAF50;">
+                        <span class="stat-label">✅ 状态：</span>
+                        <span class="stat-value">数据完整</span>
+                    </div>`;
+                }
+
+                // 显示部分数据预览
+                html += `<div class="preview">
+                    <strong>数据预览（前3条消息）：</strong>
+                    <pre>${JSON.stringify(messages.slice(0, 3), null, 2)}</pre>
+                </div>`;
+
+                // 复制按钮
+                html += `<button onclick="copyToClipboard()">📋 复制完整报告</button>`;
+
+                // 保存报告到全局变量
+                window.backupReport = {
+                    fileSize,
+                    messageCount: messages.length,
+                    topicCount: topics.length,
+                    agentCount: agents.length,
+                    fujicMessages: fujicMessages.length,
+                    fujicTopics: fujicTopics.length,
+                    issues,
+                    version: data.version,
+                    timestamp: data.timestamp
+                };
+
+            } else {
+                html += '<p>⚠️ 文件格式不正确，缺少 data 字段</p>';
+            }
+
+            html += '</div>';
+            showResult('success', '✅ 检查完成', html);
+        }
+
+        function showResult(type, title, content) {
+            result.className = `result ${type} show`;
+            resultTitle.textContent = title;
+            resultContent.innerHTML = content;
+        }
+
+        function copyToClipboard() {
+            const report = window.backupReport;
+            const text = `
+备份文件检查报告
+==================
+文件大小: ${(report.fileSize / 1024).toFixed(2)} KB
+版本: ${report.version}
+备份时间: ${report.timestamp}
+
+数据统计:
+- 消息数量: ${report.messageCount} 条
+- 话题数量: ${report.topicCount} 个
+- 智能体数量: ${report.agentCount} 个
+- FUJICL相关消息: ${report.fujicMessages} 条
+- FUJICL相关话题: ${report.fujicTopics} 个
+
+状态: ${report.issues.length > 0 ? report.issues.join(', ') : '数据完整'}
+`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ 报告已复制到剪贴板！\n请粘贴发送给我。');
+            });
+        }
+    </script>
+</body>
+</html>
+

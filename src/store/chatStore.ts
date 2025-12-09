@@ -193,9 +193,20 @@ export const useChatStore = create<ChatState>()(
             return restoredMessage
           })
           
-          // 从Supabase加载完整消息列表
+          // 从Supabase加载完整消息列表（仅在配置后）
           const localMessageCount = state.messages.length
-          console.log('📦 [Supabase] localStorage中有', localMessageCount, '条消息')
+          console.log('📦 [localStorage] 本地有', localMessageCount, '条消息')
+          
+          // 检查Supabase是否已配置
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+          const supabaseConfigured = supabaseUrl && supabaseUrl !== 'https://placeholder.supabase.co'
+          
+          if (!supabaseConfigured) {
+            console.log('⚠️ [Supabase] 未配置，使用localStorage数据')
+            return
+          }
+          
+          console.log('✅ [Supabase] 已配置，尝试加载云端数据')
           
           getMessagesFromSupabase()
             .then(data => {

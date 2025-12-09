@@ -177,9 +177,20 @@ export const useTopicStore = create<TopicState>()(
             updatedAt: new Date(topic.updatedAt),
           }))
           
-          // 从API加载完整话题列表
+          // 从API加载完整话题列表（仅在Supabase配置后）
           const localTopicCount = state.topics.length
-          console.log('📦 [Topics API] localStorage中有', localTopicCount, '个话题')
+          console.log('📦 [localStorage] 本地有', localTopicCount, '个话题')
+          
+          // 检查Supabase是否已配置
+          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+          const supabaseConfigured = supabaseUrl && supabaseUrl !== 'https://placeholder.supabase.co'
+          
+          if (!supabaseConfigured) {
+            console.log('⚠️ [Supabase] 未配置，使用localStorage数据')
+            return
+          }
+          
+          console.log('✅ [Supabase] 已配置，尝试加载云端话题')
           
           fetch('/api/topics', {
             headers: {
