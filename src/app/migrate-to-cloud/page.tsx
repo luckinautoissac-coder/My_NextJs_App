@@ -6,32 +6,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Cloud, CheckCircle2, AlertCircle, Loader2, Database } from 'lucide-react'
 import { getUserId } from '@/lib/supabase'
+import { useChatStore } from '@/store/chatStore'
+import { useTopicStore } from '@/store/topicStore'
 
 export default function MigrateToCloudPage() {
   const [status, setStatus] = useState<'idle' | 'migrating' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
   const [stats, setStats] = useState<{ messages: number; topics: number } | null>(null)
+  
+  // 从zustand store中读取完整的内存数据
+  const messages = useChatStore(state => state.messages)
+  const topics = useTopicStore(state => state.topics)
 
   const handleMigrate = async () => {
     try {
       setStatus('migrating')
       setMessage('正在读取本地数据...')
       
-      // 读取localStorage数据
-      const chatStore = localStorage.getItem('chat-store')
-      const topicStore = localStorage.getItem('topic-store')
-      
-      if (!chatStore && !topicStore) {
+      // 使用内存中的完整数据，而不是localStorage
+      if (messages.length === 0 && topics.length === 0) {
         setStatus('error')
-        setMessage('❌ 没有找到本地数据')
+        setMessage('❌ 没有找到数据，请先在"数据设置"中导入备份文件')
         return
       }
-      
-      const chatData = chatStore ? JSON.parse(chatStore) : null
-      const topicData = topicStore ? JSON.parse(topicStore) : null
-      
-      const messages = chatData?.state?.messages || []
-      const topics = topicData?.state?.topics || []
       
       setMessage(`找到 ${messages.length} 条消息和 ${topics.length} 个话题，正在上传到云端...`)
       
