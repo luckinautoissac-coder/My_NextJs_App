@@ -209,14 +209,20 @@ export const useTopicStore = create<TopicState>()(
               if (data.length > 0) {
                 const topics = data.map((topic: any) => ({
                   id: topic.id,
-                  title: topic.title,
+                  name: topic.title, // API返回title，映射到name字段
                   agentId: topic.agent_id,
+                  messages: [], // 话题不存储消息ID列表
                   createdAt: new Date(topic.created_at),
                   updatedAt: new Date(topic.updated_at)
                 }))
                 
                 console.log('✅ [Topics API] 使用云端的', topics.length, '个话题')
+                console.log('📋 [Topics API] 话题示例:', topics.slice(0, 3))
                 useTopicStore.setState({ topics })
+                
+                // 验证状态是否更新
+                const currentState = useTopicStore.getState()
+                console.log('📊 [Topics Store] 当前状态中的话题数:', currentState.topics.length)
               }
             })
             .catch(error => {
