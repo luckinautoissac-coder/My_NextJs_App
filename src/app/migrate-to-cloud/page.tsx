@@ -106,7 +106,7 @@ export default function MigrateToCloudPage() {
       }
       
       // 构造最终结果
-      const result = {
+      const finalResult = {
         success: true,
         migrated: {
           messages: totalMessagesMigrated,
@@ -114,21 +114,16 @@ export default function MigrateToCloudPage() {
         }
       }
       
-      if (result.success) {
-        setStats(result.migrated)
-        setStatus('success')
-        setMessage(`✅ 迁移成功！已上传 ${result.migrated.messages} 条消息和 ${result.migrated.topics} 个话题到云端`)
-        
-        // 提示刷新
-        setTimeout(() => {
-          if (confirm('数据已迁移到云端！是否刷新页面加载新数据？')) {
-            window.location.href = '/'
-          }
-        }, 2000)
-      } else {
-        setStatus('error')
-        setMessage(`❌ 迁移失败：${result.error}`)
-      }
+      setStats(finalResult.migrated)
+      setStatus('success')
+      setMessage(`✅ 迁移成功！已上传 ${finalResult.migrated.messages} 条消息和 ${finalResult.migrated.topics} 个话题到云端`)
+      
+      // 提示刷新
+      setTimeout(() => {
+        if (confirm('数据已迁移到云端！是否刷新页面加载新数据？')) {
+          window.location.href = '/'
+        }
+      }, 2000)
     } catch (error) {
       console.error('迁移错误:', error)
       setStatus('error')
