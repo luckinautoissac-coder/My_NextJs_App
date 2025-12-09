@@ -56,17 +56,63 @@ export default function MigrateToCloudPage() {
       
       setMessage(`找到 ${migrateMessages.length} 条消息和 ${migrateTopics.length} 个话题，正在上传到云端...`)
       
-      // 调用迁移API
-      const response = await fetch('/api/migrate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-user-id': getUserId()
-        },
-        body: JSON.stringify({ messages: migrateMessages, topics: migrateTopics })
-      })
+      // 分批上传，避免请求体过大
+      const batchSize = 200 // 每次上传200条消息
+      let totalMessagesMigrated = 0
+      let totalTopicsMigrated = 0
       
-      const result = await response.json()
+      // 先上传话题
+      if (migrateTopics.length > 0) {
+        setMessage(`正在上传 ${migrateTopics.length} 个话题...`)
+        const topicsResponse = await fetch('/api/migrate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-user-id': getUserId()
+          },
+          body: JSON.stringify({ messages: [], topics: migrateTopics })
+        })
+        
+        const topicsResult = await topicsResponse.json()
+        if (topicsResult.success) {
+          totalTopicsMigrated = topicsResult.migrated.topics
+        }
+      }
+      
+      // 分批上传消息
+      for (let i = 0; i < migrateMessages.length; i += batchSize) {
+        const batch = migrateMessages.slice(i, i + batchSize)
+        const progress = Math.min(i + batchSize, migrateMessages.length)
+        setMessage(`正在上传消息 ${progress}/${migrateMessages.length}...`)
+        
+        const response = await fetch('/api/migrate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-user-id': getUserId()
+          },
+          body: JSON.stringify({ messages: batch, topics: [] })
+        })
+        
+        if (!response.ok) {
+          const errorText = await response.text()
+          throw new Error(`上传批次 ${i}-${progress} 失败: ${errorText}`)
+        }
+        
+        const result = await response.json()
+        if (result.success) {
+          totalMessagesMigrated += result.migrated.messages
+        }
+      }
+      
+      // 构造最终结果
+      const result = {
+        success: true,
+        migrated: {
+          messages: totalMessagesMigrated,
+          topics: totalTopicsMigrated
+        }
+      }
       
       if (result.success) {
         setStats(result.migrated)
