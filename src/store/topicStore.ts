@@ -1,6 +1,63 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { TopicState, Topic } from '@/types/agent'
+import { getUserId } from '@/lib/supabase'
+
+// 辅助函数：调用话题API
+async function saveTopicToAPI(topic: Topic) {
+  try {
+    const response = await fetch('/api/topics', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-user-id': getUserId()
+      },
+      body: JSON.stringify(topic)
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      console.error('保存话题失败:', error)
+    }
+  } catch (error) {
+    console.error('保存话题到API失败:', error)
+  }
+}
+
+async function updateTopicInAPI(id: string, updates: Partial<Topic>) {
+  try {
+    const response = await fetch('/api/topics', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-user-id': getUserId()
+      },
+      body: JSON.stringify({ id, ...updates })
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      console.error('更新话题失败:', error)
+    }
+  } catch (error) {
+    console.error('更新话题到API失败:', error)
+  }
+}
+
+async function deleteTopicFromAPI(id: string) {
+  try {
+    const response = await fetch(`/api/topics?id=${id}`, {
+      method: 'DELETE',
+      headers: {
+        'x-user-id': getUserId()
+      }
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      console.error('删除话题失败:', error)
+    }
+  } catch (error) {
+    console.error('删除话题从API失败:', error)
+  }
+}
 
 export const useTopicStore = create<TopicState>()(
   persist(
@@ -15,27 +72,43 @@ export const useTopicStore = create<TopicState>()(
           createdAt: new Date(),
           updatedAt: new Date(),
         }
+        
+        // 立即更新本地状态
         set((state) => ({
           topics: [...state.topics, newTopic],
         }))
+        
+        // 异步保存到API
+        saveTopicToAPI(newTopic).catch(console.error)
+        
         return newTopic.id
       },
       
       updateTopic: (id, updates) => {
+        const updatedData = { ...updates, updatedAt: new Date() }
+        
+        // 立即更新本地状态
         set((state) => ({
           topics: state.topics.map((topic) =>
             topic.id === id 
-              ? { ...topic, ...updates, updatedAt: new Date() }
+              ? { ...topic, ...updatedData }
               : topic
           ),
         }))
+        
+        // 异步更新API
+        updateTopicInAPI(id, updatedData).catch(console.error)
       },
       
       deleteTopic: (id) => {
+        // 立即更新本地状态
         set((state) => ({
           topics: state.topics.filter((topic) => topic.id !== id),
           currentTopicId: state.currentTopicId === id ? null : state.currentTopicId,
         }))
+        
+        // 异步删除API数据
+        deleteTopicFromAPI(id).catch(console.error)
       },
       
       setCurrentTopic: (id) => set({ currentTopicId: id || null }),
@@ -89,7 +162,12 @@ export const useTopicStore = create<TopicState>()(
       },
     }),
     {
-      name: 'topic-store',
+      name: 'topic-cache', // 改名以区分
+      partialize: (state) => ({ 
+        // 只缓存最近10个话题作为快速访问缓存
+        topics: state.topics.slice(-10),
+        currentTopicId: state.currentTopicId
+      }),
       onRehydrateStorage: () => (state) => {
         if (state) {
           // 恢复 Date 对象
@@ -98,6 +176,42 @@ export const useTopicStore = create<TopicState>()(
             createdAt: new Date(topic.createdAt),
             updatedAt: new Date(topic.updatedAt),
           }))
+          
+          // 从API加载完整话题列表
+          const localTopicCount = state.topics.length
+          console.log('📦 [Topics API] localStorage中有', localTopicCount, '个话题')
+          
+          fetch('/api/topics', {
+            headers: {
+              'x-user-id': getUserId()
+            }
+          })
+            .then(res => res.json())
+            .then(data => {
+              console.log('☁️ [Topics API] 云端返回', data.length, '个话题')
+              
+              if (data.length === 0 && localTopicCount > 0) {
+                console.log('⚠️ [Topics API] 云端为空，保留localStorage数据')
+                return
+              }
+              
+              if (data.length > 0) {
+                const topics = data.map((topic: any) => ({
+                  id: topic.id,
+                  title: topic.title,
+                  agentId: topic.agent_id,
+                  createdAt: new Date(topic.created_at),
+                  updatedAt: new Date(topic.updated_at)
+                }))
+                
+                console.log('✅ [Topics API] 使用云端的', topics.length, '个话题')
+                useTopicStore.setState({ topics })
+              }
+            })
+            .catch(error => {
+              console.error('❌ [Topics API] 加载话题失败:', error)
+              console.log('⚠️ [Topics API] 保留localStorage数据')
+            })
         }
       }
     }

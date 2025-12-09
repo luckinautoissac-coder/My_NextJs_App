@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import pool, { saveMessage, getMessages, updateMessage, deleteMessage } from '@/lib/vps-database'
+import { 
+  saveMessageToSupabase, 
+  getMessagesFromSupabase, 
+  updateMessageInSupabase, 
+  deleteMessageFromSupabase 
+} from '@/lib/supabase'
 
 // 获取用户ID（从header或生成）
 function getUserId(request: NextRequest): string {
@@ -12,14 +17,14 @@ export async function GET(request: NextRequest) {
     const userId = getUserId(request)
     const topicId = request.nextUrl.searchParams.get('topicId')
     
-    const messages = await getMessages(userId, topicId || undefined)
+    const messages = await getMessagesFromSupabase(userId, topicId || undefined)
     
     // 直接返回消息数组（兼容测试页面）
     return NextResponse.json(messages)
   } catch (error) {
     console.error('获取消息失败:', error)
     return NextResponse.json(
-      { error: '获取消息失败' },
+      { error: '获取消息失败', details: error instanceof Error ? error.message : '未知错误' },
       { status: 500 }
     )
   }
@@ -31,7 +36,7 @@ export async function POST(request: NextRequest) {
     const userId = getUserId(request)
     const message = await request.json()
     
-    await saveMessage({
+    await saveMessageToSupabase({
       ...message,
       userId,
       timestamp: new Date(message.timestamp)
@@ -43,7 +48,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('保存消息失败:', error)
     return NextResponse.json(
-      { success: false, error: '保存消息失败' },
+      { success: false, error: '保存消息失败', details: error instanceof Error ? error.message : '未知错误' },
       { status: 500 }
     )
   }
@@ -62,7 +67,7 @@ export async function PATCH(request: NextRequest) {
       )
     }
     
-    await updateMessage(id, userId, updates)
+    await updateMessageInSupabase(id, updates)
     
     return NextResponse.json({ 
       success: true 
@@ -70,7 +75,7 @@ export async function PATCH(request: NextRequest) {
   } catch (error) {
     console.error('更新消息失败:', error)
     return NextResponse.json(
-      { success: false, error: '更新消息失败' },
+      { success: false, error: '更新消息失败', details: error instanceof Error ? error.message : '未知错误' },
       { status: 500 }
     )
   }
@@ -89,7 +94,7 @@ export async function DELETE(request: NextRequest) {
       )
     }
     
-    await deleteMessage(id, userId)
+    await deleteMessageFromSupabase(id)
     
     return NextResponse.json({ 
       success: true 
@@ -97,7 +102,7 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error('删除消息失败:', error)
     return NextResponse.json(
-      { success: false, error: '删除消息失败' },
+      { success: false, error: '删除消息失败', details: error instanceof Error ? error.message : '未知错误' },
       { status: 500 }
     )
   }
