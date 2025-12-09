@@ -57,31 +57,54 @@ export async function saveMessageToSupabase(message: any) {
   return data
 }
 
-// 从Supabase获取消息
+// 从Supabase获取消息（支持大量数据）
 export async function getMessagesFromSupabase(userId?: string, topicId?: string) {
   if (!isSupabaseConfigured()) {
     console.warn('Supabase未配置，返回空数组')
     return []
   }
 
-  let query = supabase
-    .from('messages')
-    .select('*')
-    .eq('user_id', userId || getUserId())
-    .order('timestamp', { ascending: true })
+  // 分页获取所有消息（避免1000条限制）
+  let allMessages: any[] = []
+  let page = 0
+  const pageSize = 1000
+  
+  while (true) {
+    let query = supabase
+      .from('messages')
+      .select('*')
+      .eq('user_id', userId || getUserId())
+      .order('timestamp', { ascending: true })
+      .range(page * pageSize, (page + 1) * pageSize - 1)
 
-  if (topicId) {
-    query = query.eq('topic_id', topicId)
+    if (topicId) {
+      query = query.eq('topic_id', topicId)
+    }
+
+    const { data, error } = await query
+
+    if (error) {
+      console.error('从Supabase获取消息失败:', error)
+      throw error
+    }
+
+    if (!data || data.length === 0) {
+      break
+    }
+
+    allMessages = allMessages.concat(data)
+    
+    // 如果返回的数据少于pageSize，说明已经是最后一页
+    if (data.length < pageSize) {
+      break
+    }
+    
+    page++
   }
+  
+  console.log(`📊 [Supabase] 共获取 ${allMessages.length} 条消息（分${page + 1}页）`)
 
-  const { data, error } = await query
-
-  if (error) {
-    console.error('从Supabase获取消息失败:', error)
-    throw error
-  }
-
-  return data || []
+  return allMessages
 }
 
 // 更新消息
