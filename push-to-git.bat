@@ -15,11 +15,11 @@ git status
 echo.
 
 echo Adding all files...
-git add .
+git add -A
 echo.
 
 echo Committing changes...
-git commit -m "Add Supabase cloud storage and data migration feature"
+git commit -m "修复构建错误，添加清空云端数据功能"
 echo.
 
 echo Pushing to GitHub...
