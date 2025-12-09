@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>备份文件修复工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .upload-area {
+            border: 2px dashed #4CAF50;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            background: #f9f9f9;
+            margin: 20px 0;
+        }
+        .upload-area:hover {
+            background: #f0f0f0;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .stats {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 备份文件修复工具</h1>
+        
+        <div class="warning">
+            <strong>⚠️ 问题原因：</strong><br>
+            你的备份文件中有一些"思考消息"卡在"发送中"状态，导致前端崩溃。<br>
+            这个工具会自动清理这些异常消息。
+        </div>
+
+        <div class="upload-area" id="uploadArea">
+            <p style="font-size: 18px; margin: 0;">📁 点击或拖拽 backup-data.json 文件到这里</p>
+            <p style="color: #999; margin-top: 10px;">将自动清理异常消息</p>
+            <input type="file" id="fileInput" accept=".json">
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const result = document.getElementById('result');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#e8f5e9';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.background = '#f9f9f9';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.background = '#f9f9f9';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.json')) {
+                showResult('error', '❌ 请选择JSON格式的文件！');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    const data = JSON.parse(content);
+                    fixBackupData(data, file.name);
+                } catch (error) {
+                    showResult('error', `❌ 文件解析失败：${error.message}`);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function fixBackupData(data, filename) {
+            const originalCount = data.data.messages.length;
+            let removedCount = 0;
+            let fixedCount = 0;
+            const removedMessages = [];
+
+            // 过滤并修复消息
+            const cleanedMessages = data.data.messages.filter(msg => {
+                // 删除空内容且状态为sending的thinking消息
+                if (msg.messageType === 'thinking' && 
+                    msg.status === 'sending' && 
+                    (!msg.content || msg.content.trim() === '')) {
+                    removedMessages.push(msg.id);
+                    removedCount++;
+                    return false;
+                }
+                
+                // 修复status为sending但不是thinking的消息
+                if (msg.status === 'sending' && msg.messageType !== 'thinking') {
+                    msg.status = 'sent';
+                    fixedCount++;
+                }
+                
+                // 修复没有messageType的消息
+                if (!msg.messageType) {
+                    msg.messageType = 'normal';
+                }
+                
+                return true;
+            });
+
+            // 更新数据
+            data.data.messages = cleanedMessages;
+
+            // 生成修复后的文件
+            const fixedContent = JSON.stringify(data, null, 2);
+            const blob = new Blob([fixedContent], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const newFilename = filename.replace('.json', '-fixed.json');
+            
+            let html = '<div class="stats">';
+            html += `<h3>✅ 修复完成！</h3>`;
+            html += `<p><strong>原始消息数：</strong> ${originalCount} 条</p>`;
+            html += `<p><strong>删除异常消息：</strong> ${removedCount} 条</p>`;
+            html += `<p><strong>修复状态：</strong> ${fixedCount} 条</p>`;
+            html += `<p><strong>剩余消息：</strong> ${cleanedMessages.length} 条</p>`;
+            
+            if (removedCount > 0) {
+                html += `<p style="color: #ff9800;">⚠️ 已删除 ${removedCount} 条卡住的思考消息</p>`;
+            }
+            
+            html += '</div>';
+            
+            html += `<button onclick="downloadFixed('${url}', '${newFilename}')">📥 下载修复后的文件</button>`;
+            html += `<p style="margin-top: 15px; font-size: 14px; color: #666;">下载后，用修复的文件在前台导入，就不会再崩溃了！</p>`;
+            
+            showResult('success', html);
+            
+            // 保存下载函数到全局
+            window.downloadFixed = function(url, filename) {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            };
+        }
+
+        function showResult(type, content) {
+            result.className = `result ${type} show`;
+            result.innerHTML = content;
+        }
+    </script>
+</body>
+</html>
+
