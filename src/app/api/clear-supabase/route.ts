@@ -6,23 +6,33 @@ export async function POST(request: NextRequest) {
   try {
     const userId = request.headers.get('x-user-id') || getUserId()
     
+    // 先查询消息数量
+    const { count: messagesCount } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+    
     // 删除所有消息
-    const { error: messagesError, count: messagesCount } = await supabase
+    const { error: messagesError } = await supabase
       .from('messages')
       .delete()
       .eq('user_id', userId)
-      .select('*', { count: 'exact', head: false })
     
     if (messagesError) {
       console.error('删除消息失败:', messagesError)
     }
     
+    // 先查询话题数量
+    const { count: topicsCount } = await supabase
+      .from('topics')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+    
     // 删除所有话题
-    const { error: topicsError, count: topicsCount } = await supabase
+    const { error: topicsError } = await supabase
       .from('topics')
       .delete()
       .eq('user_id', userId)
-      .select('*', { count: 'exact', head: false })
     
     if (topicsError) {
       console.error('删除话题失败:', topicsError)
