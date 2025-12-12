@@ -114,9 +114,38 @@ export async function updateMessageInSupabase(id: string, updates: any) {
     return
   }
 
+  // 转换字段名：驼峰 → 下划线
+  const mappedUpdates: any = {}
+  
+  for (const key in updates) {
+    switch (key) {
+      case 'messageType':
+        mappedUpdates.message_type = updates[key]
+        break
+      case 'selectedModelId':
+        mappedUpdates.selected_model_id = updates[key]
+        break
+      case 'modelResponses':
+        mappedUpdates.model_responses = updates[key]
+        break
+      case 'thinkingInfo':
+        mappedUpdates.thinking_info = updates[key]
+        break
+      case 'userId':
+        mappedUpdates.user_id = updates[key]
+        break
+      case 'topicId':
+        mappedUpdates.topic_id = updates[key]
+        break
+      default:
+        // 其他字段保持不变（如 role, content, status, timestamp 等）
+        mappedUpdates[key] = updates[key]
+    }
+  }
+
   const { error } = await supabase
     .from('messages')
-    .update(updates)
+    .update(mappedUpdates)
     .eq('id', id)
     .eq('user_id', getUserId())
 
