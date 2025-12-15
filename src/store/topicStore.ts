@@ -6,13 +6,22 @@ import { getUserId } from '@/lib/supabase'
 // 辅助函数：调用话题API
 async function saveTopicToAPI(topic: Topic) {
   try {
+    // 字段映射：驼峰命名 → API 期望的格式
+    const mappedTopic = {
+      id: topic.id,
+      title: topic.name,  // name → title
+      agentId: topic.agentId,
+      createdAt: topic.createdAt,
+      updatedAt: topic.updatedAt
+    }
+    
     const response = await fetch('/api/topics', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-user-id': getUserId()
       },
-      body: JSON.stringify(topic)
+      body: JSON.stringify(mappedTopic)
     })
     if (!response.ok) {
       const error = await response.json()
@@ -25,13 +34,26 @@ async function saveTopicToAPI(topic: Topic) {
 
 async function updateTopicInAPI(id: string, updates: Partial<Topic>) {
   try {
+    // 字段映射：驼峰命名 → API 期望的格式
+    const mappedUpdates: any = { id }
+    
+    if (updates.name !== undefined) {
+      mappedUpdates.title = updates.name  // name → title
+    }
+    if (updates.agentId !== undefined) {
+      mappedUpdates.agentId = updates.agentId
+    }
+    if (updates.updatedAt !== undefined) {
+      mappedUpdates.updatedAt = updates.updatedAt
+    }
+    
     const response = await fetch('/api/topics', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'x-user-id': getUserId()
       },
-      body: JSON.stringify({ id, ...updates })
+      body: JSON.stringify(mappedUpdates)
     })
     if (!response.ok) {
       const error = await response.json()
