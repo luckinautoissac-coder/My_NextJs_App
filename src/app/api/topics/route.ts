@@ -39,11 +39,11 @@ export async function POST(request: NextRequest) {
       .from('topics')
       .insert({
         id: topic.id,
-        user_id: userId,
+        user_id: topic.user_id || userId,
         title: topic.title,
-        agent_id: topic.agentId,
-        created_at: topic.createdAt,
-        updated_at: topic.updatedAt
+        agent_id: topic.agent_id,
+        created_at: topic.created_at,
+        updated_at: topic.updated_at
       })
       .select()
     
@@ -74,8 +74,8 @@ export async function PATCH(request: NextRequest) {
     
     const updateData: any = {}
     if (updates.title !== undefined) updateData.title = updates.title
-    if (updates.agentId !== undefined) updateData.agent_id = updates.agentId
-    if (updates.updatedAt !== undefined) updateData.updated_at = updates.updatedAt
+    if (updates.agent_id !== undefined) updateData.agent_id = updates.agent_id
+    if (updates.updated_at !== undefined) updateData.updated_at = updates.updated_at
     
     const { error } = await supabase
       .from('topics')

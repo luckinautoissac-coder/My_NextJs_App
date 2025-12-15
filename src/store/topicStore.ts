@@ -6,13 +6,14 @@ import { getUserId } from '@/lib/supabase'
 // 辅助函数：调用话题API
 async function saveTopicToAPI(topic: Topic) {
   try {
-    // 字段映射：驼峰命名 → API 期望的格式
+    // 字段映射：驼峰命名 → 数据库下划线命名
     const mappedTopic = {
       id: topic.id,
+      user_id: getUserId(),
       title: topic.name,  // name → title
-      agentId: topic.agentId,
-      createdAt: topic.createdAt,
-      updatedAt: topic.updatedAt
+      agent_id: topic.agentId,  // agentId → agent_id
+      created_at: topic.createdAt,  // createdAt → created_at
+      updated_at: topic.updatedAt   // updatedAt → updated_at
     }
     
     const response = await fetch('/api/topics', {
@@ -34,17 +35,14 @@ async function saveTopicToAPI(topic: Topic) {
 
 async function updateTopicInAPI(id: string, updates: Partial<Topic>) {
   try {
-    // 字段映射：驼峰命名 → API 期望的格式
-    const mappedUpdates: any = { id }
+    // 字段映射：驼峰命名 → 数据库下划线命名
+    const mappedUpdates: any = { id, updated_at: new Date() }
     
     if (updates.name !== undefined) {
       mappedUpdates.title = updates.name  // name → title
     }
     if (updates.agentId !== undefined) {
-      mappedUpdates.agentId = updates.agentId
-    }
-    if (updates.updatedAt !== undefined) {
-      mappedUpdates.updatedAt = updates.updatedAt
+      mappedUpdates.agent_id = updates.agentId  // agentId → agent_id
     }
     
     const response = await fetch('/api/topics', {
