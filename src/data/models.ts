@@ -212,6 +212,26 @@ export const ALL_MODELS: AIModel[] = [
     isFree: false,
     isAdded: false
   },
+  {
+    id: 'deepseek-v3.2-speciale',
+    name: 'DeepSeek V3.2 Speciale',
+    provider: 'deepseek',
+    category: ['reasoning', 'tools'],
+    description: 'DeepSeek V3.2 特别版，优化的推理和工具使用能力',
+    contextLength: 64000,
+    isFree: false,
+    isAdded: false
+  },
+  {
+    id: 'deepseek-v3.2-think',
+    name: 'DeepSeek V3.2 Think',
+    provider: 'deepseek',
+    category: ['reasoning'],
+    description: 'DeepSeek V3.2 思考模型，具有增强的思维链推理能力',
+    contextLength: 64000,
+    isFree: false,
+    isAdded: false
+  },
 
   // xAI Models
   {
