@@ -218,7 +218,7 @@ export const ALL_MODELS: AIModel[] = [
     provider: 'deepseek',
     category: ['reasoning', 'tools'],
     description: 'DeepSeek V3.2 特别版，优化的推理和工具使用能力',
-    contextLength: 64000,
+    contextLength: 128000,
     isFree: false,
     isAdded: false
   },
@@ -228,7 +228,7 @@ export const ALL_MODELS: AIModel[] = [
     provider: 'deepseek',
     category: ['reasoning'],
     description: 'DeepSeek V3.2 思考模型，具有增强的思维链推理能力',
-    contextLength: 64000,
+    contextLength: 128000,
     isFree: false,
     isAdded: false
   },
