@@ -4494,9 +4494,33 @@ export async function POST(request: NextRequest) {
       }
     ]
 
+    // 估算系统提示词的 token 数（粗略估算：1 token ≈ 4 字符）
+    const systemPromptTokens = Math.ceil(agentConfig.systemPrompt.length / 4)
+    
+    // 根据模型设置最大上下文 tokens（保守估算，留出 buffer）
+    let maxContextTokens = 32000 // 默认值
+    if (selectedModel.includes('gemini-2.5-pro')) {
+      maxContextTokens = 800000 // Gemini 2.5 Pro 无限上下文，但我们限制为 80 万
+    } else if (selectedModel.includes('gemini')) {
+      maxContextTokens = 800000 // 其他 Gemini 模型 100 万上下文
+    } else if (selectedModel.includes('gpt-4')) {
+      maxContextTokens = 100000 // GPT-4 系列
+    } else if (selectedModel.includes('claude')) {
+      maxContextTokens = 150000 // Claude 系列
+    } else if (selectedModel.includes('deepseek')) {
+      maxContextTokens = 50000 // DeepSeek 系列
+    }
+    
+    // 为输出预留空间
+    const reservedForOutput = maxTokens
+    const availableForHistory = maxContextTokens - systemPromptTokens - reservedForOutput - 2000 // 额外留 2k buffer
+    
+    console.log(`System prompt tokens: ${systemPromptTokens}, Available for history: ${availableForHistory}, Max output: ${maxTokens}`)
+    
     // 计算历史消息数量
     let maxHistoryMessages = 20 // 默认值
     let actualHistoryCount = 0
+    let estimatedHistoryTokens = 0
     
     // 添加对话历史（如果有的话）
     if (conversationHistory && Array.isArray(conversationHistory) && conversationHistory.length > 0) {
@@ -4517,13 +4541,13 @@ export async function POST(request: NextRequest) {
       
       // 深度思考模型可以处理更多上下文
       if (selectedModel.includes('gemini-2.5-pro')) {
-        maxHistoryMessages = 100 // Gemini 2.5 Pro 最强上下文能力
+        maxHistoryMessages = 50 // 降低到 50 条，但会根据 token 数动态调整
       } else if (selectedModel.includes('gemini')) {
-        maxHistoryMessages = 60
+        maxHistoryMessages = 40 // 降低到 40 条
       } else if (selectedModel.includes('gpt-4') || selectedModel.includes('claude')) {
-        maxHistoryMessages = 40
+        maxHistoryMessages = 30 // 降低到 30 条
       } else if (selectedModel.includes('o1') || selectedModel.includes('o3') || selectedModel.includes('deepseek')) {
-        maxHistoryMessages = 50
+        maxHistoryMessages = 25 // 降低到 25 条
       }
       
       // 根据思维链级别进一步调整上下文长度
@@ -4536,7 +4560,7 @@ export async function POST(request: NextRequest) {
             maxHistoryMessages = Math.floor(maxHistoryMessages * 0.8) // 斟酌：80%上下文
             break
           case 'contemplative':
-            maxHistoryMessages = Math.floor(maxHistoryMessages * 1.2) // 沉思：120%上下文
+            maxHistoryMessages = Math.floor(maxHistoryMessages * 1.0) // 沉思：100%上下文（不再增加）
             break
           case 'default':
           default:
@@ -4545,18 +4569,35 @@ export async function POST(request: NextRequest) {
         }
       }
       
+      // 从后往前添加历史消息，直到达到 token 限制或消息数量限制
       const recentHistory = filteredHistory.slice(-maxHistoryMessages)
-      actualHistoryCount = recentHistory.length
+      const historyToAdd: any[] = []
       
-      // 添加历史消息，跳过系统分隔线消息
-      recentHistory.forEach((msg: any) => {
+      // 倒序遍历，确保最新的消息优先
+      for (let i = recentHistory.length - 1; i >= 0; i--) {
+        const msg = recentHistory[i]
         if ((msg.role === 'user' || msg.role === 'assistant') && msg.messageType !== 'context-separator') {
-          messages.push({
-            role: msg.role,
-            content: msg.content
-          })
+          // 估算这条消息的 token 数
+          const msgTokens = Math.ceil((msg.content || '').length / 4)
+          
+          // 检查是否还有足够空间
+          if (estimatedHistoryTokens + msgTokens <= availableForHistory) {
+            historyToAdd.unshift({
+              role: msg.role,
+              content: msg.content
+            })
+            estimatedHistoryTokens += msgTokens
+            actualHistoryCount++
+          } else {
+            // Token 预算用完，停止添加
+            console.log(`Stopped adding history at message ${i}, reached token limit`)
+            break
+          }
         }
-      })
+      }
+      
+      // 添加历史消息
+      messages.push(...historyToAdd)
     }
 
     // 添加当前用户消息
@@ -4565,7 +4606,7 @@ export async function POST(request: NextRequest) {
       content: message
     })
 
-    console.log(`Model: ${selectedModel}, Thinking Chain: ${thinkingChain?.level || 'none'}, History messages: ${conversationHistory?.length || 0} -> ${actualHistoryCount}, Max allowed: ${maxHistoryMessages}, Estimated input tokens: ${estimatedInputTokens}, Max output tokens: ${maxTokens}`)
+    console.log(`Model: ${selectedModel}, Thinking Chain: ${thinkingChain?.level || 'none'}, History messages: ${conversationHistory?.length || 0} -> ${actualHistoryCount}, Estimated history tokens: ${estimatedHistoryTokens}, Total estimated input: ${systemPromptTokens + estimatedHistoryTokens}, Max output tokens: ${maxTokens}`)
     
     // 创建带超时的AbortController
     const controller = new AbortController()
