@@ -14,6 +14,16 @@ export const ALL_MODELS: AIModel[] = [
     isAdded: false
   },
   {
+    id: 'gpt-5.2',
+    name: 'GPT-5.2',
+    provider: 'openai',
+    category: ['reasoning', 'tools'],
+    description: 'GPT-5的改进版本，具有更强的推理和工具使用能力',
+    contextLength: 200000,
+    isFree: false,
+    isAdded: false
+  },
+  {
     id: 'gpt-4o',
     name: 'GPT-4o',
     provider: 'openai',
