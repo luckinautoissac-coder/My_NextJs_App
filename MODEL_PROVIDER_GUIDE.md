@@ -14,12 +14,10 @@
 
 ### 2. 星火API
 - **供应商类型**: OpenAI 兼容
-- **默认地址**: `https://your-xinghuo-api-endpoint.com/v1`（需要修改）
-- **特点**: 讯飞星火大模型API服务
-- **配置**: 
-  - ⚠️ **重要**: 您需要将默认地址修改为您实际的星火API端点
-  - 如果您使用的是第三方OpenAI兼容代理（如 openai-style-api），请填写代理服务的地址
-  - 确保您的端点支持OpenAI API标准格式
+- **默认地址**: `https://api.xhuoai.com/v1`
+- **官方网站**: https://api.xhuoai.com
+- **特点**: OpenAI兼容的星火大模型API服务
+- **配置**: 开箱即用，默认地址已配置好
 
 ### 3. 自定义供应商
 - **供应商类型**: OpenAI 兼容
@@ -43,10 +41,8 @@
 
 ### 步骤 4: 调整API地址（如需要）
 - **AIHUBMIX**: 默认地址已锁定，无需修改
-- **星火API**: 
-  - ⚠️ 必须修改为您实际的API端点地址
-  - 如果您不确定地址，请联系您的API服务提供商
-- **自定义**: 输入您的自定义API地址
+- **星火API**: 默认地址已配置为 `https://api.xhuoai.com/v1`，无需修改
+- **自定义**: 完全自定义您的API地址
 
 ### 步骤 5: 选择模型
 1. 点击"管理模型"按钮
@@ -58,38 +54,25 @@
 
 ## 星火API特别说明
 
-### 获取OpenAI兼容的星火API
+### OpenAI兼容的星火API
 
-星火API原生接口与OpenAI格式不同，要使用本应用，您需要：
+本应用已集成 [https://api.xhuoai.com](https://api.xhuoai.com) 提供的OpenAI兼容星火API服务。
 
-#### 选项1: 使用第三方兼容服务
-一些服务提供OpenAI格式的星火API代理，例如：
-- AIHubMix 等聚合平台
-- 自建的API转换服务
+#### 特点
+- ✅ 完全兼容 OpenAI API 格式
+- ✅ 开箱即用，无需额外配置
+- ✅ 支持讯飞星火大模型
 
-#### 选项2: 使用开源转换工具
-使用 `openai-style-api` 等开源工具将星火API转换为OpenAI格式：
-```bash
-# 参考: https://github.com/tian-minghui/openai-style-api
-```
+#### 获取API Key
+1. 访问 [https://api.xhuoai.com](https://api.xhuoai.com)
+2. 注册账号并登录
+3. 在控制台获取您的 API Key
+4. 在应用的"模型服务设置"中输入 API Key 即可使用
 
-#### 选项3: 自建转换层
-如果您有技术能力，可以自己搭建一个转换层，将星火API的请求/响应格式转换为OpenAI标准格式。
-
-### 星火API端点示例
-
-根据您使用的服务不同，端点地址可能如下：
-
-```
-# 第三方兼容服务
-https://api.example.com/v1
-
-# 自建转换服务
-https://your-domain.com/api/v1
-
-# 本地服务
-http://localhost:8000/v1
-```
+#### 默认配置
+- **API 端点**: `https://api.xhuoai.com/v1`
+- **兼容格式**: OpenAI ChatCompletion API
+- **支持模型**: 讯飞星火系列模型
 
 ## API格式要求
 
@@ -129,8 +112,8 @@ POST /chat/completions
 
 ## 常见问题
 
-### Q: 星火API的默认地址是占位符吗？
-A: 是的。星火API原生不支持OpenAI格式，默认地址只是示例。您需要填写实际的OpenAI兼容端点地址。
+### Q: 星火API是否支持OpenAI格式？
+A: 是的。我们集成的 api.xhuoai.com 提供完全兼容OpenAI格式的星火API服务，开箱即用。
 
 ### Q: 我可以添加更多供应商吗？
 A: 可以使用"自定义"选项添加任何OpenAI兼容的API服务。
@@ -155,7 +138,7 @@ A: 支持所有供应商提供的OpenAI兼容模型，包括：
 ### 后端配置 (`src/app/api/chat/route.ts`)
 ```typescript
 const AIHUBMIX_BASE_URL = 'https://aihubmix.com/v1'
-const XINGHUO_BASE_URL = 'https://your-xinghuo-api-endpoint.com/v1'
+const XINGHUO_BASE_URL = 'https://api.xhuoai.com/v1'
 ```
 
 ### 前端配置 (`src/components/settings/ModelServiceDialog.tsx`)
@@ -164,17 +147,20 @@ const API_PROVIDERS = {
   aihubmix: {
     name: 'AIHUBMIX API',
     baseUrl: 'https://aihubmix.com/v1',
-    type: 'OpenAI'
+    type: 'OpenAI',
+    description: '支持多种主流模型的统一API服务'
   },
   xinghuo: {
     name: '星火API',
-    baseUrl: 'https://your-xinghuo-api-endpoint.com/v1',
-    type: 'OpenAI'
+    baseUrl: 'https://api.xhuoai.com/v1',
+    type: 'OpenAI',
+    description: 'OpenAI兼容的星火模型API服务'
   },
   custom: {
     name: '自定义',
     baseUrl: '',
-    type: 'OpenAI'
+    type: 'OpenAI',
+    description: '自定义OpenAI兼容的API端点'
   }
 }
 ```
@@ -182,11 +168,12 @@ const API_PROVIDERS = {
 ## 更新日志
 
 ### v1.1.0 (2025-01-06)
-- ✅ 添加星火API供应商选项
+- ✅ 添加星火API供应商选项（集成 api.xhuoai.com）
 - ✅ 添加供应商快速切换功能
 - ✅ 优化API地址配置体验
 - ✅ 添加供应商描述和帮助文本
 - ✅ 支持AIHUBMIX、星火API和自定义供应商
+- ✅ 星火API使用 OpenAI 兼容格式，开箱即用
 
 ---
 
