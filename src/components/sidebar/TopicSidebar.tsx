@@ -41,10 +41,10 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent,
   DragOverlay,
-  DragStartEvent,
-  DragOverEvent,
+  type DragEndEvent,
+  type DragStartEvent,
+  type DragOverEvent,
 } from '@dnd-kit/core'
 import {
   SortableContext,
