@@ -21,7 +21,7 @@ export function getUserId(): string {
 }
 
 // 检查Supabase是否配置
-function isSupabaseConfigured(): boolean {
+export function isSupabaseConfigured(): boolean {
   return supabaseUrl !== 'https://placeholder.supabase.co' && supabaseKey !== 'placeholder-key'
 }
 

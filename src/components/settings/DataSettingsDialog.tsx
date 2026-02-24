@@ -16,6 +16,8 @@ import { useChatStore } from '@/store/chatStore'
 import { useAgentStore } from '@/store/agentStore'
 import { useTopicStore } from '@/store/topicStore'
 import { useAPISettingsStore } from '@/store/apiSettingsStore'
+import { useKnowledgeStore } from '@/store/knowledgeStore'
+import { useQuickPhrasesStore } from '@/store/quickPhrasesStore'
 
 interface DataSettingsDialogProps {
   open: boolean
@@ -30,12 +32,14 @@ export function DataSettingsDialog({ open, onOpenChange }: DataSettingsDialogPro
   const { agents } = useAgentStore()
   const { topics, importTopics } = useTopicStore()
   const { apiKey, baseUrl, selectedModel, addedModels, importSettings } = useAPISettingsStore()
+  const knowledgeStore = useKnowledgeStore()
+  const quickPhrasesStore = useQuickPhrasesStore()
 
   // 导出数据
   const handleExportData = () => {
     try {
       const exportData = {
-        version: '1.0',
+        version: '1.1',
         timestamp: new Date().toISOString(),
         data: {
           messages: messages.map(msg => ({
@@ -53,7 +57,22 @@ export function DataSettingsDialog({ open, onOpenChange }: DataSettingsDialogPro
             baseUrl,
             selectedModel,
             addedModels
-          }
+          },
+          knowledgeBases: knowledgeStore.knowledgeBases.map(kb => ({
+            ...kb,
+            createdAt: kb.createdAt.toISOString(),
+            updatedAt: kb.updatedAt.toISOString(),
+            documents: kb.documents.map(doc => ({
+              ...doc,
+              uploadedAt: doc.uploadedAt.toISOString()
+            }))
+          })),
+          selectedKnowledgeBaseIds: knowledgeStore.selectedKnowledgeBaseIds,
+          quickPhrases: quickPhrasesStore.phrases.map(phrase => ({
+            ...phrase,
+            createdAt: phrase.createdAt.toISOString(),
+            updatedAt: phrase.updatedAt.toISOString()
+          }))
         }
       }
 
@@ -109,6 +128,8 @@ export function DataSettingsDialog({ open, onOpenChange }: DataSettingsDialogPro
         const importStats = {
           messages: data.messages?.length || 0,
           topics: data.topics?.length || 0,
+          knowledgeBases: data.knowledgeBases?.length || 0,
+          quickPhrases: data.quickPhrases?.length || 0,
           hasSettings: !!data.settings
         }
 
@@ -116,6 +137,8 @@ export function DataSettingsDialog({ open, onOpenChange }: DataSettingsDialogPro
         const confirmMessage = `即将导入以下数据：
 • ${importStats.messages} 条消息
 • ${importStats.topics} 个话题
+• ${importStats.knowledgeBases} 个知识库
+• ${importStats.quickPhrases} 条快捷短语
 ${importStats.hasSettings ? '• 应用设置（不包括API Key）' : ''}
 
 ⚠️ 这将覆盖当前的所有数据，是否确认导入？`
@@ -138,7 +161,44 @@ ${importStats.hasSettings ? '• 应用设置（不包括API Key）' : ''}
             importSettings(data.settings)
           }
           
-          toast.success(`数据恢复成功！已恢复 ${importStats.messages} 条消息，${importStats.topics} 个话题`)
+          // 恢复知识库数据
+          if (data.knowledgeBases && Array.isArray(data.knowledgeBases)) {
+            // 先重置知识库
+            knowledgeStore.resetStore()
+            // 导入知识库
+            const restoredKBs = data.knowledgeBases.map((kb: any) => ({
+              ...kb,
+              createdAt: new Date(kb.createdAt),
+              updatedAt: new Date(kb.updatedAt),
+              documents: kb.documents.map((doc: any) => ({
+                ...doc,
+                uploadedAt: new Date(doc.uploadedAt)
+              }))
+            }))
+            useKnowledgeStore.setState({ 
+              knowledgeBases: restoredKBs,
+              selectedKnowledgeBaseIds: data.selectedKnowledgeBaseIds || []
+            })
+          }
+          
+          // 恢复快捷短语数据
+          if (data.quickPhrases && Array.isArray(data.quickPhrases)) {
+            const restoredPhrases = data.quickPhrases.map((phrase: any) => ({
+              ...phrase,
+              createdAt: new Date(phrase.createdAt),
+              updatedAt: new Date(phrase.updatedAt)
+            }))
+            useQuickPhrasesStore.setState({ phrases: restoredPhrases })
+          }
+          
+          toast.success(
+            `数据恢复成功！\n已恢复：\n` +
+            `• ${importStats.messages} 条消息\n` +
+            `• ${importStats.topics} 个话题\n` +
+            `• ${importStats.knowledgeBases} 个知识库\n` +
+            `• ${importStats.quickPhrases} 条快捷短语`,
+            { duration: 5000 }
+          )
           
           // 关闭对话框
           onOpenChange(false)
@@ -164,7 +224,9 @@ ${importStats.hasSettings ? '• 应用设置（不包括API Key）' : ''}
     messagesCount: messages.length,
     agentsCount: agents.length,
     topicsCount: topics.length,
-    modelsCount: addedModels.length
+    modelsCount: addedModels.length,
+    knowledgeBasesCount: knowledgeStore.knowledgeBases.length,
+    quickPhrasesCount: quickPhrasesStore.phrases.length
   }
 
   return (
@@ -206,6 +268,14 @@ ${importStats.hasSettings ? '• 应用设置（不包括API Key）' : ''}
                     <div className="text-2xl font-bold text-orange-600">{dataStats.modelsCount}</div>
                     <div className="text-sm text-gray-600">已添加模型</div>
                   </div>
+                  <div className="text-center p-3 bg-pink-50 rounded-lg">
+                    <div className="text-2xl font-bold text-pink-600">{dataStats.knowledgeBasesCount}</div>
+                    <div className="text-sm text-gray-600">知识库</div>
+                  </div>
+                  <div className="text-center p-3 bg-cyan-50 rounded-lg">
+                    <div className="text-2xl font-bold text-cyan-600">{dataStats.quickPhrasesCount}</div>
+                    <div className="text-sm text-gray-600">快捷短语</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -230,6 +300,8 @@ ${importStats.hasSettings ? '• 应用设置（不包括API Key）' : ''}
                         <li>智能体配置（不包含系统提示）</li>
                         <li>话题分组和设置</li>
                         <li>模型配置（不包含 API Key）</li>
+                        <li>所有知识库和文档内容</li>
+                        <li>所有自定义快捷短语</li>
                       </ul>
                     </div>
                   </div>

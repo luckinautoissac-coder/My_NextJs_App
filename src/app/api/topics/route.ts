@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
         user_id: topic.user_id || userId,
         title: topic.title,
         agent_id: topic.agent_id,
+        folder_id: topic.folder_id || null,
         created_at: topic.created_at,
         updated_at: topic.updated_at
       })
@@ -75,6 +76,7 @@ export async function PATCH(request: NextRequest) {
     const updateData: any = {}
     if (updates.title !== undefined) updateData.title = updates.title
     if (updates.agent_id !== undefined) updateData.agent_id = updates.agent_id
+    if (updates.folder_id !== undefined) updateData.folder_id = updates.folder_id
     if (updates.updated_at !== undefined) updateData.updated_at = updates.updated_at
     
     const { error } = await supabase

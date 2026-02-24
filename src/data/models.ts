@@ -178,6 +178,16 @@ export const ALL_MODELS: AIModel[] = [
     isFree: false,
     isAdded: false
   },
+  {
+    id: 'gemini-3.1-pro-preview',
+    name: 'Gemini 3.1 Pro Preview',
+    provider: 'google',
+    category: ['reasoning', 'vision', 'tools'],
+    description: '最新的Gemini 3.1 Pro预览版，推理能力和多模态性能显著提升',
+    contextLength: 2000000,
+    isFree: false,
+    isAdded: false
+  },
 
   // Meta Models
   {
