@@ -174,3 +174,124 @@ export async function deleteMessageFromSupabase(id: string) {
   }
 }
 
+// ============= 文件夹相关函数 =============
+
+// 保存文件夹到Supabase
+export async function saveFolderToSupabase(folder: any) {
+  if (!isSupabaseConfigured()) {
+    return null
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('folders')
+      .upsert({
+        id: folder.id,
+        user_id: getUserId(),
+        name: folder.name,
+        agent_id: folder.agentId,
+        is_expanded: folder.isExpanded,
+        order: folder.order,
+        created_at: folder.createdAt,
+        updated_at: folder.updatedAt
+      })
+      .select()
+
+    if (error) {
+      console.error('❌ [Supabase] 保存文件夹失败:', error)
+      throw error
+    }
+
+    return data
+  } catch (error) {
+    console.error('❌ [Supabase] 保存文件夹异常:', error)
+    throw error
+  }
+}
+
+// 从Supabase获取文件夹
+export async function getFoldersFromSupabase() {
+  if (!isSupabaseConfigured()) {
+    return []
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('folders')
+      .select('*')
+      .eq('user_id', getUserId())
+      .order('agent_id')
+      .order('order')
+
+    if (error) {
+      console.error('❌ [Supabase] 获取文件夹失败:', error)
+      throw error
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('❌ [Supabase] 获取文件夹异常:', error)
+    throw error
+  }
+}
+
+// 更新文件夹
+export async function updateFolderInSupabase(id: string, updates: any) {
+  if (!isSupabaseConfigured()) {
+    return
+  }
+
+  try {
+    const mappedUpdates: any = {
+      updated_at: new Date()
+    }
+
+    if (updates.name !== undefined) {
+      mappedUpdates.name = updates.name
+    }
+    if (updates.isExpanded !== undefined) {
+      mappedUpdates.is_expanded = updates.isExpanded
+    }
+    if (updates.order !== undefined) {
+      mappedUpdates.order = updates.order
+    }
+
+    const { error } = await supabase
+      .from('folders')
+      .update(mappedUpdates)
+      .eq('id', id)
+      .eq('user_id', getUserId())
+
+    if (error) {
+      console.error('❌ [Supabase] 更新文件夹失败:', error)
+      throw error
+    }
+  } catch (error) {
+    console.error('❌ [Supabase] 更新文件夹异常:', error)
+    throw error
+  }
+}
+
+// 删除文件夹
+export async function deleteFolderFromSupabase(id: string) {
+  if (!isSupabaseConfigured()) {
+    return
+  }
+
+  try {
+    const { error } = await supabase
+      .from('folders')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', getUserId())
+
+    if (error) {
+      console.error('❌ [Supabase] 删除文件夹失败:', error)
+      throw error
+    }
+  } catch (error) {
+    console.error('❌ [Supabase] 删除文件夹异常:', error)
+    throw error
+  }
+}
+

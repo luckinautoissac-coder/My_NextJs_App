@@ -149,10 +149,10 @@ export const useChatStore = create<ChatState>()(
       },
     }),
     {
-      name: 'chat-cache', // 改名以区分
+      name: 'chat-storage',
+      // 完整持久化所有消息到 localStorage
       partialize: (state) => ({ 
-        // 只缓存最近20条消息作为快速访问缓存
-        messages: state.messages.slice(-20)
+        messages: state.messages  // 保存所有消息
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -202,18 +202,18 @@ export const useChatStore = create<ChatState>()(
           const supabaseConfigured = supabaseUrl && supabaseUrl !== 'https://placeholder.supabase.co'
           
           if (!supabaseConfigured) {
-            console.log('⚠️ [Supabase] 未配置，使用localStorage数据')
+            console.log('💾 [本地模式] Supabase 未配置，使用 localStorage 完整持久化')
             return
           }
           
-          console.log('✅ [Supabase] 已配置，尝试加载云端数据')
+          console.log('☁️ [云端模式] Supabase 已配置，尝试同步云端数据...')
           
           getMessagesFromSupabase()
             .then(data => {
               console.log('☁️ [Supabase] 云端返回', data.length, '条消息')
               
               if (data.length === 0 && localMessageCount > 0) {
-                console.log('⚠️ [Supabase] 云端为空，保留localStorage数据')
+                console.log('⚠️ [Supabase] 云端为空，保留 localStorage 数据')
                 return
               }
               
@@ -232,13 +232,13 @@ export const useChatStore = create<ChatState>()(
                   } : undefined
                 }))
                 
-                console.log('✅ [Supabase] 使用云端的', messages.length, '条消息')
+                console.log('✅ [Supabase] 使用云端的', messages.length, '条消息，同时备份到 localStorage')
                 useChatStore.setState({ messages })
               }
             })
             .catch(error => {
               console.error('❌ [Supabase] 加载消息失败:', error)
-              console.log('⚠️ [Supabase] 保留localStorage数据')
+              console.log('⚠️ [Supabase] 保留 localStorage 数据')
             })
         }
       }

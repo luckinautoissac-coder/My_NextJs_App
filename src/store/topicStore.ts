@@ -1,7 +1,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { TopicState, Topic, Folder } from '@/types/agent'
-import { getUserId, isSupabaseConfigured } from '@/lib/supabase'
+import { 
+  getUserId, 
+  isSupabaseConfigured,
+  saveFolderToSupabase,
+  getFoldersFromSupabase,
+  updateFolderInSupabase,
+  deleteFolderFromSupabase
+} from '@/lib/supabase'
 
 // 辅助函数：调用话题API
 async function saveTopicToAPI(topic: Topic) {
@@ -270,24 +277,39 @@ export const useTopicStore = create<TopicState>()(
           updatedAt: new Date(),
         }
         
+        // 立即更新本地状态
         set((state) => ({
           folders: [...state.folders, newFolder],
         }))
+        
+        // 异步保存到Supabase
+        saveFolderToSupabase(newFolder).catch(error => {
+          console.error('保存文件夹到Supabase失败:', error)
+        })
         
         return newFolder.id
       },
 
       updateFolder: (id, updates) => {
+        const updatedData = { ...updates, updatedAt: new Date() }
+        
+        // 立即更新本地状态
         set((state) => ({
           folders: state.folders.map((folder) =>
             folder.id === id 
-              ? { ...folder, ...updates, updatedAt: new Date() }
+              ? { ...folder, ...updatedData }
               : folder
           ),
         }))
+        
+        // 异步更新Supabase
+        updateFolderInSupabase(id, updatedData).catch(error => {
+          console.error('更新文件夹到Supabase失败:', error)
+        })
       },
 
       deleteFolder: (id) => {
+        // 立即更新本地状态
         set((state) => ({
           folders: state.folders.filter((folder) => folder.id !== id),
           // 将文件夹内的话题移出
@@ -297,9 +319,15 @@ export const useTopicStore = create<TopicState>()(
               : topic
           ),
         }))
+        
+        // 异步删除Supabase数据
+        deleteFolderFromSupabase(id).catch(error => {
+          console.error('删除文件夹从Supabase失败:', error)
+        })
       },
 
       toggleFolder: (id) => {
+        // 立即更新本地状态
         set((state) => ({
           folders: state.folders.map((folder) =>
             folder.id === id 
@@ -307,6 +335,15 @@ export const useTopicStore = create<TopicState>()(
               : folder
           ),
         }))
+        
+        // 异步更新Supabase（仅更新展开状态）
+        const state = get()
+        const folder = state.folders.find(f => f.id === id)
+        if (folder) {
+          updateFolderInSupabase(id, { isExpanded: !folder.isExpanded }).catch(error => {
+            console.error('更新文件夹展开状态失败:', error)
+          })
+        }
       },
 
       getFoldersByAgent: (agentId) => {
@@ -350,6 +387,13 @@ export const useTopicStore = create<TopicState>()(
           
           const otherFolders = state.folders.filter(folder => folder.agentId !== agentId)
           
+          // 异步更新每个文件夹的顺序到Supabase
+          reorderedFolders.forEach(folder => {
+            updateFolderInSupabase(folder.id, { order: folder.order }).catch(error => {
+              console.error('更新文件夹顺序失败:', error)
+            })
+          })
+          
           return { 
             folders: [...otherFolders, ...reorderedFolders]
           }
@@ -357,12 +401,12 @@ export const useTopicStore = create<TopicState>()(
       },
     }),
     {
-      name: 'topic-cache', // 改名以区分
+      name: 'topic-storage',
+      // 完整持久化所有话题和文件夹到 localStorage
       partialize: (state) => ({ 
-        // 只缓存最近10个话题作为快速访问缓存
-        topics: state.topics.slice(-10),
+        topics: state.topics,  // 保存所有话题
         currentTopicId: state.currentTopicId,
-        folders: state.folders,
+        folders: state.folders,  // 保存所有文件夹
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -379,47 +423,65 @@ export const useTopicStore = create<TopicState>()(
             updatedAt: new Date(folder.updatedAt),
           }))
           
-          // 从API加载完整话题列表（仅在Supabase配置后）
+          // 从API加载完整话题和文件夹列表（仅在Supabase配置后）
           if (!isSupabaseConfigured()) {
-            console.log('📦 [本地模式] 使用 localStorage 存储，共', state.topics.length, '个话题')
+            console.log('💾 [本地模式] Supabase 未配置，使用 localStorage 完整持久化')
+            console.log('  - 话题:', state.topics.length, '个')
+            console.log('  - 文件夹:', state.folders.length, '个')
             return
           }
           
           const localTopicCount = state.topics.length
-          console.log('☁️ [云端模式] 正在从 Supabase 加载话题...')
+          const localFolderCount = state.folders.length
+          console.log('☁️ [云端模式] 正在从 Supabase 同步数据...')
           
-          fetch('/api/topics', {
-            headers: {
-              'x-user-id': getUserId()
-            }
-          })
-            .then(res => res.json())
-            .then(data => {
-              console.log('☁️ [Topics API] 云端返回', data.length, '个话题')
+          // 同时加载话题和文件夹
+          Promise.all([
+            fetch('/api/topics', {
+              headers: { 'x-user-id': getUserId() }
+            }).then(res => res.json()),
+            getFoldersFromSupabase()
+          ])
+            .then(([topicsData, foldersData]) => {
+              console.log('☁️ [Supabase] 云端返回', topicsData.length, '个话题，', foldersData.length, '个文件夹')
               
-              if (data.length === 0 && localTopicCount > 0) {
-                console.log('⚠️ [Topics API] 云端为空，保留localStorage数据')
-                return
-              }
-              
-              if (data.length > 0) {
-                const topics = data.map((topic: any) => ({
+              // 处理话题数据
+              if (topicsData.length === 0 && localTopicCount > 0) {
+                console.log('⚠️ [Topics] 云端为空，保留 localStorage 数据')
+              } else if (topicsData.length > 0) {
+                const topics = topicsData.map((topic: any) => ({
                   id: topic.id,
-                  name: topic.title, // API返回title，映射到name字段
+                  name: topic.title,
                   agentId: topic.agent_id,
                   folderId: topic.folder_id,
-                  messages: [], // 话题不存储消息ID列表
+                  messages: [],
                   createdAt: new Date(topic.created_at),
                   updatedAt: new Date(topic.updated_at)
                 }))
-                
-                console.log('✅ [Topics API] 使用云端的', topics.length, '个话题')
+                console.log('✅ [Topics] 使用云端的', topics.length, '个话题')
                 useTopicStore.setState({ topics })
+              }
+              
+              // 处理文件夹数据
+              if (foldersData.length === 0 && localFolderCount > 0) {
+                console.log('⚠️ [Folders] 云端为空，保留 localStorage 数据')
+              } else if (foldersData.length > 0) {
+                const folders = foldersData.map((folder: any) => ({
+                  id: folder.id,
+                  name: folder.name,
+                  agentId: folder.agent_id,
+                  isExpanded: folder.is_expanded,
+                  order: folder.order,
+                  createdAt: new Date(folder.created_at),
+                  updatedAt: new Date(folder.updated_at)
+                }))
+                console.log('✅ [Folders] 使用云端的', folders.length, '个文件夹')
+                useTopicStore.setState({ folders })
               }
             })
             .catch(error => {
-              console.error('❌ [Topics API] 加载话题失败:', error)
-              console.log('⚠️ [Topics API] 保留localStorage数据')
+              console.error('❌ [Supabase] 加载数据失败:', error)
+              console.log('⚠️ [Supabase] 保留 localStorage 数据')
             })
         }
       }

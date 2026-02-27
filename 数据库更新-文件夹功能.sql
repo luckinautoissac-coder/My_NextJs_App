@@ -19,3 +19,4 @@ FROM information_schema.columns
 WHERE table_name = 'topics' AND column_name = 'folder_id';
 
 
+
