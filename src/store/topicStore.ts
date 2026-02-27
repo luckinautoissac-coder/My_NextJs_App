@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { TopicState, Topic, Folder } from '@/types/agent'
 import { 
   getUserId, 
@@ -9,6 +9,30 @@ import {
   updateFolderInSupabase,
   deleteFolderFromSupabase
 } from '@/lib/supabase'
+
+// ====== 安全的 localStorage 包装器 ======
+// 防止 QuotaExceededError 导致整个应用崩溃
+const safeLocalStorage = {
+  getItem: (name: string): string | null => {
+    try {
+      return localStorage.getItem(name)
+    } catch {
+      return null
+    }
+  },
+  setItem: (name: string, value: string): void => {
+    try {
+      localStorage.setItem(name, value)
+    } catch {
+      console.warn('⚠️ localStorage 空间不足，topic 数据通过云端存储')
+    }
+  },
+  removeItem: (name: string): void => {
+    try {
+      localStorage.removeItem(name)
+    } catch {}
+  }
+}
 
 // 辅助函数：调用话题API
 async function saveTopicToAPI(topic: Topic) {
@@ -402,6 +426,8 @@ export const useTopicStore = create<TopicState>()(
     }),
     {
       name: 'topic-storage',
+      // 使用安全的 localStorage 包装器，防止 QuotaExceededError
+      storage: createJSONStorage(() => safeLocalStorage),
       // 完整持久化所有话题和文件夹到 localStorage
       partialize: (state) => ({ 
         topics: state.topics,  // 保存所有话题

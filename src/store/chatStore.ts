@@ -1,13 +1,56 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { ChatState, Message } from '@/types/chat'
 import { 
   saveMessageToSupabase, 
   getMessagesFromSupabase, 
   updateMessageInSupabase, 
   deleteMessageFromSupabase,
-  getUserId
+  getUserId,
+  isSupabaseConfigured
 } from '@/lib/supabase'
+
+// ====== 安全的 localStorage 包装器 ======
+// 防止 QuotaExceededError 导致整个应用崩溃
+const safeLocalStorage = {
+  getItem: (name: string): string | null => {
+    try {
+      return localStorage.getItem(name)
+    } catch {
+      console.warn('⚠️ 读取 localStorage 失败')
+      return null
+    }
+  },
+  setItem: (name: string, value: string): void => {
+    try {
+      localStorage.setItem(name, value)
+    } catch (e) {
+      // localStorage 空间不足时的降级处理
+      console.warn('⚠️ localStorage 空间不足，尝试精简缓存...')
+      try {
+        // 先清除旧的缓存数据
+        localStorage.removeItem(name)
+        // 尝试解析并只保留最近 30 条消息
+        const parsed = JSON.parse(value)
+        if (parsed.state?.messages && parsed.state.messages.length > 30) {
+          parsed.state.messages = parsed.state.messages.slice(-30)
+          localStorage.setItem(name, JSON.stringify(parsed))
+          console.log('💾 已精简为最近 30 条消息缓存')
+        }
+      } catch {
+        // 彻底放弃 localStorage，云端存储是主力
+        console.log('☁️ localStorage 不可用，所有数据通过云端存储')
+      }
+    }
+  },
+  removeItem: (name: string): void => {
+    try {
+      localStorage.removeItem(name)
+    } catch {
+      // 静默忽略
+    }
+  }
+}
 
 export const useChatStore = create<ChatState>()(
   persist(
@@ -150,9 +193,14 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'chat-storage',
-      // 完整持久化所有消息到 localStorage
+      // 使用安全的 localStorage 包装器，防止 QuotaExceededError
+      storage: createJSONStorage(() => safeLocalStorage),
+      // 关键修复：云端模式下，只缓存最近少量消息到 localStorage
+      // 完整消息列表始终从 Supabase 加载
       partialize: (state) => ({ 
-        messages: state.messages  // 保存所有消息
+        messages: isSupabaseConfigured()
+          ? state.messages.slice(-50)   // 云端模式：只缓存最近50条，完整数据从云端加载
+          : state.messages              // 本地模式：保存全部消息
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -195,25 +243,21 @@ export const useChatStore = create<ChatState>()(
           
           // 从Supabase加载完整消息列表（仅在配置后）
           const localMessageCount = state.messages.length
-          console.log('📦 [localStorage] 本地有', localMessageCount, '条消息')
+          console.log('📦 [localStorage] 本地缓存有', localMessageCount, '条消息')
           
-          // 检查Supabase是否已配置
-          const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-          const supabaseConfigured = supabaseUrl && supabaseUrl !== 'https://placeholder.supabase.co'
-          
-          if (!supabaseConfigured) {
+          if (!isSupabaseConfigured()) {
             console.log('💾 [本地模式] Supabase 未配置，使用 localStorage 完整持久化')
             return
           }
           
-          console.log('☁️ [云端模式] Supabase 已配置，尝试同步云端数据...')
+          console.log('☁️ [云端模式] Supabase 已配置，从云端加载完整数据...')
           
           getMessagesFromSupabase()
             .then(data => {
               console.log('☁️ [Supabase] 云端返回', data.length, '条消息')
               
               if (data.length === 0 && localMessageCount > 0) {
-                console.log('⚠️ [Supabase] 云端为空，保留 localStorage 数据')
+                console.log('⚠️ [Supabase] 云端为空，保留本地缓存数据')
                 return
               }
               
@@ -232,13 +276,13 @@ export const useChatStore = create<ChatState>()(
                   } : undefined
                 }))
                 
-                console.log('✅ [Supabase] 使用云端的', messages.length, '条消息，同时备份到 localStorage')
+                console.log('✅ [Supabase] 加载云端', messages.length, '条消息（本地仅缓存最近50条）')
                 useChatStore.setState({ messages })
               }
             })
             .catch(error => {
               console.error('❌ [Supabase] 加载消息失败:', error)
-              console.log('⚠️ [Supabase] 保留 localStorage 数据')
+              console.log('⚠️ 使用本地缓存数据')
             })
         }
       }
